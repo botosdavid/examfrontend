@@ -1,0 +1,14 @@
+version: '1'
+services:
+  mysql:
+    container_name: mysqldb
+    restart: always
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+    volumes:
+      - my-datavolume:/var/lib/mysql
+    ports:
+      - 3306:3306
+volumes:
+  my-datavolume:
