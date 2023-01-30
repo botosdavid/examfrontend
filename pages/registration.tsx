@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 const Registration = () => {
   const [name, setName] = useState("");
   const [neptun, setNeptun] = useState("");
   const [password, setPassword] = useState("");
+  const { data: session } = useSession();
 
   const registerUser = async () => {
     const res = await fetch("/api/hello");
@@ -11,6 +13,7 @@ const Registration = () => {
     console.log(data);
   };
 
+  if (session) return <div>Logged in buddy! {session.user?.name}</div>;
   return (
     <div>
       <input
@@ -31,7 +34,7 @@ const Registration = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={registerUser}>Sign Up</button>
+      <button onClick={() => signIn()}>Sign Up</button>
     </div>
   );
 };
