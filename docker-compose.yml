@@ -7,8 +7,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 'password'
     volumes:
-      - my-datavolume:/var/lib/mysql
+      - mysql:/var/lib/mysql
     ports:
       - 3306:3306
 volumes:
-  my-datavolume:
+  mysql:
