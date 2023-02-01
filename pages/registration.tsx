@@ -7,13 +7,19 @@ const Registration = () => {
   const [password, setPassword] = useState("");
   const { data: session } = useSession();
 
-  const registerUser = async () => {
-    const res = await fetch("/api/hello");
+  const registration = async () => {
+    const res = await fetch("/api/registration");
     const data = await res.json();
     console.log(data);
   };
 
-  if (session) return <div>Logged in buddy! {session.user?.name}</div>;
+  if (session)
+    return (
+      <div>
+        Logged in buddy! {JSON.stringify(session)}
+        <button onClick={() => signOut()}>Sign Out</button>
+      </div>
+    );
   return (
     <div>
       <input
@@ -34,7 +40,9 @@ const Registration = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={() => signIn()}>Sign Up</button>
+      <button onClick={() => signIn("credentials", { neptun, password })}>
+        Sign Up
+      </button>
     </div>
   );
 };
