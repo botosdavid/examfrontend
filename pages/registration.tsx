@@ -1,27 +1,34 @@
 import { useState } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import AuthPage from "@/components/AuthPage/AuthPage";
 
 const Registration = () => {
   const [name, setName] = useState("");
   const [neptun, setNeptun] = useState("");
   const [password, setPassword] = useState("");
   const { data: session } = useSession();
+  const router = useRouter();
 
-  const registration = async () => {
-    const res = await fetch("/api/registration");
-    const data = await res.json();
-    console.log(data);
+  const handleRegistration = async () => {
+    const res = await fetch("/api/registration", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, neptun, password }),
+    });
+    router.push("/login");
   };
 
-  if (session)
-    return (
-      <div>
-        Logged in buddy! {JSON.stringify(session)}
-        <button onClick={() => signOut()}>Sign Out</button>
-      </div>
-    );
+  if (session) router.push("/");
+
   return (
-    <div>
+    <AuthPage
+      title={"Register"}
+      confirmButtonLabel={"Sign Up"}
+      confirmButtonOnClick={handleRegistration}
+    >
       <input
         type="text"
         placeholder="Name"
@@ -40,10 +47,7 @@ const Registration = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={() => signIn("credentials", { neptun, password })}>
-        Sign Up
-      </button>
-    </div>
+    </AuthPage>
   );
 };
 export default Registration;

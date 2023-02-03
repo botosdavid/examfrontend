@@ -17,12 +17,12 @@ export default NextAuth({
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
         const { neptun, password } = credentials;
-        const user = await prisma.user.findFirst({ where: { neptun: neptun }});
-        
-        if(!user) return null;
-        if(password !== user.password) return null;
 
-        console.log('authorize user:', user);
+        const user = await prisma.user.findFirst({ where: { neptun: neptun }});
+        if(!user) return null;
+
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if(!isPasswordCorrect) return null;
 
         return user // Any object returned will be saved in `user` property of the JWT
       }
