@@ -3,6 +3,8 @@ import AuthPage from "@/components/AuthPage/AuthPage";
 import { GetServerSideProps } from "next/types";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { getServerSession, Session } from "next-auth";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import CustomSwitch from "@/components/CustomSwitch/CustomSwitch";
 
 interface RegistrationPageProps {
   session: Session;
@@ -46,6 +48,10 @@ const Registration = ({ session }: RegistrationPageProps) => {
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+      />
+      <FormControlLabel
+        control={<CustomSwitch defaultChecked />}
+        label="I'm a teacher"
       />
     </AuthPage>
   );

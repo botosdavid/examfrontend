@@ -3,15 +3,16 @@ import { Inter } from "@next/font/google";
 import { signOut } from "next-auth/react";
 import { GetServerSideProps } from "next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
-import { getServerSession, Session } from "next-auth";
+import { getServerSession } from "next-auth";
+import Layout from "../components/Layout/Layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
 interface HomePageProps {
-  session: Session;
+  usersession: UserSession;
 }
 
-export default function Home({ session }: HomePageProps) {
+const Home = ({ usersession }: HomePageProps) => {
   return (
     <>
       <Head>
@@ -20,18 +21,25 @@ export default function Home({ session }: HomePageProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <button onClick={() => signOut()}>Sign Out</button>
-        <h1>Dashboard</h1>
-      </main>
+      <Layout>
+        <div onClick={() => signOut()}>Sign Out</div>
+        <h1>Welcome {usersession.user.neptun} </h1>
+        <h2>Your role is {usersession.user.role}</h2>
+      </Layout>
     </>
   );
-}
+};
+
+export default Home;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
+  const usersession = await getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  );
 
-  if (!session) {
+  if (!usersession) {
     return {
       redirect: {
         destination: "/login",
@@ -42,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      session,
+      usersession,
     },
   };
 };

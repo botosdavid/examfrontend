@@ -6,7 +6,7 @@ export const PageContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #aa98b5;
+  background-color: ${(props) => props.theme.grey};
 `;
 
 export const CredentialsContainer = styled.div`
@@ -28,13 +28,14 @@ export const CredentialsBox = styled.div`
 `;
 
 export const ConfirmButton = styled.button`
+  background-color: ${(props) => props.theme.main};
   padding: 0.5rem 2rem;
-  background-color: purple;
   color: white;
   border-radius: 0.5rem;
   border: none;
 `;
 
 export const Title = styled.h1`
+  color: ${(props) => props.theme.fontColor};
   font-weight: bold;
 `;
