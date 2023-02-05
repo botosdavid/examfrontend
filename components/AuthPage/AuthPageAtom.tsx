@@ -14,11 +14,17 @@ export const CredentialsContainer = styled.div`
   height: 60vh;
   padding: 3rem;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
   border-radius: 1rem;
   background-color: white;
-  gap: 3rem;
+`;
+
+export const CredentialsBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
 `;
 
 export const ConfirmButton = styled.button`

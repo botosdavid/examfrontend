@@ -1,27 +1,27 @@
 import { useState } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 import AuthPage from "@/components/AuthPage/AuthPage";
+import { GetServerSideProps } from "next/types";
+import { authOptions } from "./api/auth/[...nextauth]";
+import { getServerSession, Session } from "next-auth";
 
-const Registration = () => {
+interface RegistrationPageProps {
+  session: Session;
+}
+
+const Registration = ({ session }: RegistrationPageProps) => {
   const [name, setName] = useState("");
   const [neptun, setNeptun] = useState("");
   const [password, setPassword] = useState("");
-  const { data: session } = useSession();
-  const router = useRouter();
 
   const handleRegistration = async () => {
-    const res = await fetch("/api/registration", {
+    fetch("/api/registration", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ name, neptun, password }),
     });
-    router.push("/login");
   };
-
-  if (session) router.push("/");
 
   return (
     <AuthPage
@@ -51,3 +51,22 @@ const Registration = () => {
   );
 };
 export default Registration;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      session,
+    },
+  };
+};

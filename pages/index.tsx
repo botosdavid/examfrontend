@@ -1,17 +1,17 @@
 import Head from "next/head";
-import Image from "next/image";
 import { Inter } from "@next/font/google";
-import { useRouter } from "next/router";
-import { useSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { GetServerSideProps } from "next";
+import { authOptions } from "pages/api/auth/[...nextauth]";
+import { getServerSession, Session } from "next-auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
-  const router = useRouter();
-  const { data: session } = useSession();
+interface HomePageProps {
+  session: Session;
+}
 
-  if (!session) router.push("/login");
-
+export default function Home({ session }: HomePageProps) {
   return (
     <>
       <Head>
@@ -27,3 +27,22 @@ export default function Home() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      session,
+    },
+  };
+};

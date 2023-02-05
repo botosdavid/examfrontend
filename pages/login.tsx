@@ -1,21 +1,46 @@
 import { useState } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { signIn, SignInResponse } from "next-auth/react";
 import AuthPage from "@/components/AuthPage/AuthPage";
-import { useRouter } from "next/router";
+import { GetServerSideProps } from "next/types";
+import { authOptions } from "./api/auth/[...nextauth]";
+import { getServerSession, Session } from "next-auth";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const Login = () => {
+interface LoginPageProps {
+  session: Session;
+}
+
+interface Credentials {
+  neptun: string;
+  password: string;
+}
+
+const notify = () =>
+  toast("Invalid Credentials!", {
+    position: "top-center",
+    type: "error",
+  });
+
+const handleLoginIn = async (credentials: Credentials) => {
+  const { ok } = (await signIn("credentials", {
+    ...credentials,
+    redirect: false,
+  })) as SignInResponse;
+
+  if (!ok) return notify();
+  window.location.replace("/");
+};
+
+const Login = ({ session }: LoginPageProps) => {
   const [neptun, setNeptun] = useState("");
   const [password, setPassword] = useState("");
-  const { data: session } = useSession();
-  const router = useRouter();
-
-  if (session) router.push("/");
 
   return (
     <AuthPage
       title={"Login"}
       confirmButtonLabel={"Sign In"}
-      confirmButtonOnClick={() => signIn("credentials", { neptun, password })}
+      confirmButtonOnClick={() => handleLoginIn({ neptun, password })}
     >
       <input
         type="text"
@@ -29,7 +54,27 @@ const Login = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+      <ToastContainer />
     </AuthPage>
   );
 };
 export default Login;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      session,
+    },
+  };
+};

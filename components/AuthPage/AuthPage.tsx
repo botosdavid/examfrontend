@@ -16,11 +16,13 @@ const AuthPage = ({
   return (
     <s.PageContainer>
       <s.CredentialsContainer>
-        <s.Title>{title}</s.Title>
-        {children}
-        <s.ConfirmButton onClick={confirmButtonOnClick}>
-          {confirmButtonLabel}
-        </s.ConfirmButton>
+        <s.CredentialsBox>
+          <s.Title>{title}</s.Title>
+          {children}
+          <s.ConfirmButton onClick={confirmButtonOnClick}>
+            {confirmButtonLabel}
+          </s.ConfirmButton>
+        </s.CredentialsBox>
       </s.CredentialsContainer>
     </s.PageContainer>
   );
