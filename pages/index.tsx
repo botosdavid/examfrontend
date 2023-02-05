@@ -1,12 +1,9 @@
 import Head from "next/head";
-import { Inter } from "@next/font/google";
 import { signOut } from "next-auth/react";
 import { GetServerSideProps } from "next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import Layout from "../components/Layout/Layout";
-
-const inter = Inter({ subsets: ["latin"] });
 
 interface HomePageProps {
   usersession: UserSession;
@@ -21,10 +18,13 @@ const Home = ({ usersession }: HomePageProps) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Layout>
+
+      <Layout usersession={usersession}>
         <div onClick={() => signOut()}>Sign Out</div>
         <h1>Welcome {usersession.user.neptun} </h1>
-        <h2>Your role is {usersession.user.role}</h2>
+        <h2>You are a {usersession.user.role}</h2>
+        <hr></hr>
+        <div>Take new exam</div>
       </Layout>
     </>
   );

@@ -14,15 +14,18 @@ const Registration = ({ session }: RegistrationPageProps) => {
   const [name, setName] = useState("");
   const [neptun, setNeptun] = useState("");
   const [password, setPassword] = useState("");
+  const [isTeacher, setIsTeacher] = useState(false);
 
   const handleRegistration = async () => {
-    fetch("/api/registration", {
+    const response = await fetch("/api/registration", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, neptun, password }),
+      body: JSON.stringify({ name, neptun, password, isTeacher }),
     });
+    if (response.status !== 200) return;
+    window.location.replace("/login");
   };
 
   return (
@@ -50,7 +53,12 @@ const Registration = ({ session }: RegistrationPageProps) => {
         onChange={(e) => setPassword(e.target.value)}
       />
       <FormControlLabel
-        control={<CustomSwitch defaultChecked />}
+        control={
+          <CustomSwitch
+            checked={isTeacher}
+            onChange={(e) => setIsTeacher(e.target.checked)}
+          />
+        }
         label="I'm a teacher"
       />
     </AuthPage>

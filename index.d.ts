@@ -1,8 +1,8 @@
 
 enum MenuItem {
     Exam,
-    Manage,
     Grades,
+    Manage,
 }
 
 interface UserSession extends Omit<Session, "user"> {
@@ -11,4 +11,16 @@ interface UserSession extends Omit<Session, "user"> {
         role: import('@prisma/client').Role;
     };
     expires: string;
+}
+
+interface LoginCredentials {
+    neptun: string;
+    password: string;
+}
+
+interface RegistrationCredentials {
+    name: string;
+    neptun: string;
+    password: string;
+    isTeacher: boolean;
 }

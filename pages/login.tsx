@@ -11,18 +11,13 @@ interface LoginPageProps {
   session: Session;
 }
 
-interface Credentials {
-  neptun: string;
-  password: string;
-}
-
 const notify = () =>
   toast("Invalid Credentials!", {
     position: "top-center",
     type: "error",
   });
 
-const handleLoginIn = async (credentials: Credentials) => {
+const handleLoginIn = async (credentials: LoginCredentials) => {
   const { ok } = (await signIn("credentials", {
     ...credentials,
     redirect: false,

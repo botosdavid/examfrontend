@@ -5,12 +5,13 @@ import * as s from "./LayoutAtoms";
 
 interface LayoutProps {
   children: ReactNode;
+  usersession: UserSession;
 }
 
-const Layout = ({ children }: LayoutProps) => {
+const Layout = ({ children, usersession }: LayoutProps) => {
   return (
     <s.LayoutContainer>
-      <Sidebar />
+      <Sidebar usersession={usersession} />
       <s.Content>{children}</s.Content>
     </s.LayoutContainer>
   );
