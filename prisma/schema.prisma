@@ -9,8 +9,41 @@ generator client {
 
 model User {
     id       String  @id @default(cuid())
-    name     String?
+    name     String
     image    String?
     neptun   String  @default("neptun")
     password String  @default("secret")
+    role     Role    @default(STUDENT)
+    Exam     Exam[]
+}
+
+model Answer {
+    id         String   @id @default(cuid())
+    text       String
+    Question   Question @relation(fields: [questionId], references: [id])
+    questionId String
+}
+
+model Question {
+    id      String   @id @default(cuid())
+    text    String
+    answers Answer[]
+    exam    Exam     @relation(fields: [examId], references: [id])
+    examId  String
+}
+
+model Exam {
+    id        String     @id @default(cuid())
+    name      String     @unique
+    author    User       @relation(fields: [authorId], references: [id])
+    authorId  String
+    questions Question[]
+    date      DateTime
+    code      String     @unique
+}
+
+enum Role {
+    STUDENT
+    TEACHER
+    ADMIN
 }
