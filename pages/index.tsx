@@ -4,7 +4,7 @@ import { GetServerSideProps } from "next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import Layout from "../components/Layout/Layout";
-
+import ExamSubscriber from "@/components/ExamSubscriber/ExamSubscriber";
 interface HomePageProps {
   usersession: UserSession;
 }
@@ -24,7 +24,7 @@ const Home = ({ usersession }: HomePageProps) => {
         <h1>Welcome {usersession.user.neptun} </h1>
         <h2>You are a {usersession.user.role}</h2>
         <hr></hr>
-        <div>Take new exam</div>
+        <ExamSubscriber />
       </Layout>
     </>
   );
