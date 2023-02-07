@@ -1,7 +1,6 @@
-import { Session } from "next-auth";
 import { ReactNode } from "react";
 import Sidebar from "../Sidebar/Sidebar";
-import * as s from "./LayoutAtoms";
+import * as s from "./LayoutAtom";
 
 interface LayoutProps {
   children: ReactNode;
