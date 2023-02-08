@@ -16,7 +16,19 @@ const ExamSubscriber = () => {
 
 const Modal = () => {
   const [code, setCode] = useState("");
-  const handleSubscribeToExam = (code: string) => {};
+  const isValidCode = code.length === 6;
+
+  const handleSubscribeToExam = async (code: string) => {
+    const response = await fetch("/api/exam", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code }),
+    });
+    if (response.status !== 200) return;
+  };
+
   return (
     <s.ModalOuter>
       <s.ModalContainer>
@@ -27,6 +39,12 @@ const Modal = () => {
           inputClassName="code-input"
           autoFocus
         />
+        <s.Button
+          onClick={() => handleSubscribeToExam(code)}
+          disabled={!isValidCode}
+        >
+          Subscribe
+        </s.Button>
       </s.ModalContainer>
     </s.ModalOuter>
   );

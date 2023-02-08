@@ -8,13 +8,14 @@ generator client {
 }
 
 model User {
-    id       String  @id @default(cuid())
-    name     String
-    image    String?
-    neptun   String  @default("neptun")
-    password String  @default("secret")
-    role     Role    @default(STUDENT)
-    Exam     Exam[]
+    id              String  @id @default(cuid())
+    name            String
+    image           String?
+    neptun          String  @unique
+    password        String
+    role            Role    @default(STUDENT)
+    examsCreated    Exam[]  @relation("author")
+    examsSubscribed Exam[]  @relation("subscribers")
 }
 
 model Answer {
@@ -33,13 +34,14 @@ model Question {
 }
 
 model Exam {
-    id        String     @id @default(cuid())
-    name      String     @unique
-    author    User       @relation(fields: [authorId], references: [id])
-    authorId  String
-    questions Question[]
-    date      DateTime
-    code      String     @unique
+    id          String     @id @default(cuid())
+    name        String     @unique
+    author      User       @relation("author", fields: [authorId], references: [id])
+    authorId    String
+    questions   Question[]
+    date        DateTime
+    code        String     @unique
+    subscribers User[]     @relation("subscribers")
 }
 
 enum Role {

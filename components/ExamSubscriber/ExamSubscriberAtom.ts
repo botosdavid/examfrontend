@@ -39,3 +39,16 @@ export const ModalContainer = styled.div`
 export const ModalTitle = styled.h3`
     color: ${props => props.theme.fontColor};
 `;
+
+interface ButtonProps {
+    disabled: boolean;
+}
+
+export const Button = styled.button<ButtonProps>`
+    background-color: ${props => props.theme.main};
+    color: white;
+    padding: 0.5rem 3rem;
+    border-radius: 0.5rem;
+    border: none;
+    opacity: ${props => props.disabled ? '0.5': '1'}
+`

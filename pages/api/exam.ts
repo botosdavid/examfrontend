@@ -28,6 +28,21 @@ export default async function handler(
           code,
         },
       })
-      res.status(200).json({ isSuccess: true })
+      res.status(200).json({ isSuccess: true });
+      
+    case 'PATCH':
+      const updatedExam = await prisma.exam.update({
+        where: {
+          code
+        },
+        data: {
+          subscribers: {
+            connect: {
+              id: session.user.id,
+            }
+          },
+        },
+      })
+      res.status(200).json({ isSuccess: true });
   }
 }
