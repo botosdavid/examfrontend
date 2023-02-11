@@ -10,12 +10,18 @@ const ExamSubscriber = () => {
       <s.ExamSubscriberContainer onClick={() => setIsModalOpen(true)}>
         Add Exam
       </s.ExamSubscriberContainer>
-      {isModalOpen && <ExamSubscriberModal />}
+      {isModalOpen && (
+        <ExamSubscriberModal onClose={() => setIsModalOpen(false)} />
+      )}
     </>
   );
 };
 
-const ExamSubscriberModal = () => {
+interface ExamSubscriberModalProps {
+  onClose: () => void;
+}
+
+const ExamSubscriberModal = ({ onClose }: ExamSubscriberModalProps) => {
   const [code, setCode] = useState("");
   const isValidCode = code.length === 6;
 
@@ -31,7 +37,7 @@ const ExamSubscriberModal = () => {
   };
 
   return (
-    <Modal title="Enter Exam Code">
+    <Modal title="Enter Exam Code" onClose={onClose}>
       <AuthCode
         onChange={(e) => setCode(e)}
         allowedCharacters="numeric"

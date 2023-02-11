@@ -6,13 +6,15 @@ interface ModalProps {
   children: ReactNode;
   width?: string;
   height?: string;
+  onClose: () => void;
 }
 
-const Modal = ({ children, width, height, title }: ModalProps) => {
+const Modal = ({ children, width, height, title, onClose }: ModalProps) => {
   return (
     <s.ModalOuter>
       <s.ModalContainer width={width} height={height}>
         {title && <s.ModalTitle>{title}</s.ModalTitle>}
+        <s.Close onClick={onClose} />
         {children}
       </s.ModalContainer>
     </s.ModalOuter>

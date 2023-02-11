@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import CloseIcon from "@mui/icons-material/Close";
 
 export const ModalOuter = styled.div`
     width: 100vw;
@@ -20,6 +21,7 @@ interface ModalContainerProps {
 }
 
 export const ModalContainer = styled.div<ModalContainerProps>`
+    position: relative;
     width: ${props => props.width ?? '30vw'};
     height: ${props => props.height ?? '30vh'};
     border-radius: 1rem;
@@ -36,4 +38,12 @@ export const ModalContainer = styled.div<ModalContainerProps>`
 
 export const ModalTitle = styled.h3`
     font-weight: bold;
-`
+    text-align: center;
+`;
+
+export const Close = styled(CloseIcon)`
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    cursor: pointer;
+`;
