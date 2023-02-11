@@ -20,7 +20,7 @@ const Sidebar = ({ usersession }: SidebarProps) => {
     <s.SidebarContainer>
       <s.Logo>Logo</s.Logo>
       <s.MenuItemsContainer>
-        <MenuItem label={"Exams"} link={""} Icon={<SchoolIcon />} />
+        <MenuItem label={"Exams"} link={"/"} Icon={<SchoolIcon />} />
         <MenuItem label={"Grades"} link={"/grades"} Icon={<GradeIcon />} />
         {canManageExams && (
           <MenuItem

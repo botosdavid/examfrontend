@@ -1,4 +1,5 @@
-import { ReactNode, useEffect, useState } from "react";
+import Link from "next/link";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import * as s from "./MenuItemAtom";
 
 interface MenuItemProps {
@@ -7,19 +8,21 @@ interface MenuItemProps {
   Icon?: ReactNode;
 }
 
-const MenuItem = ({ label, link = "", Icon }: MenuItemProps) => {
+const MenuItem = ({ label, link = "/", Icon }: MenuItemProps) => {
   const [isActivePage, setIsActivePage] = useState(false);
 
   useEffect(() => {
     const urlParam = window.location.pathname.split("/").pop();
-    setIsActivePage(urlParam === link);
+    setIsActivePage(`/${urlParam}` === link);
   }, []);
 
   return (
-    <s.MenuItemContainer href={link} active={isActivePage}>
-      {Icon}
-      {label}
-    </s.MenuItemContainer>
+    <Link href={link} style={{ textDecoration: "none" }}>
+      <s.MenuItemContainer active={isActivePage}>
+        {Icon}
+        {label}
+      </s.MenuItemContainer>
+    </Link>
   );
 };
 
