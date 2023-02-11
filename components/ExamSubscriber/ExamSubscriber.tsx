@@ -1,6 +1,7 @@
 import * as s from "./ExamSubscriberAtom";
 import { useState } from "react";
 import AuthCode from "react-auth-code-input";
+import Modal from "../Modal/Modal";
 
 const ExamSubscriber = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -9,12 +10,12 @@ const ExamSubscriber = () => {
       <s.ExamSubscriberContainer onClick={() => setIsModalOpen(true)}>
         Add Exam
       </s.ExamSubscriberContainer>
-      {isModalOpen && <Modal />}
+      {isModalOpen && <ExamSubscriberModal />}
     </>
   );
 };
 
-const Modal = () => {
+const ExamSubscriberModal = () => {
   const [code, setCode] = useState("");
   const isValidCode = code.length === 6;
 
@@ -30,23 +31,20 @@ const Modal = () => {
   };
 
   return (
-    <s.ModalOuter>
-      <s.ModalContainer>
-        <s.ModalTitle>Enter Exam Code</s.ModalTitle>
-        <AuthCode
-          onChange={(e) => setCode(e)}
-          allowedCharacters="numeric"
-          inputClassName="code-input"
-          autoFocus
-        />
-        <s.Button
-          onClick={() => handleSubscribeToExam(code)}
-          disabled={!isValidCode}
-        >
-          Subscribe
-        </s.Button>
-      </s.ModalContainer>
-    </s.ModalOuter>
+    <Modal title="Enter Exam Code">
+      <AuthCode
+        onChange={(e) => setCode(e)}
+        allowedCharacters="numeric"
+        inputClassName="code-input"
+        autoFocus
+      />
+      <s.Button
+        onClick={() => handleSubscribeToExam(code)}
+        disabled={!isValidCode}
+      >
+        Subscribe
+      </s.Button>
+    </Modal>
   );
 };
 
