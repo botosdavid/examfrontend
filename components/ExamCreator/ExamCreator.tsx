@@ -2,6 +2,7 @@ import * as s from "./ExamCreatorAtom";
 import { ChangeEvent, useState } from "react";
 import Modal from "../Modal/Modal";
 import CustomInput from "../CustomInput/CustomInput";
+import { notifyCreatedSuccessfully } from "../../utils/toast/toastify";
 
 const defaultAnserCount = 4;
 
@@ -49,6 +50,8 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
       body: JSON.stringify({ name: examName, questions }),
     });
     if (response.status !== 200) return;
+    notifyCreatedSuccessfully();
+    onClose();
   };
 
   const handleAddQuestion = () =>

@@ -17,7 +17,7 @@ const Registration = ({ session }: RegistrationPageProps) => {
   const [isTeacher, setIsTeacher] = useState(false);
 
   const handleRegistration = async () => {
-    const response = await fetch("/api/registration", {
+    const response = await fetch("/api/user", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

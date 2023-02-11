@@ -4,18 +4,10 @@ import AuthPage from "@/components/AuthPage/AuthPage";
 import { GetServerSideProps } from "next/types";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { getServerSession, Session } from "next-auth";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
+import { notifyInvalidCredentials } from "@/utils/toast/toastify";
 interface LoginPageProps {
   session: Session;
 }
-
-const notify = () =>
-  toast("Invalid Credentials!", {
-    position: "top-center",
-    type: "error",
-  });
 
 const handleLoginIn = async (credentials: LoginCredentials) => {
   const { ok } = (await signIn("credentials", {
@@ -23,7 +15,7 @@ const handleLoginIn = async (credentials: LoginCredentials) => {
     redirect: false,
   })) as SignInResponse;
 
-  if (!ok) return notify();
+  if (!ok) return notifyInvalidCredentials();
   window.location.replace("/");
 };
 
@@ -49,7 +41,6 @@ const Login = ({ session }: LoginPageProps) => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <ToastContainer />
     </AuthPage>
   );
 };

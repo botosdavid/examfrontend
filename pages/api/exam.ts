@@ -6,7 +6,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from './auth/[...nextauth]';
 
 type Response = {
-  isSuccess: boolean,
+  isSuccess?: boolean,
+  exams?: any[],
 }
 
 export default async function handler(
@@ -49,6 +50,6 @@ export default async function handler(
           },
         },
       })
-      res.status(200).json({ isSuccess: true });
+      return res.status(200).json({ isSuccess: true });
   }
 }

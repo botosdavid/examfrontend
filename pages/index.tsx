@@ -5,11 +5,21 @@ import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import Layout from "../components/Layout/Layout";
 import ExamSubscriber from "@/components/ExamSubscriber/ExamSubscriber";
+import { useQuery } from "react-query";
+import CircularProgress from "@mui/material/CircularProgress";
 interface HomePageProps {
   usersession: UserSession;
 }
 
+const getSubscribedExams = async () => {
+  const response = await fetch("/api/user/exam");
+  return response.json();
+};
+
 const Home = ({ usersession }: HomePageProps) => {
+  const { data: exams, isLoading } = useQuery("exams", getSubscribedExams);
+
+  if (isLoading) return <CircularProgress />;
   return (
     <>
       <Head>
@@ -18,13 +28,16 @@ const Home = ({ usersession }: HomePageProps) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <Layout usersession={usersession}>
         <div onClick={() => signOut()}>Sign Out</div>
         <h1>Welcome {usersession.user.neptun} </h1>
         <h2>You are a {usersession.user.role}</h2>
-        <hr></hr>
         <ExamSubscriber />
+        {exams.exams[0].examsSubscribed.map((exam: any, index: number) => (
+          <div key={index}>
+            {exam.name} - {exam.date}
+          </div>
+        ))}
       </Layout>
     </>
   );

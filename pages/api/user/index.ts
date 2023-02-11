@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import prisma from '../../prisma/lib/prismadb';
+import prisma from '../../../prisma/lib/prismadb';
 import bcrypt from 'bcrypt';
 import { Role } from '@prisma/client';
 

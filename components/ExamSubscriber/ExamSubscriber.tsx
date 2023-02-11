@@ -2,6 +2,7 @@ import * as s from "./ExamSubscriberAtom";
 import { useState } from "react";
 import AuthCode from "react-auth-code-input";
 import Modal from "../Modal/Modal";
+import { notifySubscribedSuccessfully } from "@/utils/toast/toastify";
 
 const ExamSubscriber = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,6 +35,8 @@ const ExamSubscriberModal = ({ onClose }: ExamSubscriberModalProps) => {
       body: JSON.stringify({ code }),
     });
     if (response.status !== 200) return;
+    notifySubscribedSuccessfully();
+    onClose();
   };
 
   return (
