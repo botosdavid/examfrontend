@@ -3,6 +3,7 @@ import { ChangeEvent, useState } from "react";
 import Modal from "../Modal/Modal";
 import CustomInput from "../CustomInput/CustomInput";
 import { notifyCreatedSuccessfully } from "../../utils/toast/toastify";
+import Button from "../Button/Button";
 
 const defaultAnserCount = 4;
 
@@ -118,8 +119,10 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
           ))}
         </div>
       ))}
-      <button onClick={handleAddQuestion}>Add Question</button>
-      <button onClick={handleCreateExam}>Create</button>
+      <Button secondary onClick={handleAddQuestion}>
+        Add Question
+      </Button>
+      <Button onClick={handleCreateExam}>Create</Button>
     </Modal>
   );
 };

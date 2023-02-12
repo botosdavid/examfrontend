@@ -27,14 +27,6 @@ export const CredentialsBox = styled.div`
   gap: 2rem;
 `;
 
-export const ConfirmButton = styled.button`
-  background-color: ${(props) => props.theme.main};
-  padding: 0.5rem 2rem;
-  color: white;
-  border-radius: 0.5rem;
-  border: none;
-`;
-
 export const Title = styled.h1`
   color: ${(props) => props.theme.fontColor};
   font-weight: bold;

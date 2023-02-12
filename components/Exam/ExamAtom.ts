@@ -9,6 +9,7 @@ export const ExamContainer = styled.div`
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    margin: 0.4rem 0;
 `;
 
 export const ExamName = styled.div`

@@ -1,3 +1,4 @@
+import Button from "../Button/Button";
 import * as s from "./AuthPageAtom";
 
 interface AuthPageProps {
@@ -19,9 +20,7 @@ const AuthPage = ({
         <s.CredentialsBox>
           <s.Title>{title}</s.Title>
           {children}
-          <s.ConfirmButton onClick={confirmButtonOnClick}>
-            {confirmButtonLabel}
-          </s.ConfirmButton>
+          <Button onClick={confirmButtonOnClick}>{confirmButtonLabel}</Button>
         </s.CredentialsBox>
       </s.CredentialsContainer>
     </s.PageContainer>

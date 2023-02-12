@@ -3,14 +3,13 @@ import { useState } from "react";
 import AuthCode from "react-auth-code-input";
 import Modal from "../Modal/Modal";
 import { notifySubscribedSuccessfully } from "@/utils/toast/toastify";
+import Button from "../Button/Button";
 
 const ExamSubscriber = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <>
-      <s.ExamSubscriberContainer onClick={() => setIsModalOpen(true)}>
-        Add Exam
-      </s.ExamSubscriberContainer>
+      <Button onClick={() => setIsModalOpen(true)}>Add Exam</Button>
       {isModalOpen && (
         <ExamSubscriberModal onClose={() => setIsModalOpen(false)} />
       )}
@@ -47,12 +46,12 @@ const ExamSubscriberModal = ({ onClose }: ExamSubscriberModalProps) => {
         inputClassName="code-input"
         autoFocus
       />
-      <s.Button
+      <Button
         onClick={() => handleSubscribeToExam(code)}
         disabled={!isValidCode}
       >
         Subscribe
-      </s.Button>
+      </Button>
     </Modal>
   );
 };
