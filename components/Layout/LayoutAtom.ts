@@ -6,4 +6,5 @@ export const LayoutContainer = styled.div`
 
 export const Content = styled.div`
     padding: 4rem;
+    width: 100%;
 `

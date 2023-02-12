@@ -7,6 +7,8 @@ import Layout from "../components/Layout/Layout";
 import ExamSubscriber from "@/components/ExamSubscriber/ExamSubscriber";
 import { useQuery } from "react-query";
 import CircularProgress from "@mui/material/CircularProgress";
+import Exam from "@/components/Exam/Exam";
+
 interface HomePageProps {
   usersession: UserSession;
 }
@@ -33,10 +35,8 @@ const Home = ({ usersession }: HomePageProps) => {
         <h1>Welcome {usersession.user.neptun} </h1>
         <h2>You are a {usersession.user.role}</h2>
         <ExamSubscriber />
-        {exams.exams[0].examsSubscribed.map((exam: any, index: number) => (
-          <div key={index}>
-            {exam.name} - {exam.date}
-          </div>
+        {exams.map((exam: any, index: number) => (
+          <Exam exam={exam} key={index} />
         ))}
       </Layout>
     </>

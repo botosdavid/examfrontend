@@ -3,11 +3,9 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '../../../prisma/lib/prismadb';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
+import { Exam } from '@prisma/client';
 
-type Response = {
-  isSuccess?: boolean,
-  exams?: any[],
-}
+type Response = Exam[]
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,10 +17,13 @@ export default async function handler(
 
     switch (method){
       case 'GET':      
-        const exams = await prisma.user.findMany({ 
+        const user = await prisma.user.findMany({ 
           include: { examsSubscribed: true },
           where: { id },
         })
-        return res.json({isSuccess: true, exams});
+        if (!user) return res.status(404);
+        const exams = user[0].examsSubscribed;
+        
+        return res.json(exams);
     }
 }
