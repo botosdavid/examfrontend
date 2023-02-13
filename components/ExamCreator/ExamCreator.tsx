@@ -4,6 +4,10 @@ import Modal from "../Modal/Modal";
 import CustomInput from "../CustomInput/CustomInput";
 import { notifyCreatedSuccessfully } from "../../utils/toast/toastify";
 import Button from "../Button/Button";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { TextField } from "@mui/material";
+import moment, { Moment } from "moment";
 
 const defaultAnserCount = 4;
 
@@ -40,6 +44,7 @@ interface Answer {
 
 const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
   const [examName, setExamName] = useState("");
+  const [examDate, setExamDate] = useState<Moment | null>(moment());
   const [questions, setQuestions] = useState<Question[]>([]);
 
   const handleCreateExam = async () => {
@@ -48,7 +53,11 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name: examName, questions }),
+      body: JSON.stringify({
+        name: examName,
+        date: moment(examDate).toDate(),
+        questions,
+      }),
     });
     if (response.status !== 200) return;
     notifyCreatedSuccessfully();
@@ -90,6 +99,8 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
     );
   };
 
+  const handleDateChange = (date: Moment | null) => setExamDate(date);
+
   return (
     <Modal
       title="Enter New Exam Details"
@@ -97,6 +108,19 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
       height="80vh"
       onClose={onClose}
     >
+      <DesktopDatePicker
+        label="Date desktop"
+        inputFormat="MM/DD/YYYY"
+        value={examDate}
+        onChange={handleDateChange}
+        renderInput={(params) => <TextField {...params} />}
+      />
+      <TimePicker
+        label="Time"
+        value={examDate}
+        onChange={handleDateChange}
+        renderInput={(params) => <TextField {...params} />}
+      />
       <CustomInput
         label="Exam Name"
         value={examName}

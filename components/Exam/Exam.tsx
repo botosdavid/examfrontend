@@ -9,12 +9,14 @@ const Exam = ({ exam }: any) => {
   return (
     <s.ExamContainer>
       <s.ExamName>{exam.name}</s.ExamName>
-      {hasStarted && (
-        <Button secondary onClick={() => {}}>
-          Start Exam
-        </Button>
-      )}
-      <s.ExamDate> {exam.date.slice(0, 10)}</s.ExamDate>
+      <s.ExamInfoContainer>
+        {hasStarted && (
+          <Button secondary onClick={() => {}}>
+            Start Exam
+          </Button>
+        )}
+        <s.ExamDate> {exam.date.slice(0, 10)}</s.ExamDate>
+      </s.ExamInfoContainer>
     </s.ExamContainer>
   );
 };

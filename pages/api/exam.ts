@@ -15,7 +15,7 @@ export default async function handler(
   res: NextApiResponse<Response>
 ) {
   const session = await getServerSession(req, res, authOptions);
-  const { body: { name, code, questions }, method } = req;
+  const { body: { name, code, questions, date }, method } = req;
   const { user: {id, role}} = session;
   
   switch (method){
@@ -28,7 +28,7 @@ export default async function handler(
         data: {
           name,
           authorId: id,
-          date: new Date(),
+          date,
           code: newCode,
           questions: {
             create: formatedQuestions,

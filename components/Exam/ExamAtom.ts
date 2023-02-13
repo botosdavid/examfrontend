@@ -19,4 +19,13 @@ export const ExamName = styled.div`
 
 export const ExamDate = styled.div`
     font-stretch: expanded;
+    width: 30%;
+`;
+
+export const ExamInfoContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 40%;
+    gap: 1rem;
 `;
