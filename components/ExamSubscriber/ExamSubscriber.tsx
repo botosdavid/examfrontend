@@ -3,7 +3,10 @@ import { useState } from "react";
 import AuthCode from "react-auth-code-input";
 import Modal from "../Modal/Modal";
 import { notifySubscribedSuccessfully } from "@/utils/toast/toastify";
+import { subscribeToExam } from "@/utils/api/requests";
 import Button from "../Button/Button";
+import { useMutation } from "react-query";
+import { queryClient } from "@/pages/_app";
 
 const ExamSubscriber = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,18 +28,13 @@ const ExamSubscriberModal = ({ onClose }: ExamSubscriberModalProps) => {
   const [code, setCode] = useState("");
   const isValidCode = code.length === 6;
 
-  const handleSubscribeToExam = async (code: string) => {
-    const response = await fetch("/api/exam", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code }),
-    });
-    if (response.status !== 200) return;
-    notifySubscribedSuccessfully();
-    onClose();
-  };
+  const subscribeToExamMutation = useMutation(subscribeToExam, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("exams");
+      notifySubscribedSuccessfully();
+      onClose();
+    },
+  });
 
   return (
     <Modal title="Enter Exam Code" onClose={onClose}>
@@ -47,7 +45,7 @@ const ExamSubscriberModal = ({ onClose }: ExamSubscriberModalProps) => {
         autoFocus
       />
       <Button
-        onClick={() => handleSubscribeToExam(code)}
+        onClick={() => subscribeToExamMutation.mutate(code)}
         disabled={!isValidCode}
       >
         Subscribe

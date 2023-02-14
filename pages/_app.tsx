@@ -11,7 +11,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 const poppins = Poppins({ weight: "200", subsets: ["latin"] });
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 export default function App({
   Component,
