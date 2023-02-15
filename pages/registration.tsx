@@ -5,34 +5,34 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import { getServerSession, Session } from "next-auth";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import CustomSwitch from "@/components/CustomSwitch/CustomSwitch";
+import { useMutation } from "react-query";
+import { createUser } from "@/utils/api/post";
+import { useRouter } from "next/router";
 
 interface RegistrationPageProps {
   session: Session;
 }
 
 const Registration = ({ session }: RegistrationPageProps) => {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [neptun, setNeptun] = useState("");
   const [password, setPassword] = useState("");
   const [isTeacher, setIsTeacher] = useState(false);
 
-  const handleRegistration = async () => {
-    const response = await fetch("/api/user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, neptun, password, isTeacher }),
-    });
-    if (response.status !== 200) return;
-    window.location.replace("/login");
-  };
+  const createUserMutation = useMutation(createUser, {
+    onSuccess: () => {
+      router.push("/login");
+    },
+  });
 
   return (
     <AuthPage
       title={"Register"}
       confirmButtonLabel={"Sign Up"}
-      confirmButtonOnClick={handleRegistration}
+      confirmButtonOnClick={() =>
+        createUserMutation.mutate({ name, neptun, password, isTeacher })
+      }
     >
       <input
         type="text"
