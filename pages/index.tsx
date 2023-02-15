@@ -9,13 +9,15 @@ import { useQuery } from "react-query";
 import CircularProgress from "@mui/material/CircularProgress";
 import Exam from "@/components/Exam/Exam";
 import { getSubscribedExams } from "@/utils/api/get";
+import { Exam as IExam } from "@prisma/client";
+import { subscribedExams } from "@/utils/querykeys/querykeys";
 
 interface HomePageProps {
   usersession: UserSession;
 }
 
 const Home = ({ usersession }: HomePageProps) => {
-  const { data: exams, isLoading } = useQuery("exams", getSubscribedExams);
+  const { data: exams, isLoading } = useQuery(subscribedExams, getSubscribedExams);
 
   if (isLoading) return <CircularProgress />;
   return (
@@ -31,7 +33,7 @@ const Home = ({ usersession }: HomePageProps) => {
         <h1>Welcome {usersession.user.neptun} </h1>
         <h2>You are a {usersession.user.role}</h2>
         <ExamSubscriber />
-        {exams.map((exam: any, index: number) => (
+        {exams.map((exam: IExam, index: number) => (
           <Exam exam={exam} key={index} />
         ))}
       </Layout>

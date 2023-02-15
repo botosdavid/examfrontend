@@ -7,6 +7,7 @@ import { subscribeToExam } from "@/utils/api/patch";
 import Button from "../Button/Button";
 import { useMutation } from "react-query";
 import { queryClient } from "@/pages/_app";
+import { subscribedExams } from "@/utils/querykeys/querykeys";
 
 const ExamSubscriber = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,7 +31,7 @@ const ExamSubscriberModal = ({ onClose }: ExamSubscriberModalProps) => {
 
   const subscribeToExamMutation = useMutation(subscribeToExam, {
     onSuccess: () => {
-      queryClient.invalidateQueries("exams");
+      queryClient.invalidateQueries(subscribedExams);
       notifySubscribedSuccessfully();
       onClose();
     },

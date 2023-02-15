@@ -1,7 +1,13 @@
+import Exam from "@/components/Exam/Exam";
 import ExamCreator from "@/components/ExamCreator/ExamCreator";
 import Layout from "@/components/Layout/Layout";
+import { getCreatedExams } from "@/utils/api/get";
+import { createdExams } from "@/utils/querykeys/querykeys";
+import { CircularProgress } from "@mui/material";
+import { Exam as IExam } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { GetServerSideProps } from "next/types";
+import { useQuery } from "react-query";
 import { authOptions } from "./api/auth/[...nextauth]";
 
 interface ManagePageProps {
@@ -9,9 +15,15 @@ interface ManagePageProps {
 }
 
 const ManagePage = ({ usersession }: ManagePageProps) => {
+  const { data: exams, isLoading } = useQuery(createdExams, getCreatedExams);
+
+  if (isLoading) return <CircularProgress />;
   return (
     <Layout usersession={usersession}>
       <ExamCreator />
+      {exams.map((exam: IExam, index: number) => (
+        <Exam exam={exam} key={index}/>
+      ))}
     </Layout>
   );
 };

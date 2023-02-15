@@ -11,6 +11,7 @@ import moment, { Moment } from "moment";
 import { queryClient } from "@/pages/_app";
 import { useMutation } from "react-query";
 import { createExam } from "@/utils/api/post";
+import { createdExams } from "@/utils/querykeys/querykeys";
 
 const defaultAnserCount = 4;
 
@@ -39,7 +40,7 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
 
   const createExamMutation = useMutation(createExam, {
     onSuccess: () => {
-      queryClient.invalidateQueries("createdExams");
+      queryClient.invalidateQueries(createdExams);
       notifyCreatedSuccessfully();
       onClose();
     },

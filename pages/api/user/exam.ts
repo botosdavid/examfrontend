@@ -13,16 +13,16 @@ export default async function handler(
 ) {
     const session = await getServerSession(req, res, authOptions);
     const { user: { id }} = session;
-    const { method } = req;
+    const { method, query: { filter }} = req;
 
     switch (method){
       case 'GET':      
         const user = await prisma.user.findMany({ 
-          include: { examsSubscribed: true },
+          include: { [`${filter}`]: true},
           where: { id },
         })
         if (!user) return res.status(404);
-        const exams = user[0].examsSubscribed;
+        const exams = user[0][`${filter}`];
         
         return res.json(exams);
     }
