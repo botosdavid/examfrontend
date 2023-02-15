@@ -3,7 +3,7 @@ import { useState } from "react";
 import AuthCode from "react-auth-code-input";
 import Modal from "../Modal/Modal";
 import { notifySubscribedSuccessfully } from "@/utils/toast/toastify";
-import { subscribeToExam } from "@/utils/api/requests";
+import { subscribeToExam } from "@/utils/api/patch";
 import Button from "../Button/Button";
 import { useMutation } from "react-query";
 import { queryClient } from "@/pages/_app";

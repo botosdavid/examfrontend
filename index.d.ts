@@ -24,3 +24,18 @@ interface RegistrationCredentials {
     password: string;
     isTeacher: boolean;
 }
+
+interface CreateExam {
+    name: string;
+    date: Moment | null;
+    questions: CreateQuestion[];
+}
+
+interface CreateQuestion {
+    text: string;
+    answers: CreateAnswer[];
+}
+
+interface CreateAnswer {
+    text: string;
+  }

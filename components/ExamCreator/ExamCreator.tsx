@@ -8,6 +8,9 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { TextField } from "@mui/material";
 import moment, { Moment } from "moment";
+import { queryClient } from "@/pages/_app";
+import { useMutation } from "react-query";
+import { createExam } from "@/utils/api/post";
 
 const defaultAnserCount = 4;
 
@@ -29,40 +32,18 @@ interface ExamCreatorModalProps {
   onClose: () => void;
 }
 
-interface Exam {
-  name: string;
-}
-
-interface Question {
-  text: string;
-  answers: Answer[];
-}
-
-interface Answer {
-  text: string;
-}
-
 const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
-  const [examName, setExamName] = useState("");
-  const [examDate, setExamDate] = useState<Moment | null>(moment());
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [name, setName] = useState("");
+  const [date, setDate] = useState<Moment | null>(moment());
+  const [questions, setQuestions] = useState<CreateQuestion[]>([]);
 
-  const handleCreateExam = async () => {
-    const response = await fetch("/api/exam", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: examName,
-        date: moment(examDate).toDate(),
-        questions,
-      }),
-    });
-    if (response.status !== 200) return;
-    notifyCreatedSuccessfully();
-    onClose();
-  };
+  const createExamMutation = useMutation(createExam, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("createdExams");
+      notifyCreatedSuccessfully();
+      onClose();
+    },
+  });
 
   const handleAddQuestion = () =>
     setQuestions([
@@ -99,7 +80,7 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
     );
   };
 
-  const handleDateChange = (date: Moment | null) => setExamDate(date);
+  const handleDateChange = (date: Moment | null) => setDate(date);
 
   return (
     <Modal
@@ -111,22 +92,22 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
       <DesktopDatePicker
         label="Date desktop"
         inputFormat="MM/DD/YYYY"
-        value={examDate}
+        value={date}
         onChange={handleDateChange}
         renderInput={(params) => <TextField {...params} />}
       />
       <TimePicker
         label="Time"
-        value={examDate}
+        value={date}
         onChange={handleDateChange}
         renderInput={(params) => <TextField {...params} />}
       />
       <CustomInput
         label="Exam Name"
-        value={examName}
-        onChange={(e) => setExamName(e.target.value)}
+        value={name}
+        onChange={(e) => setName(e.target.value)}
       />
-      {questions.map((question: Question, index) => (
+      {questions.map((question, index) => (
         <div key={index}>
           <CustomInput
             label={`${index + 1}. Question`}
@@ -146,7 +127,11 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
       <Button secondary onClick={handleAddQuestion}>
         Add Question
       </Button>
-      <Button onClick={handleCreateExam}>Create</Button>
+      <Button
+        onClick={() => createExamMutation.mutate({ name, date, questions })}
+      >
+        Create
+      </Button>
     </Modal>
   );
 };

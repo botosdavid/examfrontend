@@ -8,15 +8,11 @@ import ExamSubscriber from "@/components/ExamSubscriber/ExamSubscriber";
 import { useQuery } from "react-query";
 import CircularProgress from "@mui/material/CircularProgress";
 import Exam from "@/components/Exam/Exam";
+import { getSubscribedExams } from "@/utils/api/get";
 
 interface HomePageProps {
   usersession: UserSession;
 }
-
-const getSubscribedExams = async () => {
-  const response = await fetch("/api/user/exam");
-  return response.json();
-};
 
 const Home = ({ usersession }: HomePageProps) => {
   const { data: exams, isLoading } = useQuery("exams", getSubscribedExams);
