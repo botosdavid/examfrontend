@@ -83,6 +83,18 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
 
   const handleDateChange = (date: Moment | null) => setDate(date);
 
+  const handleCorrectAnswerChange = (
+    questionIndex: number,
+    correctAnswer: number
+  ) => {
+    setQuestions(
+      questions.map((question, index) => {
+        if (index !== questionIndex) return question;
+        return { ...question, correctAnswer };
+      })
+    );
+  };
+
   return (
     <Modal
       title="Enter New Exam Details"
@@ -121,6 +133,7 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
               placeholder={`${answerIndex + 1}. Answer`}
               value={answer.text}
               onChange={(e) => handleAnswerChange(e, index, answerIndex)}
+              onClick={() => handleCorrectAnswerChange(index, answerIndex)}
             />
           ))}
         </div>

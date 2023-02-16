@@ -26,11 +26,12 @@ model Answer {
 }
 
 model Question {
-    id      String   @id @default(cuid())
-    text    String
-    answers Answer[]
-    exam    Exam     @relation(fields: [examId], references: [id])
-    examId  String
+    id            String   @id @default(cuid())
+    text          String
+    answers       Answer[]
+    exam          Exam     @relation(fields: [examId], references: [id])
+    examId        String
+    correctAnswer Int
 }
 
 model Exam {

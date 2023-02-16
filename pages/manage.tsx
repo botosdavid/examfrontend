@@ -22,7 +22,7 @@ const ManagePage = ({ usersession }: ManagePageProps) => {
     <Layout usersession={usersession}>
       <ExamCreator />
       {exams.map((exam: IExam, index: number) => (
-        <Exam exam={exam} key={index}/>
+        <Exam exam={exam} key={index} canEdit />
       ))}
     </Layout>
   );
