@@ -2,6 +2,7 @@ import * as s from "./ExamCreatorAtom";
 import { ChangeEvent, useState } from "react";
 import Modal from "../Modal/Modal";
 import CustomInput from "../CustomInput/CustomInput";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import { notifyCreatedSuccessfully } from "../../utils/toast/toastify";
 import Button from "../Button/Button";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
@@ -49,7 +50,11 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
   const handleAddQuestion = () =>
     setQuestions([
       ...questions,
-      { text: "", answers: Array(defaultAnserCount).fill({ text: "" }) },
+      {
+        text: "",
+        correctAnswer: 0,
+        answers: Array(defaultAnserCount).fill({ text: "" }),
+      },
     ]);
 
   const handleQuestionChange = (
@@ -95,11 +100,15 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
     );
   };
 
+  const handleDeleteQuestion = (questionIndex: number) => {
+    setQuestions(questions.filter((_, index) => index !== questionIndex));
+  };
+
   return (
     <Modal
       title="Enter New Exam Details"
       width="60vw"
-      height="80vh"
+      height="90vh"
       onClose={onClose}
     >
       <DesktopDatePicker
@@ -120,6 +129,7 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
+      Select the right answer for every question by clicking on it.
       {questions.map((question, index) => (
         <div key={index}>
           <CustomInput
@@ -127,8 +137,13 @@ const ExamCreatorModal = ({ onClose }: ExamCreatorModalProps) => {
             value={question.text}
             onChange={(e) => handleQuestionChange(e, index)}
           />
+          <Button onClick={() => handleDeleteQuestion(index)} secondary>
+            <DeleteRoundedIcon />
+          </Button>
+          <br />
           {question.answers.map((answer, answerIndex) => (
-            <input
+            <CustomInput
+              isSelected={answerIndex === question.correctAnswer}
               key={answerIndex}
               placeholder={`${answerIndex + 1}. Answer`}
               value={answer.text}

@@ -29,6 +29,8 @@ const ExamPage = ({ code }: ExamPageProps) => {
 
   if (isLoading) return <CircularProgress />;
 
+  if (!exam.questions.length) return <div>No questions in this exam!</div>;
+
   const hasNextQuestion = exam.questions.length > questionIndex + 1;
 
   return (
