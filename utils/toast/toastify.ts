@@ -6,6 +6,12 @@ export const notifyCreatedSuccessfully = () =>
     type: "success",
   });
 
+export const notifyExamFinished = () =>
+  toast("Exam finished successfully!", {
+    position: "top-center",
+    type: "success",
+  });
+
 export const notifySubscribedSuccessfully = () =>
   toast("Subscribed successfully!", {
     position: "top-center",
@@ -14,6 +20,12 @@ export const notifySubscribedSuccessfully = () =>
 
 export const notifyInvalidCredentials = () =>
   toast("Invalid Credentials!", {
+    position: "top-center",
+    type: "error",
+  });
+
+export const notifySelectAnswer = () =>
+  toast("You must select an answer!", {
     position: "top-center",
     type: "error",
   });

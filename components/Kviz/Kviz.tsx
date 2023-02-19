@@ -1,9 +1,12 @@
 import { getExam } from "@/utils/api/get";
+import { createSelectedAnswer } from "@/utils/api/post";
 import { fullExam } from "@/utils/querykeys/querykeys";
+import { notifyExamFinished, notifySelectAnswer } from "@/utils/toast/toastify";
 import { CircularProgress } from "@mui/material";
 import { Answer } from "@prisma/client";
+import { useRouter } from "next/router";
 import { useState } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import Button from "../Button/Button";
 import * as s from "./KvizAtom";
 
@@ -12,21 +15,28 @@ interface KvizProps {
 }
 
 const Kviz = ({ code }: KvizProps) => {
+  const router = useRouter();
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const { data: exam, isLoading } = useQuery([fullExam, { code }], () =>
     getExam(code)
   );
-  const [questionIndex, setQuestionIndex] = useState(0);
-  const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(
-    null
-  );
+  const selectAnswerMutation = useMutation(createSelectedAnswer, {
+    onSuccess: () => {
+      if (!hasNextQuestion) {
+        notifyExamFinished();
+        return router.push("/");
+      }
+      setQuestionIndex(questionIndex + 1);
+      setSelectedAnswer(null);
+    },
+  });
 
   const handleGoToNextQuestion = () => {
-    if (!selectedAnswerIndex) return;
-    if (!hasNextQuestion) return;
-    setQuestionIndex(questionIndex + 1);
-    setSelectedAnswerIndex(null);
-    // TODO: mutation saving users answer to this question
-    // TODO: fetching next question from this exam (later)
+    if (!selectedAnswer) return notifySelectAnswer();
+    const questionId = exam.questions[questionIndex].id;
+    selectAnswerMutation.mutate({ questionId, selectedAnswer });
+    // TODO: fetching only one question at a time for safety
   };
 
   if (isLoading) return <CircularProgress />;
@@ -46,9 +56,9 @@ const Kviz = ({ code }: KvizProps) => {
         {exam.questions[questionIndex].answers.map(
           (answer: Answer, index: number) => (
             <Button
-              onClick={() => setSelectedAnswerIndex(index)}
+              onClick={() => setSelectedAnswer(index)}
               key={index}
-              secondary={index !== selectedAnswerIndex}
+              secondary={index !== selectedAnswer}
             >
               {answer.text}
             </Button>

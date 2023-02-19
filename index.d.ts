@@ -39,3 +39,8 @@ interface CreateQuestion {
 interface CreateAnswer {
   text: string;
 }
+
+interface CreateSelectedAnswer {
+  questionId: string;
+  selectedAnswer: number;
+}
