@@ -8,6 +8,7 @@ import CustomSwitch from "@/components/CustomSwitch/CustomSwitch";
 import { useMutation } from "react-query";
 import { createUser } from "@/utils/api/post";
 import { useRouter } from "next/router";
+import CustomInput from "@/components/CustomInput/CustomInput";
 
 interface RegistrationPageProps {
   session: Session;
@@ -34,19 +35,19 @@ const Registration = ({ session }: RegistrationPageProps) => {
         createUserMutation.mutate({ name, neptun, password, isTeacher })
       }
     >
-      <input
+      <CustomInput
         type="text"
         placeholder="Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
-      <input
+      <CustomInput
         type="text"
         placeholder="Neptun"
         value={neptun}
         onChange={(e) => setNeptun(e.target.value)}
       />
-      <input
+      <CustomInput
         type="password"
         placeholder="Password"
         value={password}

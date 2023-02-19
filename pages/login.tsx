@@ -5,6 +5,8 @@ import { GetServerSideProps } from "next/types";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { getServerSession, Session } from "next-auth";
 import { notifyInvalidCredentials } from "@/utils/toast/toastify";
+import CustomInput from "@/components/CustomInput/CustomInput";
+import Link from "next/link";
 interface LoginPageProps {
   session: Session;
 }
@@ -29,18 +31,19 @@ const Login = ({ session }: LoginPageProps) => {
       confirmButtonLabel={"Sign In"}
       confirmButtonOnClick={() => handleLoginIn({ neptun, password })}
     >
-      <input
+      <CustomInput
         type="text"
-        placeholder="Neptun"
+        label="Neptun"
         value={neptun}
         onChange={(e) => setNeptun(e.target.value)}
       />
-      <input
+      <CustomInput
         type="password"
-        placeholder="Password"
+        label="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+      <Link href={"/registration"}>Haven&apos;t got an account yet?</Link>
     </AuthPage>
   );
 };

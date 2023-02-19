@@ -21,6 +21,7 @@ const ExamPage = ({ code }: ExamPageProps) => {
   );
 
   const handleGoToNextQuestion = () => {
+    if (!selectedAnswerIndex) return;
     setQuestionIndex(questionIndex + 1);
     setSelectedAnswerIndex(null);
     // TODO: mutation saving users answer to this question

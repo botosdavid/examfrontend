@@ -14,7 +14,7 @@ const MenuItem = ({ label, link = "/", Icon }: MenuItemProps) => {
   useEffect(() => {
     const urlParam = window.location.pathname.split("/").pop();
     setIsActivePage(`/${urlParam}` === link);
-  }, []);
+  }, [link]);
 
   return (
     <Link href={link} style={{ textDecoration: "none" }}>
