@@ -9,14 +9,15 @@ generator client {
 }
 
 model User {
-    id              String  @id @default(cuid())
+    id              String             @id @default(cuid())
     name            String
     image           String?
-    neptun          String  @unique
+    neptun          String             @unique
     password        String
-    role            Role    @default(STUDENT)
-    examsCreated    Exam[]  @relation("author")
-    examsSubscribed Exam[]  @relation("subscribers")
+    role            Role               @default(STUDENT)
+    examsCreated    Exam[]             @relation("author")
+    examsSubscribed Exam[]             @relation("subscribers")
+    selectedAnswers QuestionsOnUsers[]
 }
 
 model Answer {
@@ -29,12 +30,13 @@ model Answer {
 }
 
 model Question {
-    id            String   @id @default(cuid())
-    text          String
-    answers       Answer[]
-    exam          Exam     @relation(fields: [examId], references: [id])
-    examId        String
-    correctAnswer Int
+    id              String             @id @default(cuid())
+    text            String
+    answers         Answer[]
+    exam            Exam               @relation(fields: [examId], references: [id])
+    examId          String
+    correctAnswer   Int
+    selectedAnswers QuestionsOnUsers[]
 
     @@index([examId])
 }
@@ -48,8 +50,22 @@ model Exam {
     date        DateTime
     code        String     @unique
     subscribers User[]     @relation("subscribers")
+    createdAt   DateTime   @default(now())
 
     @@index([authorId])
+}
+
+model QuestionsOnUsers {
+    user           User     @relation(fields: [userId], references: [id])
+    userId         String
+    question       Question @relation(fields: [questionId], references: [id])
+    questionId     String
+    selectedAnswer Int
+    createdAt      DateTime @default(now())
+
+    @@id([userId, questionId])
+    @@index([userId])
+    @@index([questionId])
 }
 
 enum Role {
