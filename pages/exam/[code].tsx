@@ -1,69 +1,34 @@
-import Button from "@/components/Button/Button";
-import { getExam } from "@/utils/api/get";
-import { CircularProgress } from "@mui/material";
-import { Answer } from "@prisma/client";
+import Kviz from "@/components/Kviz/Kviz";
+import Layout from "@/components/Layout/Layout";
 import { GetServerSidePropsContext } from "next";
-import { useState } from "react";
-import { useQuery } from "react-query";
-import { fullExam } from "../../utils/querykeys/querykeys";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 interface ExamPageProps {
   code: string;
+  usersession: UserSession;
 }
 
-const ExamPage = ({ code }: ExamPageProps) => {
-  const { data: exam, isLoading } = useQuery([fullExam, { code }], () =>
-    getExam(code)
-  );
-  const [questionIndex, setQuestionIndex] = useState(0);
-  const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(
-    null
-  );
-
-  const handleGoToNextQuestion = () => {
-    if (!selectedAnswerIndex) return;
-    setQuestionIndex(questionIndex + 1);
-    setSelectedAnswerIndex(null);
-    // TODO: mutation saving users answer to this question
-    // TODO: fetching next question from this exam (later)
-  };
-
-  if (isLoading) return <CircularProgress />;
-
-  if (!exam.questions.length) return <div>No questions in this exam!</div>;
-
-  const hasNextQuestion = exam.questions.length > questionIndex + 1;
-
+const ExamPage = ({ code, usersession }: ExamPageProps) => {
   return (
-    <div>
-      <h1>Exam with code: {code}</h1>
-      <h3>{exam.questions[questionIndex].text}</h3>
-      {exam.questions[questionIndex].answers.map(
-        (answer: Answer, index: number) => (
-          <Button
-            onClick={() => setSelectedAnswerIndex(index)}
-            key={index}
-            secondary={index === selectedAnswerIndex}
-          >
-            {answer.text}
-          </Button>
-        )
-      )}
-      {hasNextQuestion && (
-        <Button secondary onClick={handleGoToNextQuestion}>
-          Next
-        </Button>
-      )}
-    </div>
+    <Layout usersession={usersession}>
+      <Kviz code={code} />
+    </Layout>
   );
 };
 
 export default ExamPage;
 
-export async function getServerSideProps({ query }: GetServerSidePropsContext) {
+export async function getServerSideProps({
+  query,
+  req,
+  res,
+}: GetServerSidePropsContext) {
   const { code } = query;
+  const usersession = await getServerSession(req, res, authOptions);
   return {
     props: {
+      usersession,
       code,
     },
   };
