@@ -24,6 +24,8 @@ model Answer {
     text       String
     Question   Question @relation(fields: [questionId], references: [id])
     questionId String
+
+    @@index([questionId])
 }
 
 model Question {
@@ -33,6 +35,8 @@ model Question {
     exam          Exam     @relation(fields: [examId], references: [id])
     examId        String
     correctAnswer Int
+
+    @@index([examId])
 }
 
 model Exam {
@@ -44,6 +48,8 @@ model Exam {
     date        DateTime
     code        String     @unique
     subscribers User[]     @relation("subscribers")
+
+    @@index([authorId])
 }
 
 enum Role {
