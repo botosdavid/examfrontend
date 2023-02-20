@@ -1,11 +1,11 @@
-import { getExam } from "@/utils/api/get";
+import { getExam, getExamCorrectAnswers } from "@/utils/api/get";
 import { createSelectedAnswer } from "@/utils/api/post";
 import { fullExam } from "@/utils/querykeys/querykeys";
 import { notifyExamFinished, notifySelectAnswer } from "@/utils/toast/toastify";
 import { CircularProgress } from "@mui/material";
 import { Answer } from "@prisma/client";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import Button from "../Button/Button";
 import * as s from "./KvizAtom";
@@ -31,6 +31,10 @@ const Kviz = ({ code }: KvizProps) => {
       setSelectedAnswer(null);
     },
   });
+
+  useEffect(() => {
+    getExamCorrectAnswers(code).then(console.log);
+  }, []);
 
   const handleGoToNextQuestion = () => {
     if (!selectedAnswer) return notifySelectAnswer();
