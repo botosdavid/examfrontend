@@ -54,8 +54,14 @@ export default async function handler(
       return res.status(200).json({ exam: examWIthQuestions });
 
     case "POST":
-      await prisma.questionsOnUsers.create({
-        data: {
+      await prisma.questionsOnUsers.upsert({
+        where: {
+          userId_questionId: { userId, questionId },
+        },
+        update: {
+          selectedAnswer,
+        },
+        create: {
           userId,
           questionId,
           selectedAnswer,
