@@ -39,6 +39,7 @@ export default async function handler(
         include: {
           questions: {
             include: {
+              answers: true,
               selectedAnswers: {
                 where: {
                   userId,
