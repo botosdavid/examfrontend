@@ -20,9 +20,10 @@ const ManagePage = ({ usersession }: ManagePageProps) => {
   if (isLoading) return <CircularProgress />;
   return (
     <Layout usersession={usersession}>
+      <h1>Manage your exams</h1>
       <ExamCreator />
       {exams.map((exam: IExam, index: number) => (
-        <Exam exam={exam} key={index} canEdit />
+        <Exam exam={exam} key={index} />
       ))}
     </Layout>
   );

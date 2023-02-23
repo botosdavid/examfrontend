@@ -2,12 +2,12 @@ import TextField from "@mui/material/TextField";
 import styled from "styled-components";
 
 interface CustomInputProps {
-  isSelected?: boolean;
+  selected?: boolean;
 }
 
 const CustomInput = styled(TextField)<CustomInputProps>(
-  ({ theme, isSelected }) => ({
-    backgroundColor: `${isSelected ? "lightgreen" : "white"}`,
+  ({ theme, selected }) => ({
+    backgroundColor: `${selected ? "lightgreen" : "white"}`,
     ".css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused": {
       color: `${theme.main}`,
     },

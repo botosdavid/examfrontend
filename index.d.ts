@@ -6,10 +6,16 @@ enum MenuItem {
 
 interface UserSession extends Omit<Session, "user"> {
   user: {
+    id?: string;
     neptun: string;
     role: import("@prisma/client").Role;
   };
   expires: string;
+}
+
+interface AuthSession {
+  data: any;
+  status: string;
 }
 
 interface LoginCredentials {
