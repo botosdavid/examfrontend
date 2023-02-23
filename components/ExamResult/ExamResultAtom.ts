@@ -11,6 +11,22 @@ export const Title = styled.h2`
   font-weight: bold;
 `;
 
+export const Points = styled.p`
+  text-align: end;
+  color: ${(props) => props.theme.main};
+`;
+
+export const QuestionText = styled.h3`
+  padding-bottom: 1rem;
+  box-sizing: border-box;
+`;
+
+export const QuestionContainer = styled.div`
+  padding: 2rem;
+  border-radius: 2rem;
+  box-shadow: ${(props) => props.theme.boxShadow};
+`;
+
 interface AnswerProps {
   correct: boolean;
   wrong: boolean;
@@ -18,7 +34,7 @@ interface AnswerProps {
 }
 
 export const Answer = styled.div<AnswerProps>`
-  min-width: 5rem;
+  min-width: 20rem;
   padding: 0.5rem;
   border-radius: 0.3rem;
   background-color: ${(props) =>

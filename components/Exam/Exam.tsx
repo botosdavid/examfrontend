@@ -4,6 +4,7 @@ import { Exam as IExam } from "@prisma/client";
 import { useRouter } from "next/router";
 import Button from "../Button/Button";
 import * as s from "./ExamAtom";
+import { useState } from "react";
 
 interface ExamProps {
   exam: IExam;
@@ -11,6 +12,8 @@ interface ExamProps {
 }
 
 const Exam = ({ exam, canEdit }: ExamProps) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   const currentDate = new Date().toISOString().slice(0.1);
   const examDate = exam.date.toString().slice(0, 10);
   const hasStarted = currentDate > examDate;
@@ -20,12 +23,16 @@ const Exam = ({ exam, canEdit }: ExamProps) => {
     router.push(`/exam/${exam.code}`);
   };
 
+  const handleEditExam = () => {
+    setIsEditModalOpen(true);
+  };
+
   return (
     <s.ExamContainer>
       <s.ExamName>{exam.name}</s.ExamName>
       <s.ExamInfoContainer>
         {canEdit && (
-          <Button secondary onClick={handleStartExam}>
+          <Button secondary onClick={handleEditExam}>
             <EditRoundedIcon />
           </Button>
         )}

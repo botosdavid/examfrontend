@@ -42,8 +42,17 @@ const ExamResult = ({ code }: ExamResultProps) => {
         <s.Title>Percentage: {percentage}%</s.Title>
       </div>
       {examResult.exam.questions.map((question: any, index: number) => (
-        <div key={index}>
-          {index + 1}.- {question.text}
+        <s.QuestionContainer key={index}>
+          <s.Points>
+            +{" "}
+            {Number(
+              question.selectedAnswers[0].selectedAnswer ===
+                question.correctAnswer
+            )}
+          </s.Points>
+          <s.QuestionText>
+            {index + 1}.- {question.text}
+          </s.QuestionText>
           {question.answers.map((answer: Answer, index: number) => (
             <s.Answer
               correct={index === question.correctAnswer}
@@ -60,7 +69,7 @@ const ExamResult = ({ code }: ExamResultProps) => {
               {answer.text}
             </s.Answer>
           ))}
-        </div>
+        </s.QuestionContainer>
       ))}
     </s.ExamResultContainer>
   );

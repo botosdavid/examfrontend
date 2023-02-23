@@ -34,7 +34,7 @@ const Kviz = ({ code }: KvizProps) => {
   });
 
   const handleGoToNextQuestion = () => {
-    if (!selectedAnswer) return notifySelectAnswer();
+    if (selectedAnswer === null) return notifySelectAnswer();
     const questionId = exam.questions[questionIndex].id;
     selectAnswerMutation.mutate({ questionId, selectedAnswer });
     // TODO: fetching only one question at a time for safety
