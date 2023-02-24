@@ -1,5 +1,6 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import * as s from "./ModalAtom";
+const escKeyCode = 27;
 
 interface ModalProps {
   title?: string;
@@ -10,6 +11,16 @@ interface ModalProps {
 }
 
 const Modal = ({ children, width, height, title, onClose }: ModalProps) => {
+  useEffect(() => {
+    const handleEsc = (ev: any) => {
+      if (ev.keyCode === escKeyCode) onClose();
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, []);
+
   return (
     <s.ModalOuter>
       <s.ModalContainer width={width} height={height}>

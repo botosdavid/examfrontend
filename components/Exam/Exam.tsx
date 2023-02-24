@@ -37,12 +37,12 @@ const Exam = ({ exam }: ExamProps) => {
       <s.ExamName>{exam.name}</s.ExamName>
       <s.ExamInfoContainer>
         {canEdit && (
-          <Button secondary onClick={handleEditExam}>
+          <Button small secondary onClick={handleEditExam}>
             <EditRoundedIcon />
           </Button>
         )}
         {hasStarted && (
-          <Button secondary onClick={handleStartExam}>
+          <Button small secondary onClick={handleStartExam}>
             <PlayCircleFilledRoundedIcon />
           </Button>
         )}

@@ -5,6 +5,7 @@ interface ButtonProps {
   children: ReactNode;
   disabled?: boolean;
   secondary?: boolean;
+  small?: boolean;
   onClick: () => void;
 }
 
@@ -12,6 +13,7 @@ const Button = ({
   children,
   secondary = false,
   disabled = false,
+  small = false,
   onClick = () => {},
 }: ButtonProps) => {
   return (
@@ -19,6 +21,7 @@ const Button = ({
       onClick={onClick}
       secondary={secondary}
       disabled={disabled}
+      small={small}
     >
       {children}
     </s.ButtonContainer>
