@@ -69,5 +69,40 @@ export default async function handler(
         },
       });
       return res.status(200).json({ isSuccess: true });
+
+    case "PUT":
+      await prisma.exam.update({
+        where: { code },
+        include: { questions: true },
+        data: { questions: { deleteMany: {} } },
+      });
+
+      const formatedQuestionsUpdate = questions.map(
+        (question: CreateQuestion) => ({
+          text: question.text,
+          correctAnswer: question.correctAnswer,
+          answers: {
+            create: question.answers.map((answer) => ({
+              text: answer.text,
+            })),
+          },
+        })
+      );
+      await prisma.exam.update({
+        where: { code },
+        data: {
+          name,
+          date,
+          questions: {
+            create: formatedQuestionsUpdate,
+          },
+        },
+        include: {
+          questions: {
+            include: { answers: true },
+          },
+        },
+      });
+      return res.status(200).json({ isSuccess: true });
   }
 }

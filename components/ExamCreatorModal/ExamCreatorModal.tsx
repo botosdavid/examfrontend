@@ -1,8 +1,11 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import Modal from "../Modal/Modal";
 import CustomInput from "../CustomInput/CustomInput";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import { notifyCreatedSuccessfully } from "../../utils/toast/toastify";
+import {
+  notifyCreatedSuccessfully,
+  notifyUpdatedSuccessfully,
+} from "../../utils/toast/toastify";
 import Button from "../Button/Button";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
@@ -14,6 +17,7 @@ import { createExam } from "@/utils/api/post";
 import { createdExams, fullExam } from "@/utils/querykeys/querykeys";
 import { Exam } from "@prisma/client";
 import { getExam } from "@/utils/api/get";
+import { updateExam } from "@/utils/api/put";
 
 const defaultAnswerCount = 4;
 
@@ -37,6 +41,14 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
       },
     }
   );
+
+  const updateExamMutation = useMutation(updateExam, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(createdExams);
+      notifyUpdatedSuccessfully();
+      onClose();
+    },
+  });
 
   const createExamMutation = useMutation(createExam, {
     onSuccess: () => {
@@ -157,9 +169,18 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
         Add Question
       </Button>
       <Button
-        onClick={() => createExamMutation.mutate({ name, date, questions })}
+        onClick={() =>
+          exam
+            ? updateExamMutation.mutate({
+                code: exam.code,
+                questions,
+                name,
+                date,
+              })
+            : createExamMutation.mutate({ name, date, questions })
+        }
       >
-        Create
+        {exam ? "Update" : "Create"}
       </Button>
     </Modal>
   );

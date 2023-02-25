@@ -6,6 +6,12 @@ export const notifyCreatedSuccessfully = () =>
     type: "success",
   });
 
+export const notifyUpdatedSuccessfully = () =>
+  toast("Exam updated successfully!", {
+    position: "top-center",
+    type: "success",
+  });
+
 export const notifyExamFinished = () =>
   toast("Exam finished successfully!", {
     position: "top-center",
