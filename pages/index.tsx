@@ -17,7 +17,10 @@ interface HomePageProps {
 }
 
 const Home = ({ usersession }: HomePageProps) => {
-  const { data: exams, isLoading } = useQuery(subscribedExams, getSubscribedExams);
+  const { data: exams, isLoading } = useQuery(
+    subscribedExams,
+    getSubscribedExams
+  );
 
   if (isLoading) return <CircularProgress />;
   return (

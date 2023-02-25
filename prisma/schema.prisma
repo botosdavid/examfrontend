@@ -16,7 +16,7 @@ model User {
     password        String
     role            Role               @default(STUDENT)
     examsCreated    Exam[]             @relation("author")
-    examsSubscribed Exam[]             @relation("subscribers")
+    examsSubscribed ExamsOnUsers[]
     selectedAnswers QuestionsOnUsers[]
 }
 
@@ -42,15 +42,15 @@ model Question {
 }
 
 model Exam {
-    id          String     @id @default(cuid())
-    name        String     @unique
-    author      User       @relation("author", fields: [authorId], references: [id])
+    id          String         @id @default(cuid())
+    name        String         @unique
+    author      User           @relation("author", fields: [authorId], references: [id])
     authorId    String
     questions   Question[]
     date        DateTime
-    code        String     @unique
-    subscribers User[]     @relation("subscribers")
-    createdAt   DateTime   @default(now())
+    code        String         @unique
+    subscribers ExamsOnUsers[]
+    createdAt   DateTime       @default(now())
 
     @@index([authorId])
 }
@@ -66,6 +66,22 @@ model QuestionsOnUsers {
     @@id([userId, questionId])
     @@index([userId])
     @@index([questionId])
+}
+
+model ExamsOnUsers {
+    user          User     @relation(fields: [userId], references: [id])
+    userId        String
+    exam          Exam     @relation(fields: [examId], references: [id])
+    examId        String
+    hasHalving    Boolean  @default(true)
+    hasStatistics Boolean  @default(true)
+    hasBestAnswer Boolean  @default(true)
+    hasFinished   Boolean  @default(false)
+    createdAt     DateTime @default(now())
+
+    @@id([userId, examId])
+    @@index([userId])
+    @@index([examId])
 }
 
 enum Role {

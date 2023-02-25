@@ -56,16 +56,19 @@ export default async function handler(
       return res.status(200).json({ isSuccess: true });
 
     case "PATCH":
-      const updatedExam = await prisma.exam.update({
+      const examToSubscribe = await prisma.exam.findUnique({ where: { code } });
+      if (!examToSubscribe) return res.status(404);
+      await prisma.examsOnUsers.upsert({
         where: {
-          code,
-        },
-        data: {
-          subscribers: {
-            connect: {
-              id: session.user.id,
-            },
+          userId_examId: {
+            userId: session.user.id,
+            examId: examToSubscribe.id,
           },
+        },
+        update: {},
+        create: {
+          userId: session.user.id,
+          examId: examToSubscribe.id,
         },
       });
       return res.status(200).json({ isSuccess: true });

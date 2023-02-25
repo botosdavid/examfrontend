@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../prisma/lib/prismadb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
-import { Exam } from "@prisma/client";
+import { Exam, ExamsOnUsers } from "@prisma/client";
 
 type Response = Exam[];
 
@@ -22,13 +22,27 @@ export default async function handler(
 
   switch (method) {
     case "GET":
-      const user = await prisma.user.findMany({
-        include: { [`${filter}`]: true },
-        where: { id },
-      });
-      if (!user) return res.status(404);
-      const exams = user[0][`${filter}`];
+      switch (filter) {
+        case "examsSubscribed":
+          const user = await prisma.user.findMany({
+            include: { [`${filter}`]: { select: { exam: true } } },
+            where: { id },
+          });
+          if (!user) return res.status(404);
+          const exams = user[0][`${filter}`];
+          const formatExams = [...exams].map(
+            ({ exam }: ExamsOnUsers & { exam: Exam }) => exam
+          );
+          return res.json(formatExams);
 
-      return res.json(exams);
+        case "examsCreated":
+          const createdByUser = await prisma.user.findMany({
+            include: { [`${filter}`]: true },
+            where: { id },
+          });
+          if (!createdByUser) return res.status(404);
+          const examsCreatedByUser = createdByUser[0][`${filter}`];
+          return res.json(examsCreatedByUser);
+      }
   }
 }
