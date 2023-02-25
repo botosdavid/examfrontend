@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Modal from "../Modal/Modal";
 import CustomInput from "../CustomInput/CustomInput";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
@@ -6,13 +6,14 @@ import { notifyCreatedSuccessfully } from "../../utils/toast/toastify";
 import Button from "../Button/Button";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { TextField } from "@mui/material";
+import { CircularProgress, TextField } from "@mui/material";
 import moment, { Moment } from "moment";
 import { queryClient } from "@/pages/_app";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { createExam } from "@/utils/api/post";
-import { createdExams } from "@/utils/querykeys/querykeys";
+import { createdExams, fullExam } from "@/utils/querykeys/querykeys";
 import { Exam } from "@prisma/client";
+import { getExam } from "@/utils/api/get";
 
 const defaultAnswerCount = 4;
 
@@ -22,9 +23,20 @@ interface ExamCreatorModalProps {
 }
 
 const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
-  const [name, setName] = useState(exam?.name || "");
-  const [date, setDate] = useState<Moment | null>(moment());
+  const [name, setName] = useState(exam?.name);
+  const [date, setDate] = useState<Moment | null>(moment(exam?.date));
   const [questions, setQuestions] = useState<CreateQuestion[]>([]);
+
+  const { isLoading } = useQuery(
+    [fullExam, exam?.code],
+    () => getExam(exam!.code),
+    {
+      enabled: !!exam,
+      onSuccess: (data) => {
+        setQuestions(data.questions);
+      },
+    }
+  );
 
   const createExamMutation = useMutation(createExam, {
     onSuccess: () => {
@@ -90,6 +102,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   const handleDeleteQuestion = (questionIndex: number) => {
     setQuestions(questions.filter((_, index) => index !== questionIndex));
   };
+  if (isLoading) return <CircularProgress />;
 
   return (
     <Modal

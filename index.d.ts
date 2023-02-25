@@ -31,8 +31,8 @@ interface RegistrationCredentials {
 }
 
 interface CreateExam {
-  name: string;
-  date: Moment | null;
+  name?: string;
+  date: Moment;
   questions: CreateQuestion[];
 }
 
