@@ -38,7 +38,13 @@ export default async function handler(
       });
       if (!exam) return res.status(404);
 
-      const currentQuestionIndex = exam.subscribers[0].currentQuestion;
+      const currentQuestionIndex = await prisma.questionsOnUsers.count({
+        where: {
+          userId: user.id,
+          question: { examId: exam.id },
+        },
+      });
+
       const currentQuestion = exam.questions[currentQuestionIndex];
       if (!currentQuestion) exam.questions = [];
       else exam.questions = [currentQuestion];

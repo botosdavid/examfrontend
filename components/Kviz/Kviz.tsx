@@ -23,13 +23,13 @@ const Kviz = ({ code, ip }: KvizProps) => {
   const [selectedAnswer, setSelectedAnswer] =
     useState<number>(noSelectedAnswer);
 
-  const { data: exam, isLoading } = useQuery(
-    [currentQuestion, { code }],
-    () => getExamQuestion(code),
-    {
-      onSuccess: (exam) => setIsFinished(!exam.questions.length),
-    }
-  );
+  const {
+    data: exam,
+    isLoading,
+    isFetching,
+  } = useQuery([currentQuestion, { code }], () => getExamQuestion(code), {
+    onSuccess: (exam) => setIsFinished(!exam.questions.length),
+  });
 
   const selectAnswerMutation = useMutation(createSelectedAnswer, {
     onSuccess: () => {
@@ -43,15 +43,19 @@ const Kviz = ({ code, ip }: KvizProps) => {
     selectAnswerMutation.mutate({ questionId, selectedAnswer });
   };
 
-  if (isLoading) return <CircularProgress />;
-
-  if (exam.ip && exam.ip !== ip)
-    return <div>Cannot access exam from this IP address</div>;
-
   const handleSelectAnswer = (index: number) => {
     if (selectedAnswer === index) return setSelectedAnswer(noSelectedAnswer);
     setSelectedAnswer(index);
   };
+
+  if (isLoading || isFetching) return <CircularProgress />;
+
+  if (exam.ip && exam.ip !== ip)
+    return <div>Cannot access exam from this IP address</div>;
+
+  if (!exam.subscribers.length)
+    return <div>You are not subscribed to this exam</div>;
+
   const { hasHalving, hasStatistics, hasBestAnswer } = exam.subscribers[0];
 
   return (
