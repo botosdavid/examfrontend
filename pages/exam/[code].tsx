@@ -7,12 +7,13 @@ import { authOptions } from "../api/auth/[...nextauth]";
 interface ExamPageProps {
   code: string;
   usersession: UserSession;
+  ip: string;
 }
 
-const ExamPage = ({ code, usersession }: ExamPageProps) => {
+const ExamPage = ({ code, usersession, ip }: ExamPageProps) => {
   return (
     <Layout usersession={usersession}>
-      <Kviz code={code} />
+      <Kviz code={code} ip={ip} />
     </Layout>
   );
 };
@@ -24,12 +25,14 @@ export async function getServerSideProps({
   req,
   res,
 }: GetServerSidePropsContext) {
-  const { code } = query;
   const usersession = await getServerSession(req, res, authOptions);
+  const ip = req.socket.remoteAddress;
+  const { code } = query;
   return {
     props: {
       usersession,
       code,
+      ip,
     },
   };
 }

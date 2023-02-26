@@ -12,9 +12,10 @@ import * as s from "./KvizAtom";
 
 interface KvizProps {
   code: string;
+  ip: string;
 }
 
-const Kviz = ({ code }: KvizProps) => {
+const Kviz = ({ code, ip }: KvizProps) => {
   const [isFinished, setIsFinished] = useState(false);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -42,6 +43,9 @@ const Kviz = ({ code }: KvizProps) => {
   };
 
   if (isLoading) return <CircularProgress />;
+
+  if (exam.ip && exam.ip !== ip)
+    return <div>Cannot access exam from this IP address</div>;
 
   if (!exam.questions.length) return <div>No questions in this exam!</div>;
 
