@@ -21,6 +21,7 @@ const Kviz = ({ code }: KvizProps) => {
   const { data: exam, isLoading } = useQuery([fullExam, { code }], () =>
     getExam(code)
   );
+
   const selectAnswerMutation = useMutation(createSelectedAnswer, {
     onSuccess: () => {
       if (!hasNextQuestion) {
@@ -45,6 +46,7 @@ const Kviz = ({ code }: KvizProps) => {
   if (!exam.questions.length) return <div>No questions in this exam!</div>;
 
   const hasNextQuestion = exam.questions.length > questionIndex + 1;
+  const { hasHalving, hasStatistics, hasBestAnswer } = exam.subscribers[0];
 
   return (
     <s.KvizContainer>
@@ -57,6 +59,17 @@ const Kviz = ({ code }: KvizProps) => {
         <ExamResult code={code} />
       ) : (
         <>
+          <s.HelpersContainer>
+            <Button disabled={!hasHalving} onClick={() => {}}>
+              Halving
+            </Button>
+            <Button disabled={!hasStatistics} onClick={() => {}}>
+              Statistics
+            </Button>
+            <Button disabled={!hasBestAnswer} onClick={() => {}}>
+              Best Answer
+            </Button>
+          </s.HelpersContainer>
           <s.Question>{exam.questions[questionIndex].text}</s.Question>
           <s.AnswerButtonsContainer>
             {exam.questions[questionIndex].answers.map(
@@ -71,9 +84,11 @@ const Kviz = ({ code }: KvizProps) => {
               )
             )}
           </s.AnswerButtonsContainer>
-          <Button secondary onClick={handleGoToNextQuestion}>
-            {hasNextQuestion ? "Next" : "Finish"}
-          </Button>
+          <s.NextButtonContainer>
+            <Button onClick={handleGoToNextQuestion}>
+              {hasNextQuestion ? "Next" : "Finish"}
+            </Button>
+          </s.NextButtonContainer>
         </>
       )}
     </s.KvizContainer>

@@ -10,6 +10,10 @@ export const KvizContainer = styled.div`
   flex-direction: column;
   text-align: center;
   gap: 4rem;
+
+  button {
+    height: 2.5rem;
+  }
 `;
 
 export const AnswerButtonsContainer = styled.div`
@@ -35,4 +39,16 @@ export const Info = styled.h3`
   margin: 0;
   padding: 0;
   font-size: 0.8rem;
+`;
+
+export const HelpersContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+export const NextButtonContainer = styled.div`
+  width: 50%;
+  align-self: flex-end;
+  display: flex;
+  justify-content: flex-end;
 `;

@@ -29,7 +29,10 @@ export default async function handler(
     case "GET":
       const exam = await prisma.exam.findFirst({
         where: { code: query.code?.toString() },
-        include: { questions: { include: { answers: true } } },
+        include: {
+          questions: { include: { answers: true } },
+          subscribers: { where: { userId: authorId } },
+        },
       });
       if (!exam) return res.status(404);
       return res.status(200).json(exam);
