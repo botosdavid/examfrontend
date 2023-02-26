@@ -5,6 +5,7 @@ import { Answer, Question } from "@prisma/client";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
 import * as s from "./ExamResultAtom";
+import { noSelectedAnswer } from "../Kviz/Kviz";
 
 interface ExamResultProps {
   code: string;
@@ -19,6 +20,16 @@ const ExamResult = ({ code }: ExamResultProps) => {
     (sum: number, curr: Question & { selectedAnswers: any }) =>
       sum +
       Number(curr.correctAnswer === curr.selectedAnswers[0].selectedAnswer),
+    0
+  );
+
+  const points = examResult?.exam?.questions?.reduce(
+    (sum: number, curr: Question & { selectedAnswers: any }) => {
+      const selectedAnswer = curr.selectedAnswers[0].selectedAnswer;
+      const correct = curr.correctAnswer === selectedAnswer;
+      const skipped = selectedAnswer === noSelectedAnswer;
+      return sum + (correct ? 1 : skipped ? 0 : -1);
+    },
     0
   );
 
@@ -40,15 +51,17 @@ const ExamResult = ({ code }: ExamResultProps) => {
           Correct answers: {correctAnswersCount} / {totalAnswersCount}
         </s.Title>
         <s.Title>Percentage: {percentage}%</s.Title>
+        <s.Title>Points: {points}</s.Title>
       </div>
       {examResult.exam.questions.map((question: any, index: number) => (
         <s.QuestionContainer key={index}>
           <s.Points>
-            +{" "}
-            {Number(
-              question.selectedAnswers[0].selectedAnswer ===
-                question.correctAnswer
-            )}
+            {question.selectedAnswers[0].selectedAnswer ===
+            question.correctAnswer
+              ? "+ 1"
+              : question.selectedAnswers[0].selectedAnswer === noSelectedAnswer
+              ? "+ 0"
+              : "- 1"}
           </s.Points>
           <s.QuestionText>
             {index + 1}.- {question.text}
