@@ -69,15 +69,16 @@ model QuestionsOnUsers {
 }
 
 model ExamsOnUsers {
-    user          User     @relation(fields: [userId], references: [id])
-    userId        String
-    exam          Exam     @relation(fields: [examId], references: [id])
-    examId        String
-    hasHalving    Boolean  @default(true)
-    hasStatistics Boolean  @default(true)
-    hasBestAnswer Boolean  @default(true)
-    hasFinished   Boolean  @default(false)
-    createdAt     DateTime @default(now())
+    user            User     @relation(fields: [userId], references: [id])
+    userId          String
+    exam            Exam     @relation(fields: [examId], references: [id])
+    examId          String
+    hasHalving      Boolean  @default(true)
+    hasStatistics   Boolean  @default(true)
+    hasBestAnswer   Boolean  @default(true)
+    hasFinished     Boolean  @default(false)
+    currentQuestion Int      @default(0)
+    createdAt       DateTime @default(now())
 
     @@id([userId, examId])
     @@index([userId])

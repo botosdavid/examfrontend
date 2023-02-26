@@ -17,3 +17,8 @@ export const getExamCorrectAnswers = async (code: string) => {
   const response = await fetch(`/api/answer?code=${code}`);
   return response.json();
 };
+
+export const getExamQuestion = async (code: string) => {
+  const response = await fetch(`/api/question?code=${code}`);
+  return response.json();
+};

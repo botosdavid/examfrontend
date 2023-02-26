@@ -68,6 +68,19 @@ export default async function handler(
           selectedAnswer,
         },
       });
+
+      const question = await prisma.question.findUnique({
+        where: { id: questionId },
+        select: { examId: true },
+      });
+      if (!question) return res.status(404);
+
+      await prisma.examsOnUsers.update({
+        where: {
+          userId_examId: { userId, examId: question.examId },
+        },
+        data: { currentQuestion: { increment: 1 } },
+      });
       res.status(200).json({ isSuccess: true });
   }
 }

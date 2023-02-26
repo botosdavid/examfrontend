@@ -1,7 +1,7 @@
-import { getExam } from "@/utils/api/get";
+import { queryClient } from "@/pages/_app";
+import { getExamQuestion } from "@/utils/api/get";
 import { createSelectedAnswer } from "@/utils/api/post";
-import { fullExam } from "@/utils/querykeys/querykeys";
-import { notifyExamFinished, notifySelectAnswer } from "@/utils/toast/toastify";
+import { currentQuestion } from "@/utils/querykeys/querykeys";
 import { CircularProgress } from "@mui/material";
 import { Answer } from "@prisma/client";
 import { useState } from "react";
@@ -22,18 +22,18 @@ const Kviz = ({ code, ip }: KvizProps) => {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] =
     useState<number>(noSelectedAnswer);
-  const { data: exam, isLoading } = useQuery([fullExam, { code }], () =>
-    getExam(code)
+
+  const { data: exam, isLoading } = useQuery(
+    [currentQuestion, { code }],
+    () => getExamQuestion(code),
+    {
+      onSuccess: (exam) => setIsFinished(!exam.questions.length),
+    }
   );
 
   const selectAnswerMutation = useMutation(createSelectedAnswer, {
     onSuccess: () => {
-      if (!hasNextQuestion) {
-        notifyExamFinished();
-        setIsFinished(true);
-        return;
-      }
-      setQuestionIndex(questionIndex + 1);
+      queryClient.invalidateQueries(currentQuestion);
       setSelectedAnswer(noSelectedAnswer);
     },
   });
@@ -41,7 +41,6 @@ const Kviz = ({ code, ip }: KvizProps) => {
   const handleGoToNextQuestion = () => {
     const questionId = exam.questions[questionIndex].id;
     selectAnswerMutation.mutate({ questionId, selectedAnswer });
-    // TODO: fetching only one question at a time for safety
   };
 
   if (isLoading) return <CircularProgress />;
@@ -49,13 +48,10 @@ const Kviz = ({ code, ip }: KvizProps) => {
   if (exam.ip && exam.ip !== ip)
     return <div>Cannot access exam from this IP address</div>;
 
-  if (!exam.questions.length) return <div>No questions in this exam!</div>;
-
   const handleSelectAnswer = (index: number) => {
     if (selectedAnswer === index) return setSelectedAnswer(noSelectedAnswer);
     setSelectedAnswer(index);
   };
-  const hasNextQuestion = exam.questions.length > questionIndex + 1;
   const { hasHalving, hasStatistics, hasBestAnswer } = exam.subscribers[0];
 
   return (
@@ -96,11 +92,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
           </s.AnswerButtonsContainer>
           <s.NextButtonContainer>
             <Button onClick={handleGoToNextQuestion}>
-              {selectedAnswer === noSelectedAnswer
-                ? "Skip"
-                : hasNextQuestion
-                ? "Next"
-                : "Finish"}
+              {selectedAnswer === noSelectedAnswer ? "Skip" : "Next"}
             </Button>
           </s.NextButtonContainer>
         </>
