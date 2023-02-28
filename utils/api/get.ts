@@ -22,3 +22,8 @@ export const getExamQuestion = async (code: string) => {
   const response = await fetch(`/api/question?code=${code}`);
   return response.json();
 };
+
+export const getQuestionHalving = async (id: string) => {
+  const response = await fetch(`/api/question/helper?id=${id}&type=halving`);
+  return response.json();
+};

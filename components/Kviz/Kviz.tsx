@@ -1,7 +1,7 @@
 import { queryClient } from "@/pages/_app";
-import { getExamQuestion } from "@/utils/api/get";
+import { getExamQuestion, getQuestionHalving } from "@/utils/api/get";
 import { createSelectedAnswer } from "@/utils/api/post";
-import { currentQuestion } from "@/utils/querykeys/querykeys";
+import { currentQuestion, questionHalving } from "@/utils/querykeys/querykeys";
 import { CircularProgress } from "@mui/material";
 import { Answer } from "@prisma/client";
 import { useState } from "react";
@@ -18,8 +18,8 @@ interface KvizProps {
 }
 
 const Kviz = ({ code, ip }: KvizProps) => {
+  const [isHalving, setIsHalving] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-  const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] =
     useState<number>(noSelectedAnswer);
 
@@ -31,6 +31,19 @@ const Kviz = ({ code, ip }: KvizProps) => {
     onSuccess: (exam) => setIsFinished(!exam.questions.length),
   });
 
+  const { data: eliminatedAnswerIndexes } = useQuery(
+    [questionHalving],
+    () => getQuestionHalving(exam.questions[0].id),
+    {
+      staleTime: Infinity,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      enabled: !!exam && isHalving,
+      onSuccess: () =>
+        queryClient.invalidateQueries([currentQuestion, { code }]),
+    }
+  );
+
   const selectAnswerMutation = useMutation(createSelectedAnswer, {
     onSuccess: () => {
       queryClient.invalidateQueries(currentQuestion);
@@ -39,7 +52,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
   });
 
   const handleGoToNextQuestion = () => {
-    const questionId = exam.questions[questionIndex].id;
+    const questionId = exam.questions[0].id;
     selectAnswerMutation.mutate({ questionId, selectedAnswer });
   };
 
@@ -50,7 +63,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
 
   if (isLoading || isFetching) return <CircularProgress />;
 
-  if (exam.ip && exam.ip !== ip)
+  if (exam?.ip && exam?.ip !== ip)
     return <div>Cannot access exam from this IP address</div>;
 
   if (!exam.subscribers.length)
@@ -70,7 +83,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
       ) : (
         <>
           <s.HelpersContainer>
-            <Button disabled={!hasHalving} onClick={() => {}}>
+            <Button disabled={!hasHalving} onClick={() => setIsHalving(true)}>
               Halving
             </Button>
             <Button disabled={!hasStatistics} onClick={() => {}}>
@@ -80,19 +93,23 @@ const Kviz = ({ code, ip }: KvizProps) => {
               Best Answer
             </Button>
           </s.HelpersContainer>
-          <s.Question>{exam.questions[questionIndex].text}</s.Question>
+          <s.Question>{exam.questions[0].text}</s.Question>
           <s.AnswerButtonsContainer>
-            {exam.questions[questionIndex].answers.map(
-              (answer: Answer, index: number) => (
-                <Button
-                  onClick={() => handleSelectAnswer(index)}
-                  key={index}
-                  secondary={index !== selectedAnswer}
-                >
-                  {answer.text}
-                </Button>
-              )
-            )}
+            {exam.questions[0].answers.map((answer: Answer, index: number) => (
+              <Button
+                onClick={() => handleSelectAnswer(index)}
+                key={index}
+                secondary={index !== selectedAnswer}
+                disabled={
+                  eliminatedAnswerIndexes &&
+                  eliminatedAnswerIndexes.eliminatedAnswerIndexes.includes(
+                    index
+                  )
+                }
+              >
+                {answer.text}
+              </Button>
+            ))}
           </s.AnswerButtonsContainer>
           <s.NextButtonContainer>
             <Button onClick={handleGoToNextQuestion}>

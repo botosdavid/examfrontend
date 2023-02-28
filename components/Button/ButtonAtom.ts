@@ -15,6 +15,6 @@ export const ButtonContainer = styled.button<ButtonProps>`
   border: none;
   padding: ${(props) => (props.small ? "0.5rem 0.7rem" : "0.5rem 3rem")};
   margin: 0.2rem 0;
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   min-width: ${(props) => (!props.small ? "10rem" : "")};
 `;

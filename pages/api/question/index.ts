@@ -2,8 +2,8 @@
 import { Exam, ExamsOnUsers } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
-import prisma from "../../prisma/lib/prismadb";
-import { authOptions } from "./auth/[...nextauth]";
+import prisma from "../../../prisma/lib/prismadb";
+import { authOptions } from "../auth/[...nextauth]";
 
 type Response = Exam & {
   questions: { text: string; answers: { text: string }[] }[];
