@@ -23,8 +23,20 @@ export default async function handler(
 
   switch (method) {
     case "GET":
-      const exam = await prisma.exam.findUnique({
+      const { id } = await prisma.exam.findUniqueOrThrow({
         where: { code: code?.toString() },
+      });
+      if (!id) return res.status(404);
+
+      const currentQuestionIndex = await prisma.questionsOnUsers.count({
+        where: {
+          userId: user.id,
+          question: { examId: id },
+        },
+      });
+
+      const exam = await prisma.exam.findUnique({
+        where: { id },
         include: {
           subscribers: { where: { userId: user.id } },
           questions: {
@@ -33,21 +45,12 @@ export default async function handler(
               text: true,
               answers: { select: { text: true } },
             },
+            skip: currentQuestionIndex,
+            take: 1,
           },
         },
       });
       if (!exam) return res.status(404);
-
-      const currentQuestionIndex = await prisma.questionsOnUsers.count({
-        where: {
-          userId: user.id,
-          question: { examId: exam.id },
-        },
-      });
-
-      const currentQuestion = exam.questions[currentQuestionIndex];
-      if (!currentQuestion) exam.questions = [];
-      else exam.questions = [currentQuestion];
 
       return res.status(200).json(exam);
   }

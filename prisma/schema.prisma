@@ -37,6 +37,7 @@ model Question {
     examId          String
     correctAnswer   Int
     selectedAnswers QuestionsOnUsers[]
+    group           Group              @default(A)
 
     @@index([examId])
 }
@@ -78,6 +79,8 @@ model ExamsOnUsers {
     hasBestAnswer   Boolean  @default(true)
     hasFinished     Boolean  @default(false)
     currentQuestion Int      @default(0)
+    questionsOrder  String?
+    group           Group    @default(A)
     createdAt       DateTime @default(now())
 
     @@id([userId, examId])
@@ -89,4 +92,9 @@ enum Role {
     STUDENT
     TEACHER
     ADMIN
+}
+
+enum Group {
+    A
+    B
 }
