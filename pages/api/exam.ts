@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../prisma/lib/prismadb";
-import { Exam, Role } from "@prisma/client";
+import { Exam, Group, Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";
 
@@ -61,6 +61,9 @@ export default async function handler(
     case "PATCH":
       const examToSubscribe = await prisma.exam.findUnique({ where: { code } });
       if (!examToSubscribe) return res.status(404);
+      const numberOfSubscribers = await prisma.examsOnUsers.count({
+        where: { examId: examToSubscribe.id },
+      });
       await prisma.examsOnUsers.upsert({
         where: {
           userId_examId: {
@@ -72,6 +75,7 @@ export default async function handler(
         create: {
           userId: session.user.id,
           examId: examToSubscribe.id,
+          group: numberOfSubscribers % 2 ? Group.A : Group.B,
         },
       });
       return res.status(200).json({ isSuccess: true });
