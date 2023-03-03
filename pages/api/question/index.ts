@@ -35,6 +35,22 @@ export default async function handler(
         },
       });
 
+      const { questionsOrder } = await prisma.examsOnUsers.findUniqueOrThrow({
+        where: {
+          userId_examId: {
+            userId: user.id,
+            examId: id,
+          },
+        },
+        select: { questionsOrder: true },
+      });
+      if (!questionsOrder) return res.status(404);
+
+      const order = questionsOrder.split(",");
+      const skip = isNaN(Number(order[currentQuestionIndex]))
+        ? currentQuestionIndex
+        : Number(order[currentQuestionIndex]);
+
       const exam = await prisma.exam.findUnique({
         where: { id },
         include: {
@@ -45,7 +61,7 @@ export default async function handler(
               text: true,
               answers: { select: { text: true } },
             },
-            skip: currentQuestionIndex,
+            skip,
             take: 1,
           },
         },

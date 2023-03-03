@@ -4,6 +4,7 @@ import prisma from "../../prisma/lib/prismadb";
 import { Exam, Group, Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";
+import { shuffleQuestions } from "@/utils/functions/functions";
 
 type Response =
   | {
@@ -59,11 +60,33 @@ export default async function handler(
       return res.status(200).json({ isSuccess: true });
 
     case "PATCH":
-      const examToSubscribe = await prisma.exam.findUnique({ where: { code } });
+      const examToSubscribe = await prisma.exam.findUnique({
+        where: { code },
+        include: {
+          questions: true,
+        },
+      });
       if (!examToSubscribe) return res.status(404);
+
       const numberOfSubscribers = await prisma.examsOnUsers.count({
         where: { examId: examToSubscribe.id },
       });
+      const group = numberOfSubscribers % 2 ? Group.A : Group.B;
+      const secondGroup = !(numberOfSubscribers % 2) ? Group.A : Group.B;
+
+      const questionsIndexGroups = examToSubscribe.questions.reduce(
+        (sum, curr, index) => ({
+          ...sum,
+          [curr.group]: [...sum[curr.group], index],
+        }),
+        { A: [], B: [] }
+      );
+
+      const questionsOrder = [
+        ...shuffleQuestions(questionsIndexGroups[group]),
+        ...questionsIndexGroups[secondGroup],
+      ].join(",");
+
       await prisma.examsOnUsers.upsert({
         where: {
           userId_examId: {
@@ -75,7 +98,8 @@ export default async function handler(
         create: {
           userId: session.user.id,
           examId: examToSubscribe.id,
-          group: numberOfSubscribers % 2 ? Group.A : Group.B,
+          questionsOrder,
+          group,
         },
       });
       return res.status(200).json({ isSuccess: true });
