@@ -18,6 +18,8 @@ import { createdExams, fullExam } from "@/utils/querykeys/querykeys";
 import { Exam } from "@prisma/client";
 import { getExam } from "@/utils/api/get";
 import { updateExam } from "@/utils/api/put";
+import * as s from "./ExamCreatorModalAtom";
+import CustomSwitch from "../CustomSwitch/CustomSwitch";
 
 const defaultAnswerCount = 4;
 
@@ -143,16 +145,18 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
       />
       Select the right answer for every question by clicking on it.
       {questions.map((question, index) => (
-        <div key={index}>
+        <s.QuestionContainer key={index}>
           <CustomInput
             label={`${index + 1}. Question`}
             value={question.text}
             onChange={(e) => handleQuestionChange(e, index)}
           />
-          <Button onClick={() => handleDeleteQuestion(index)} secondary>
-            <DeleteRoundedIcon />
-          </Button>
-          <br />
+          <s.QuestionEditContainer>
+            <CustomSwitch />
+            <Button onClick={() => handleDeleteQuestion(index)} secondary>
+              <DeleteRoundedIcon />
+            </Button>
+          </s.QuestionEditContainer>
           {question.answers.map((answer, answerIndex) => (
             <CustomInput
               selected={answerIndex === question.correctAnswer}
@@ -163,7 +167,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
               onClick={() => handleCorrectAnswerChange(index, answerIndex)}
             />
           ))}
-        </div>
+        </s.QuestionContainer>
       ))}
       <Button secondary onClick={handleAddQuestion}>
         Add Question
