@@ -39,6 +39,7 @@ interface CreateExam {
 interface CreateQuestion {
   text: string;
   correctAnswer: number;
+  group?: import("@prisma/client").Group;
   answers: CreateAnswer[];
 }
 

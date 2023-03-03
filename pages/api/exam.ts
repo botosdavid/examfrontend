@@ -91,6 +91,7 @@ export default async function handler(
         (question: CreateQuestion) => ({
           text: question.text,
           correctAnswer: question.correctAnswer,
+          group: question.group,
           answers: {
             create: question.answers.map((answer) => ({
               text: answer.text,

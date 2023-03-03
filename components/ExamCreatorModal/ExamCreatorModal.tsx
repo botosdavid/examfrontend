@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Modal from "../Modal/Modal";
 import CustomInput from "../CustomInput/CustomInput";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
@@ -15,7 +15,7 @@ import { queryClient } from "@/pages/_app";
 import { useMutation, useQuery } from "react-query";
 import { createExam } from "@/utils/api/post";
 import { createdExams, fullExam } from "@/utils/querykeys/querykeys";
-import { Exam } from "@prisma/client";
+import { Exam, Group } from "@prisma/client";
 import { getExam } from "@/utils/api/get";
 import { updateExam } from "@/utils/api/put";
 import * as s from "./ExamCreatorModalAtom";
@@ -66,6 +66,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
       {
         text: "",
         correctAnswer: 0,
+        group: Group.A,
         answers: Array(defaultAnswerCount).fill({ text: "" }),
       },
     ]);
@@ -116,6 +117,19 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   const handleDeleteQuestion = (questionIndex: number) => {
     setQuestions(questions.filter((_, index) => index !== questionIndex));
   };
+
+  const handleQuestionGroupChange = (questionIndex: number) => {
+    setQuestions(
+      questions.map((question, index) => {
+        if (index != questionIndex) return question;
+        return {
+          ...question,
+          group: question.group === Group.A ? Group.B : Group.A,
+        };
+      })
+    );
+  };
+
   if (isLoading) return <CircularProgress />;
 
   return (
@@ -152,7 +166,12 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
             onChange={(e) => handleQuestionChange(e, index)}
           />
           <s.QuestionEditContainer>
-            <CustomSwitch />
+            <b>A</b>
+            <CustomSwitch
+              checked={question.group === Group.B}
+              onChange={() => handleQuestionGroupChange(index)}
+            />
+            <b>B</b>
             <Button onClick={() => handleDeleteQuestion(index)} secondary>
               <DeleteRoundedIcon />
             </Button>
