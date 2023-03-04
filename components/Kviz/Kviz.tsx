@@ -70,7 +70,8 @@ const Kviz = ({ code, ip }: KvizProps) => {
     return <div>You are not subscribed to this exam</div>;
 
   const { hasHalving, hasStatistics, hasBestAnswer } = exam.subscribers[0];
-
+  const isInSecondPhase =
+    exam.questions[0]?.group !== exam.subscribers[0]?.group;
   return (
     <s.KvizContainer>
       <s.Info>
@@ -82,17 +83,19 @@ const Kviz = ({ code, ip }: KvizProps) => {
         <ExamResult code={code} />
       ) : (
         <>
-          <s.HelpersContainer>
-            <Button disabled={!hasHalving} onClick={() => setIsHalving(true)}>
-              Halving
-            </Button>
-            <Button disabled={!hasStatistics} onClick={() => {}}>
-              Statistics
-            </Button>
-            <Button disabled={!hasBestAnswer} onClick={() => {}}>
-              Best Answer
-            </Button>
-          </s.HelpersContainer>
+          {isInSecondPhase && (
+            <s.HelpersContainer>
+              <Button disabled={!hasHalving} onClick={() => setIsHalving(true)}>
+                Halving
+              </Button>
+              <Button disabled={!hasStatistics} onClick={() => {}}>
+                Statistics
+              </Button>
+              <Button disabled={!hasBestAnswer} onClick={() => {}}>
+                Best Answer
+              </Button>
+            </s.HelpersContainer>
+          )}
           <s.Question>{exam.questions[0].text}</s.Question>
           <s.AnswerButtonsContainer>
             {exam.questions[0].answers.map((answer: Answer, index: number) => (

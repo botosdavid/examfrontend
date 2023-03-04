@@ -63,6 +63,7 @@ export default async function handler(
             select: {
               id: true,
               text: true,
+              group: true,
               answers: { select: { text: true } },
             },
             skip,
