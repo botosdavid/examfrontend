@@ -28,7 +28,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
     isLoading,
     isFetching,
   } = useQuery([currentQuestion, { code }], () => getExamQuestion(code), {
-    onSuccess: (exam) => setIsFinished(!exam.questions.length),
+    onSuccess: (exam) => setIsFinished(!exam?.questions?.length),
   });
 
   const { data: eliminatedAnswerIndexes } = useQuery(
@@ -66,7 +66,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
   if (exam?.ip && exam?.ip !== ip)
     return <div>Cannot access exam from this IP address</div>;
 
-  if (!exam.subscribers.length)
+  if (!exam?.subscribers?.length)
     return <div>You are not subscribed to this exam</div>;
 
   const { hasHalving, hasStatistics, hasBestAnswer } = exam.subscribers[0];

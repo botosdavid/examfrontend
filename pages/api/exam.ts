@@ -62,17 +62,22 @@ export default async function handler(
     case "PATCH":
       const examToSubscribe = await prisma.exam.findUnique({
         where: { code },
-        include: {
+        select: {
+          id: true,
           questions: true,
+          _count: {
+            select: {
+              subscribers: true,
+            },
+          },
         },
       });
       if (!examToSubscribe) return res.status(404);
 
-      const numberOfSubscribers = await prisma.examsOnUsers.count({
-        where: { examId: examToSubscribe.id },
-      });
-      const group = numberOfSubscribers % 2 ? Group.A : Group.B;
-      const secondGroup = !(numberOfSubscribers % 2) ? Group.A : Group.B;
+      const [group, secondGroup] = [
+        examToSubscribe._count.subscribers % 2 ? Group.A : Group.B,
+        !(examToSubscribe._count.subscribers % 2) ? Group.A : Group.B,
+      ];
 
       const questionsIndexGroups = examToSubscribe.questions.reduce(
         (sum, curr, index) => ({

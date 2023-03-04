@@ -5,10 +5,12 @@ import { getServerSession } from "next-auth";
 import prisma from "../../../prisma/lib/prismadb";
 import { authOptions } from "../auth/[...nextauth]";
 
-type Response = Exam & {
-  questions: { text: string; answers: { text: string }[] }[];
-  subscribers: ExamsOnUsers[];
-};
+type Response =
+  | (Exam & {
+      questions: { text: string; answers: { text: string }[] }[];
+      subscribers: ExamsOnUsers[];
+    })
+  | { isSuccess: boolean };
 
 export default async function handler(
   req: NextApiRequest,
@@ -35,7 +37,7 @@ export default async function handler(
         },
       });
 
-      const { questionsOrder } = await prisma.examsOnUsers.findUniqueOrThrow({
+      const questionsOrder = await prisma.examsOnUsers.findUnique({
         where: {
           userId_examId: {
             userId: user.id,
@@ -44,12 +46,14 @@ export default async function handler(
         },
         select: { questionsOrder: true },
       });
-      if (!questionsOrder) return res.status(404);
+      if (!questionsOrder?.questionsOrder)
+        return res.status(404).json({ isSuccess: false });
 
-      const order = questionsOrder.split(",");
-      const skip = isNaN(Number(order[currentQuestionIndex]))
-        ? currentQuestionIndex
-        : Number(order[currentQuestionIndex]);
+      const order = questionsOrder.questionsOrder.split(",");
+      const skip =
+        currentQuestionIndex in order
+          ? Number(order[currentQuestionIndex])
+          : currentQuestionIndex;
 
       const exam = await prisma.exam.findUnique({
         where: { id },
