@@ -13,8 +13,11 @@ export const ButtonContainer = styled.button<ButtonProps>`
   opacity: ${(props) => (props.disabled ? "0.5" : "1")};
   border-radius: 0.5rem;
   border: none;
-  padding: ${(props) => (props.small ? "0.5rem 0.7rem" : "0.5rem 3rem")};
+  padding: ${(props) => (props.small ? "0.5rem 0.6rem" : "0.5rem 3rem")};
   margin: 0.2rem 0;
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   min-width: ${(props) => (!props.small ? "10rem" : "")};
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

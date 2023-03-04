@@ -7,6 +7,7 @@ import * as s from "./ExamAtom";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import ExamCreatorModal from "../ExamCreatorModal/ExamCreatorModal";
+import moment from "moment";
 
 interface ExamProps {
   exam: IExam;
@@ -16,7 +17,7 @@ const Exam = ({ exam }: ExamProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const currentDate = new Date().toISOString().slice(0.1);
-  const examDate = exam.date.toString().slice(0, 10);
+  const examDate = exam.date.toString();
   const hasStarted = currentDate > examDate;
   const router = useRouter();
   const session: AuthSession = useSession();
@@ -46,7 +47,7 @@ const Exam = ({ exam }: ExamProps) => {
             <PlayCircleFilledRoundedIcon />
           </Button>
         )}
-        <s.ExamDate>{examDate}</s.ExamDate>
+        <s.ExamDate>{moment(examDate).format("YY/MM/DD HH:mm")}</s.ExamDate>
       </s.ExamInfoContainer>
       {isEditModalOpen && (
         <ExamCreatorModal

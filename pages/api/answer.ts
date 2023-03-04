@@ -50,8 +50,20 @@ export default async function handler(
               },
             },
           },
+          subscribers: {
+            where: {
+              userId,
+            },
+          },
         },
       });
+      if (!examWIthQuestions?.subscribers[0]?.questionsOrder)
+        return res.status(404).json({ isSuccess: false });
+
+      examWIthQuestions.questions =
+        examWIthQuestions.subscribers[0].questionsOrder
+          .split(",")
+          .map((index: string) => examWIthQuestions.questions[Number(index)]);
       return res.status(200).json({ exam: examWIthQuestions });
 
     case "POST":

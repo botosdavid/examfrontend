@@ -11,6 +11,7 @@ import Exam from "@/components/Exam/Exam";
 import { getSubscribedExams } from "@/utils/api/get";
 import { Exam as IExam } from "@prisma/client";
 import { subscribedExams } from "@/utils/querykeys/querykeys";
+import Button from "@/components/Button/Button";
 
 interface HomePageProps {
   usersession: UserSession;
@@ -32,7 +33,9 @@ const Home = ({ usersession }: HomePageProps) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout usersession={usersession}>
-        <div onClick={() => signOut()}>Sign Out</div>
+        <Button onClick={() => signOut()} secondary>
+          Sign Out
+        </Button>
         <h1>Welcome {usersession.user.neptun} </h1>
         <h2>You are a {usersession.user.role}</h2>
         <ExamSubscriber />
