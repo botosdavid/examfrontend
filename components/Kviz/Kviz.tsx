@@ -1,7 +1,15 @@
 import { queryClient } from "@/pages/_app";
-import { getExamQuestion, getQuestionHalving } from "@/utils/api/get";
+import {
+  getExamQuestion,
+  getQuestionHalving,
+  getQuestionStatistics,
+} from "@/utils/api/get";
 import { createSelectedAnswer } from "@/utils/api/post";
-import { currentQuestion, questionHalving } from "@/utils/querykeys/querykeys";
+import {
+  currentQuestion,
+  questionHalving,
+  questionStatistics,
+} from "@/utils/querykeys/querykeys";
 import { CircularProgress } from "@mui/material";
 import { Answer } from "@prisma/client";
 import { useState } from "react";
@@ -9,6 +17,9 @@ import { useMutation, useQuery } from "react-query";
 import Button from "../Button/Button";
 import ExamResult from "../ExamResult/ExamResult";
 import * as s from "./KvizAtom";
+import SplitscreenIcon from "@mui/icons-material/Splitscreen";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import StarIcon from "@mui/icons-material/Star";
 
 export const noSelectedAnswer = -1;
 
@@ -18,7 +29,8 @@ interface KvizProps {
 }
 
 const Kviz = ({ code, ip }: KvizProps) => {
-  const [isHalving, setIsHalving] = useState(false);
+  const [showHalving, setShowHalving] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [selectedAnswer, setSelectedAnswer] =
     useState<number>(noSelectedAnswer);
@@ -38,7 +50,20 @@ const Kviz = ({ code, ip }: KvizProps) => {
       staleTime: Infinity,
       refetchOnMount: false,
       refetchOnReconnect: false,
-      enabled: !!exam && isHalving,
+      enabled: !!exam && showHalving,
+      onSuccess: () =>
+        queryClient.invalidateQueries([currentQuestion, { code }]),
+    }
+  );
+
+  const { data: statistics } = useQuery(
+    [questionStatistics],
+    () => getQuestionStatistics(exam.questions[0].id),
+    {
+      staleTime: Infinity,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      enabled: !!exam && showStatistics,
       onSuccess: () =>
         queryClient.invalidateQueries([currentQuestion, { code }]),
     }
@@ -85,33 +110,45 @@ const Kviz = ({ code, ip }: KvizProps) => {
         <>
           {isInSecondPhase && (
             <s.HelpersContainer>
-              <Button disabled={!hasHalving} onClick={() => setIsHalving(true)}>
+              <Button
+                disabled={!hasHalving}
+                onClick={() => setShowHalving(true)}
+              >
                 Halving
+                <SplitscreenIcon fontSize="small" />
               </Button>
-              <Button disabled={!hasStatistics} onClick={() => {}}>
+              <Button
+                disabled={!hasStatistics}
+                onClick={() => setShowStatistics(true)}
+              >
                 Statistics
+                <BarChartIcon fontSize="small" />
               </Button>
               <Button disabled={!hasBestAnswer} onClick={() => {}}>
                 Best Answer
+                <StarIcon fontSize="small" />
               </Button>
             </s.HelpersContainer>
           )}
           <s.Question>{exam.questions[0].text}</s.Question>
           <s.AnswerButtonsContainer>
             {exam.questions[0].answers.map((answer: Answer, index: number) => (
-              <Button
-                onClick={() => handleSelectAnswer(index)}
-                key={index}
-                secondary={index !== selectedAnswer}
-                disabled={
-                  eliminatedAnswerIndexes &&
-                  eliminatedAnswerIndexes.eliminatedAnswerIndexes.includes(
-                    index
-                  )
-                }
-              >
-                {answer.text}
-              </Button>
+              <div key={index}>
+                <p>{showStatistics && statistics?.statistics[index]}</p>
+                <Button
+                  onClick={() => handleSelectAnswer(index)}
+                  key={index}
+                  secondary={index !== selectedAnswer}
+                  disabled={
+                    eliminatedAnswerIndexes &&
+                    eliminatedAnswerIndexes.eliminatedAnswerIndexes.includes(
+                      index
+                    )
+                  }
+                >
+                  {answer.text}
+                </Button>
+              </div>
             ))}
           </s.AnswerButtonsContainer>
           <s.NextButtonContainer>

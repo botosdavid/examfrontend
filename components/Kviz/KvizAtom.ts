@@ -23,6 +23,7 @@ export const AnswerButtonsContainer = styled.div`
 
   button {
     height: 3rem;
+    width: 100%;
     transition: all 0.1s ease-in;
     &:hover {
       font-size: 0.9rem;

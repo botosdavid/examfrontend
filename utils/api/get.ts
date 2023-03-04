@@ -27,3 +27,8 @@ export const getQuestionHalving = async (id: string) => {
   const response = await fetch(`/api/question/helper?id=${id}&type=halving`);
   return response.json();
 };
+
+export const getQuestionStatistics = async (id: string) => {
+  const response = await fetch(`/api/question/helper?id=${id}&type=statistics`);
+  return response.json();
+};

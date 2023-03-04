@@ -6,7 +6,9 @@ import prisma from "../../../prisma/lib/prismadb";
 import { authOptions } from "../auth/[...nextauth]";
 
 type Response = {
-  eliminatedAnswerIndexes: number[];
+  eliminatedAnswerIndexes?: number[];
+  statistics?: number[];
+  isSuccess?: boolean;
 };
 
 export default async function handler(
@@ -28,29 +30,23 @@ export default async function handler(
         case "halving":
           const question = await prisma.question.findUnique({
             where: { id: id?.toString() },
-            select: { correctAnswer: true },
+            select: { correctAnswer: true, examId: true },
           });
+          if (!question) return res.status(404).json({ isSuccess: false });
 
           const answerIndexes = new Array(4).fill(0).map((_, index) => index);
-          answerIndexes.splice(Number(question?.correctAnswer), 1);
+          answerIndexes.splice(Number(question.correctAnswer), 1);
 
           const eliminatedAnswerIndexes = [
             getRandomWrongAnswerIndex(answerIndexes),
             getRandomWrongAnswerIndex(answerIndexes),
           ];
 
-          if (!eliminatedAnswerIndexes) return res.status(404);
-
-          const { examId } = await prisma.question.findUniqueOrThrow({
-            where: { id: id?.toString() },
-            select: { examId: true },
-          });
-
           await prisma.examsOnUsers.update({
             where: {
               userId_examId: {
                 userId: user.id,
-                examId,
+                examId: question.examId,
               },
             },
             data: {
@@ -59,6 +55,23 @@ export default async function handler(
           });
 
           return res.status(200).json({ eliminatedAnswerIndexes });
+
+        case "statistics":
+          const questionStatistics = await prisma.questionsOnUsers.findMany({
+            where: {
+              questionId: id?.toString(),
+            },
+            select: { selectedAnswer: true },
+          });
+
+          const statistics = questionStatistics.reduce(
+            (acc, curr) => {
+              acc[curr.selectedAnswer]++;
+              return acc;
+            },
+            [0, 0, 0, 0]
+          );
+          return res.status(200).json({ statistics });
       }
   }
 }

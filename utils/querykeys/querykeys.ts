@@ -4,3 +4,4 @@ export const fullExam = "fullExam";
 export const resultExam = "resultExam";
 export const currentQuestion = "currentQuestion";
 export const questionHalving = "questionHalving";
+export const questionStatistics = "questionStatistics";
