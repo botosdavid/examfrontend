@@ -20,6 +20,7 @@ import { getExam } from "@/utils/api/get";
 import { updateExam } from "@/utils/api/put";
 import * as s from "./ExamCreatorModalAtom";
 import CustomSwitch from "../CustomSwitch/CustomSwitch";
+import { uploadImage } from "@/utils/firebase/upload";
 
 const defaultAnswerCount = 4;
 
@@ -32,6 +33,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   const [name, setName] = useState(exam?.name || "");
   const [date, setDate] = useState<Moment | null>(moment(exam?.date));
   const [questions, setQuestions] = useState<CreateQuestion[]>([]);
+  const [image, setImage] = useState();
 
   const { isLoading } = useQuery(
     [fullExam, exam?.code],
@@ -130,6 +132,13 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
     );
   };
 
+  const handleImageUpload = (e: React.ChangeEvent) => {
+    const target = e.target as HTMLInputElement;
+    if (!target?.files) return;
+    const file = target.files[0];
+    uploadImage(file);
+  };
+
   if (isLoading) return <CircularProgress />;
 
   return (
@@ -157,6 +166,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
+      <CustomInput type="file" value={image} onChange={handleImageUpload} />
       Select the right answer for every question by clicking on it.
       {questions.map((question, index) => (
         <s.QuestionContainer key={index}>
