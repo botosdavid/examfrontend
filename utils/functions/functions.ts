@@ -10,3 +10,11 @@ export const shuffleQuestions = (array: number[]) => {
   }
   return array;
 };
+
+export const getPointSum = (selectedAnswers: SelectedAnswer[]) => {
+  return selectedAnswers.reduce(
+    (acc: number, curr) =>
+      Number(curr.selectedAnswer === curr.question.correctAnswer) + acc,
+    0
+  );
+};

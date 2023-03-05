@@ -4,11 +4,16 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import prisma from "../../../prisma/lib/prismadb";
 import { authOptions } from "../auth/[...nextauth]";
+import { getPointSum } from "@/utils/functions/functions";
+
+const hasHalving = "hasHalving";
+const hasStatistics = "hasStatistics";
+const hasBestAnswer = "hasBestAnswer";
 
 type Response = {
   eliminatedAnswerIndexes?: number[];
   statistics?: number[];
-  bestAnswer?: any;
+  bestAnswer?: number;
   isSuccess?: boolean;
 };
 
@@ -24,6 +29,20 @@ export default async function handler(
   } = req;
 
   if (!user) return res.status(401);
+
+  const useHelper = async (helper: string, examId: string) => {
+    await prisma.examsOnUsers.update({
+      where: {
+        userId_examId: {
+          userId: user.id,
+          examId,
+        },
+      },
+      data: {
+        [helper]: false,
+      },
+    });
+  };
 
   switch (method) {
     case "GET":
@@ -42,18 +61,7 @@ export default async function handler(
             getRandomWrongAnswerIndex(answerIndexes),
             getRandomWrongAnswerIndex(answerIndexes),
           ];
-
-          await prisma.examsOnUsers.update({
-            where: {
-              userId_examId: {
-                userId: user.id,
-                examId: question.examId,
-              },
-            },
-            data: {
-              hasHalving: false,
-            },
-          });
+          await useHelper(hasHalving, question.examId);
 
           return res.status(200).json({ eliminatedAnswerIndexes });
 
@@ -79,24 +87,17 @@ export default async function handler(
           });
           if (!questionExam) return res.status(404).json({ isSuccess: false });
 
-          await prisma.examsOnUsers.update({
-            where: {
-              userId_examId: {
-                userId: user.id,
-                examId: questionExam?.examId,
-              },
-            },
-            data: {
-              hasStatistics: false,
-            },
-          });
+          await useHelper(hasStatistics, questionExam?.examId);
+
           return res.status(200).json({ statistics });
 
         case "bestanswer":
           const questionInfo = await prisma.question.findUnique({
             where: { id: id?.toString() },
-            select: { examId: true, group: true },
+            select: { examId: true, group: true, correctAnswer: true },
           });
+          if (!questionInfo) return res.status(404).json({ isSuccess: false });
+
           const answersData = await prisma.question.findUnique({
             where: { id: id?.toString() },
             select: {
@@ -122,23 +123,21 @@ export default async function handler(
               },
             },
           });
+          if (!answersData?.exam?.subscribers?.length) {
+            await useHelper(hasBestAnswer, questionInfo?.examId);
+            return res
+              .status(200)
+              .json({ bestAnswer: questionInfo?.correctAnswer });
+          }
 
-          const getUserPoints = (user: any) => {
-            return user.selectedAnswers.reduce(
-              (acc: any, curr: any) =>
-                acc + (curr.selectedAnswer === curr.question.correctAnswer),
-              0
-            );
-          };
           const bestUser = answersData?.exam.subscribers.reduce(
-            (acc, curr: any) => {
-              if (getUserPoints(curr.user) <= acc.points) return acc;
-              return { points: getUserPoints(curr.user), userId: curr.user.id };
+            (acc, curr: Subscription) => {
+              const points = getPointSum(curr.user.selectedAnswers);
+              if (points <= acc.points) return acc;
+              return { points, userId: curr.user.id };
             },
-            { points: -1, userId: null }
+            { points: -1, userId: "" }
           );
-          if (!bestUser?.userId)
-            return res.status(404).json({ isSuccess: false });
 
           const bestAnswer = await prisma.questionsOnUsers.findUnique({
             where: {
@@ -149,9 +148,9 @@ export default async function handler(
             },
             select: { selectedAnswer: true },
           });
-          // TODO: refactor
-          console.log(bestAnswer);
-          console.log(answersData?.exam.subscribers);
+
+          await useHelper(hasBestAnswer, questionInfo?.examId);
+
           return res
             .status(200)
             .json({ bestAnswer: bestAnswer?.selectedAnswer });

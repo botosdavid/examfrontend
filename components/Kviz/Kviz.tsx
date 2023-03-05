@@ -47,7 +47,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
   });
 
   const { data: eliminatedAnswerIndexes } = useQuery(
-    [questionHalving],
+    [questionHalving, { code }],
     () => getQuestionHalving(exam.questions[0].id),
     {
       staleTime: Infinity,
@@ -60,7 +60,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
   );
 
   const { data: statistics } = useQuery(
-    [questionStatistics],
+    [questionStatistics, { code }],
     () => getQuestionStatistics(exam.questions[0].id),
     {
       staleTime: Infinity,
@@ -73,18 +73,15 @@ const Kviz = ({ code, ip }: KvizProps) => {
   );
 
   const { data: bestAnswer } = useQuery(
-    [questionBestAnswer],
+    [questionBestAnswer, { code }],
     () => getBestAnswer(exam.questions[0].id),
     {
       staleTime: Infinity,
       refetchOnMount: false,
       refetchOnReconnect: false,
       enabled: !!exam && showBestAnswer,
-      onSuccess: (data) => {
-        console.log(data);
-
-        queryClient.invalidateQueries([currentQuestion, { code }]);
-      },
+      onSuccess: (data) =>
+        queryClient.invalidateQueries([currentQuestion, { code }]),
     }
   );
 
@@ -92,6 +89,9 @@ const Kviz = ({ code, ip }: KvizProps) => {
     onSuccess: () => {
       queryClient.invalidateQueries(currentQuestion);
       setSelectedAnswer(noSelectedAnswer);
+      setShowHalving(false);
+      setShowStatistics(false);
+      setShowBestAnswer(false);
     },
   });
 

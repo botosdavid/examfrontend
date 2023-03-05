@@ -51,3 +51,16 @@ interface CreateSelectedAnswer {
   questionId: string;
   selectedAnswer: number;
 }
+
+type SelectedAnswer = import("@prisma/client").QuestionsOnUsers & {
+  question: import("@prisma/client").Question;
+};
+
+type Subscription = {
+  user: {
+    selectedAnswers: (import("@prisma/client").QuestionsOnUsers & {
+      question: import("@prisma/client").Question;
+    })[];
+    id: string;
+  };
+};
