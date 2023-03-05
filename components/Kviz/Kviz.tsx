@@ -3,10 +3,12 @@ import {
   getExamQuestion,
   getQuestionHalving,
   getQuestionStatistics,
+  getBestAnswer,
 } from "@/utils/api/get";
 import { createSelectedAnswer } from "@/utils/api/post";
 import {
   currentQuestion,
+  questionBestAnswer,
   questionHalving,
   questionStatistics,
 } from "@/utils/querykeys/querykeys";
@@ -31,6 +33,7 @@ interface KvizProps {
 const Kviz = ({ code, ip }: KvizProps) => {
   const [showHalving, setShowHalving] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
+  const [showBestAnswer, setShowBestAnswer] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [selectedAnswer, setSelectedAnswer] =
     useState<number>(noSelectedAnswer);
@@ -66,6 +69,22 @@ const Kviz = ({ code, ip }: KvizProps) => {
       enabled: !!exam && showStatistics,
       onSuccess: () =>
         queryClient.invalidateQueries([currentQuestion, { code }]),
+    }
+  );
+
+  const { data: bestAnswer } = useQuery(
+    [questionBestAnswer],
+    () => getBestAnswer(exam.questions[0].id),
+    {
+      staleTime: Infinity,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      enabled: !!exam && showBestAnswer,
+      onSuccess: (data) => {
+        console.log(data);
+
+        queryClient.invalidateQueries([currentQuestion, { code }]);
+      },
     }
   );
 
@@ -124,7 +143,10 @@ const Kviz = ({ code, ip }: KvizProps) => {
                 Statistics
                 <BarChartIcon fontSize="small" />
               </Button>
-              <Button disabled={!hasBestAnswer} onClick={() => {}}>
+              <Button
+                disabled={!hasBestAnswer}
+                onClick={() => setShowBestAnswer(true)}
+              >
                 Best Answer
                 <StarIcon fontSize="small" />
               </Button>
@@ -145,6 +167,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
                       index
                     )
                   }
+                  selected={showBestAnswer && bestAnswer?.bestAnswer === index}
                 >
                   {answer.text}
                 </Button>

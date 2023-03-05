@@ -4,6 +4,7 @@ interface ButtonProps {
   disabled?: boolean;
   secondary?: boolean;
   small?: boolean;
+  selected?: boolean;
 }
 
 export const ButtonContainer = styled.button<ButtonProps>`
@@ -12,7 +13,8 @@ export const ButtonContainer = styled.button<ButtonProps>`
   color: ${(props) => (props.secondary ? props.theme.main : "white")};
   opacity: ${(props) => (props.disabled ? "0.5" : "1")};
   border-radius: 0.5rem;
-  border: none;
+  border: ${(props) =>
+    props.selected ? `1px solid ${props.theme.main}` : "none"};
   padding: ${(props) => (props.small ? "0.5rem 0.6rem" : "0.5rem 3rem")};
   margin: 0.2rem 0;
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};

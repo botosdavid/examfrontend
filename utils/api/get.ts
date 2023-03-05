@@ -32,3 +32,8 @@ export const getQuestionStatistics = async (id: string) => {
   const response = await fetch(`/api/question/helper?id=${id}&type=statistics`);
   return response.json();
 };
+
+export const getBestAnswer = async (id: string) => {
+  const response = await fetch(`/api/question/helper?id=${id}&type=bestanswer`);
+  return response.json();
+};
