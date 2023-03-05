@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import Modal from "../Modal/Modal";
 import CustomInput from "../CustomInput/CustomInput";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
@@ -29,7 +29,7 @@ interface ExamCreatorModalProps {
 }
 
 const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
-  const [name, setName] = useState(exam?.name);
+  const [name, setName] = useState(exam?.name || "");
   const [date, setDate] = useState<Moment | null>(moment(exam?.date));
   const [questions, setQuestions] = useState<CreateQuestion[]>([]);
 

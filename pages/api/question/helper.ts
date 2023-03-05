@@ -30,7 +30,7 @@ export default async function handler(
 
   if (!user) return res.status(401);
 
-  const useHelper = async (helper: string, examId: string) => {
+  const setHelperUsed = async (helper: string, examId: string) => {
     await prisma.examsOnUsers.update({
       where: {
         userId_examId: {
@@ -61,7 +61,7 @@ export default async function handler(
             getRandomWrongAnswerIndex(answerIndexes),
             getRandomWrongAnswerIndex(answerIndexes),
           ];
-          await useHelper(hasHalving, question.examId);
+          await setHelperUsed(hasHalving, question.examId);
 
           return res.status(200).json({ eliminatedAnswerIndexes });
 
@@ -87,7 +87,7 @@ export default async function handler(
           });
           if (!questionExam) return res.status(404).json({ isSuccess: false });
 
-          await useHelper(hasStatistics, questionExam?.examId);
+          await setHelperUsed(hasStatistics, questionExam?.examId);
 
           return res.status(200).json({ statistics });
 
@@ -124,7 +124,7 @@ export default async function handler(
             },
           });
           if (!answersData?.exam?.subscribers?.length) {
-            await useHelper(hasBestAnswer, questionInfo?.examId);
+            await setHelperUsed(hasBestAnswer, questionInfo?.examId);
             return res
               .status(200)
               .json({ bestAnswer: questionInfo?.correctAnswer });
@@ -149,7 +149,7 @@ export default async function handler(
             select: { selectedAnswer: true },
           });
 
-          await useHelper(hasBestAnswer, questionInfo?.examId);
+          await setHelperUsed(hasBestAnswer, questionInfo?.examId);
 
           return res
             .status(200)
