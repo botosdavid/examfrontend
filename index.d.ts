@@ -41,6 +41,8 @@ interface CreateQuestion {
   correctAnswer: number;
   group?: import("@prisma/client").Group;
   answers: CreateAnswer[];
+  image: string;
+  imageFile?: File;
 }
 
 interface CreateAnswer {
@@ -64,3 +66,7 @@ type Subscription = {
     id: string;
   };
 };
+
+interface HTMLInputEvent extends Event {
+  target: HTMLInputElement & EventTarget;
+}

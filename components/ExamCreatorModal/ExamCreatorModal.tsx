@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Modal from "../Modal/Modal";
 import CustomInput from "../CustomInput/CustomInput";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
@@ -33,7 +33,10 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   const [name, setName] = useState(exam?.name || "");
   const [date, setDate] = useState<Moment | null>(moment(exam?.date));
   const [questions, setQuestions] = useState<CreateQuestion[]>([]);
-  const [image, setImage] = useState();
+
+  useEffect(() => {
+    console.log(questions);
+  }, [questions]);
 
   const { isLoading } = useQuery(
     [fullExam, exam?.code],
@@ -70,6 +73,8 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
         correctAnswer: 0,
         group: Group.A,
         answers: Array(defaultAnswerCount).fill({ text: "" }),
+        image: "",
+        imageFile: new File([], ""),
       },
     ]);
 
@@ -132,11 +137,34 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
     );
   };
 
-  const handleImageUpload = (e: React.ChangeEvent) => {
-    const target = e.target as HTMLInputElement;
-    if (!target?.files) return;
-    const file = target.files[0];
-    uploadImage(file);
+  const handleImageChange = (questionIndex: number, e: ChangeEvent<any>) => {
+    setQuestions(
+      questions.map((question, index) => {
+        if (index !== questionIndex) return question;
+        return { ...question, imageFile: e.target.files[0] };
+      })
+    );
+  };
+
+  // TODO: refactor
+  const handleSave = async () => {
+    const imageUrls: string[] = [];
+    for (const question of questions) {
+      if (!question.imageFile?.name) {
+        imageUrls.push("");
+      } else {
+        const imageUrl = await uploadImage(question.imageFile);
+        imageUrls.push(imageUrl);
+      }
+    }
+    const questionsToSave = questions
+      .map((question, index) => {
+        if (!imageUrls[index]) return question;
+        return { ...question, image: imageUrls[index] };
+      })
+      .map(({ imageFile, ...other }) => other);
+
+    createExamMutation.mutate({ name, date, questions: questionsToSave });
   };
 
   if (isLoading) return <CircularProgress />;
@@ -166,14 +194,12 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
-      <CustomInput type="file" value={image} onChange={handleImageUpload} />
       Select the right answer for every question by clicking on it.
       {questions.map((question, index) => (
         <s.QuestionContainer key={index}>
-          <CustomInput
-            label={`${index + 1}. Question`}
-            value={question.text}
-            onChange={(e) => handleQuestionChange(e, index)}
+          <img
+            style={{ gridColumn: "span 2", width: "100%" }}
+            src={question.image}
           />
           <s.QuestionEditContainer>
             <b>A</b>
@@ -186,6 +212,16 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
               <DeleteRoundedIcon />
             </Button>
           </s.QuestionEditContainer>
+          <br />
+          <CustomInput
+            label={`${index + 1}. Question`}
+            value={question.text}
+            onChange={(e) => handleQuestionChange(e, index)}
+          />
+          <CustomInput
+            type="file"
+            onChange={(e) => handleImageChange(index, e)}
+          />
           {question.answers.map((answer, answerIndex) => (
             <CustomInput
               selected={answerIndex === question.correctAnswer}
@@ -210,7 +246,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
                 name,
                 date,
               })
-            : createExamMutation.mutate({ name, date, questions })
+            : handleSave()
         }
       >
         {exam ? "Update" : "Create"}

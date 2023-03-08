@@ -38,6 +38,7 @@ model Question {
     correctAnswer   Int
     selectedAnswers QuestionsOnUsers[]
     group           Group              @default(A)
+    image           String             @default("")
 
     @@index([examId])
 }
