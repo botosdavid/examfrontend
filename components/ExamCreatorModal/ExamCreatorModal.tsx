@@ -20,7 +20,7 @@ import { getExam } from "@/utils/api/get";
 import { updateExam } from "@/utils/api/put";
 import * as s from "./ExamCreatorModalAtom";
 import CustomSwitch from "../CustomSwitch/CustomSwitch";
-import { uploadImage } from "@/utils/firebase/upload";
+import { uploadImages } from "@/utils/firebase/upload";
 
 const defaultAnswerCount = 4;
 
@@ -43,15 +43,23 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
     () => getExam(exam!.code),
     {
       enabled: !!exam,
+      staleTime: Infinity,
+      refetchOnMount: true,
+      refetchOnReconnect: false,
       onSuccess: (data) => {
-        setQuestions(data.questions);
+        setQuestions(
+          data.questions.map((question: CreateQuestion) => ({
+            ...question,
+            imageFile: new File([], ""),
+          }))
+        );
       },
     }
   );
 
   const updateExamMutation = useMutation(updateExam, {
     onSuccess: () => {
-      queryClient.invalidateQueries(createdExams);
+      queryClient.invalidateQueries([fullExam, exam?.code]);
       notifyUpdatedSuccessfully();
       onClose();
     },
@@ -63,6 +71,18 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
       notifyCreatedSuccessfully();
       onClose();
     },
+  });
+
+  const uploadImagesMutation = useMutation(uploadImages, {
+    onSuccess: (questions) =>
+      !exam
+        ? createExamMutation.mutate({ name, date, questions })
+        : updateExamMutation.mutate({
+            code: exam.code,
+            questions,
+            name,
+            date,
+          }),
   });
 
   const handleAddQuestion = () =>
@@ -146,27 +166,6 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
     );
   };
 
-  // TODO: refactor
-  const handleSave = async () => {
-    const imageUrls: string[] = [];
-    for (const question of questions) {
-      if (!question.imageFile?.name) {
-        imageUrls.push("");
-      } else {
-        const imageUrl = await uploadImage(question.imageFile);
-        imageUrls.push(imageUrl);
-      }
-    }
-    const questionsToSave = questions
-      .map((question, index) => {
-        if (!imageUrls[index]) return question;
-        return { ...question, image: imageUrls[index] };
-      })
-      .map(({ imageFile, ...other }) => other);
-
-    createExamMutation.mutate({ name, date, questions: questionsToSave });
-  };
-
   if (isLoading) return <CircularProgress />;
 
   return (
@@ -199,7 +198,11 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
         <s.QuestionContainer key={index}>
           <img
             style={{ gridColumn: "span 2", width: "100%" }}
-            src={question.image}
+            src={
+              question.imageFile?.name
+                ? URL.createObjectURL(question.imageFile)
+                : question.image
+            }
           />
           <s.QuestionEditContainer>
             <b>A</b>
@@ -237,18 +240,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
       <Button secondary onClick={handleAddQuestion}>
         Add Question
       </Button>
-      <Button
-        onClick={() =>
-          exam
-            ? updateExamMutation.mutate({
-                code: exam.code,
-                questions,
-                name,
-                date,
-              })
-            : handleSave()
-        }
-      >
+      <Button onClick={() => uploadImagesMutation.mutate(questions)}>
         {exam ? "Update" : "Create"}
       </Button>
     </Modal>

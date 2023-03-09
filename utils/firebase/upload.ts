@@ -10,3 +10,29 @@ export const uploadImage = async (file: File) => {
   console.log("File available at", downloadURL);
   return downloadURL;
 };
+
+export const uploadImages = async (questions: CreateQuestion[]) => {
+  const imageUrls: string[] = [];
+
+  for (const question of questions) {
+    if (question.imageFile?.name) {
+      try {
+        // TODO: delete image in cloud if overwriting
+        const imageUrl = await uploadImage(question.imageFile);
+        imageUrls.push(imageUrl);
+      } catch (error) {
+        console.error("Error while uploading image: ", error);
+        imageUrls.push("");
+      } finally {
+        continue;
+      }
+    }
+    imageUrls.push(question.image ?? "");
+  }
+  return questions
+    .map((question, index) => {
+      if (!imageUrls[index]) return question;
+      return { ...question, image: imageUrls[index] };
+    })
+    .map(({ imageFile, ...other }) => other);
+};

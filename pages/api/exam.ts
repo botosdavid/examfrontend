@@ -121,6 +121,7 @@ export default async function handler(
           text: question.text,
           correctAnswer: question.correctAnswer,
           group: question.group,
+          image: question.image,
           answers: {
             create: question.answers.map((answer) => ({
               text: answer.text,
