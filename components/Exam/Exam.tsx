@@ -1,5 +1,7 @@
 import PlayCircleFilledRoundedIcon from "@mui/icons-material/PlayCircleFilledRounded";
+import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import ScheduleIcon from "@mui/icons-material/Schedule";
 import { Exam as IExam, Role } from "@prisma/client";
 import { useRouter } from "next/router";
 import Button from "../Button/Button";
@@ -8,6 +10,7 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import ExamCreatorModal from "../ExamCreatorModal/ExamCreatorModal";
 import moment from "moment";
+import ExamInfoModal from "../ExamInfoModal/ExamInfoModal";
 
 interface ExamProps {
   exam: IExam;
@@ -15,6 +18,7 @@ interface ExamProps {
 
 const Exam = ({ exam }: ExamProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
   const currentDate = new Date().toISOString().slice(0.1);
   const examDate = exam.date.toString();
@@ -37,6 +41,9 @@ const Exam = ({ exam }: ExamProps) => {
     <s.ExamContainer>
       <s.ExamName>{exam.name}</s.ExamName>
       <s.ExamInfoContainer>
+        <Button small secondary onClick={() => setIsInfoModalOpen(true)}>
+          <QrCodeScannerIcon />
+        </Button>
         {canEdit && (
           <Button small secondary onClick={handleEditExam}>
             <EditRoundedIcon />
@@ -48,12 +55,16 @@ const Exam = ({ exam }: ExamProps) => {
           </Button>
         )}
         <s.ExamDate>{moment(examDate).format("YY/MM/DD HH:mm")}</s.ExamDate>
+        <ScheduleIcon />
       </s.ExamInfoContainer>
       {isEditModalOpen && (
         <ExamCreatorModal
           exam={exam}
           onClose={() => setIsEditModalOpen(false)}
         />
+      )}
+      {isInfoModalOpen && (
+        <ExamInfoModal exam={exam} onClose={() => setIsInfoModalOpen(false)} />
       )}
     </s.ExamContainer>
   );
