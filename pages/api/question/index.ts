@@ -64,6 +64,7 @@ export default async function handler(
               id: true,
               text: true,
               group: true,
+              image: true,
               answers: { select: { text: true } },
             },
             skip,

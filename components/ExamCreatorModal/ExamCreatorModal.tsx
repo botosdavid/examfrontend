@@ -21,6 +21,7 @@ import { updateExam } from "@/utils/api/put";
 import * as s from "./ExamCreatorModalAtom";
 import CustomSwitch from "../CustomSwitch/CustomSwitch";
 import { uploadImages } from "@/utils/firebase/upload";
+import Image from "next/image";
 
 const defaultAnswerCount = 4;
 
@@ -43,9 +44,9 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
     () => getExam(exam!.code),
     {
       enabled: !!exam,
-      staleTime: Infinity,
       refetchOnMount: true,
-      refetchOnReconnect: false,
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: false,
       onSuccess: (data) => {
         setQuestions(
           data.questions.map((question: CreateQuestion) => ({
@@ -196,14 +197,20 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
       Select the right answer for every question by clicking on it.
       {questions.map((question, index) => (
         <s.QuestionContainer key={index}>
-          <img
-            style={{ gridColumn: "span 2", width: "100%" }}
-            src={
-              question.imageFile?.name
-                ? URL.createObjectURL(question.imageFile)
-                : question.image
-            }
-          />
+          {(question.imageFile?.name || question.image) && (
+            <Image
+              alt=""
+              width="400"
+              height="100"
+              style={{ gridColumn: "span 2", objectFit: "cover" }}
+              unoptimized
+              src={
+                question.imageFile?.name
+                  ? URL.createObjectURL(question.imageFile)
+                  : question.image
+              }
+            />
+          )}
           <s.QuestionEditContainer>
             <b>A</b>
             <CustomSwitch

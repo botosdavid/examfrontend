@@ -9,7 +9,7 @@ export const KvizContainer = styled.div`
   display: flex;
   flex-direction: column;
   text-align: center;
-  gap: 4rem;
+  gap: 3rem;
 
   button {
     height: 2.5rem;

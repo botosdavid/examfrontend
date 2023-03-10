@@ -22,6 +22,7 @@ import * as s from "./KvizAtom";
 import SplitscreenIcon from "@mui/icons-material/Splitscreen";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import StarIcon from "@mui/icons-material/Star";
+import Image from "next/image";
 
 export const noSelectedAnswer = -1;
 
@@ -151,6 +152,16 @@ const Kviz = ({ code, ip }: KvizProps) => {
                 <StarIcon fontSize="small" />
               </Button>
             </s.HelpersContainer>
+          )}
+          {exam.questions[0].image && (
+            <Image
+              alt=""
+              width="300"
+              height="200"
+              style={{ objectFit: "cover", alignSelf: "center" }}
+              unoptimized
+              src={exam.questions[0].image}
+            />
           )}
           <s.Question>{exam.questions[0].text}</s.Question>
           <s.AnswerButtonsContainer>
