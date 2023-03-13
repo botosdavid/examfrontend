@@ -128,7 +128,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
   if (!exam?.subscribers?.length)
     return <div>You are not subscribed to this exam</div>;
 
-  if (!isFinished && countdownDuration < 0) return handleGoToNextQuestion();
+  if (!isFinished && countdownDuration < 0) handleGoToNextQuestion();
 
   const { hasHalving, hasStatistics, hasBestAnswer } = exam.subscribers[0];
   const isInSecondPhase =
