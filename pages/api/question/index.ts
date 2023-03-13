@@ -9,6 +9,7 @@ type Response =
   | (Exam & {
       questions: { text: string; answers: { text: string }[] }[];
       subscribers: ExamsOnUsers[];
+      currentQuestionIndex?: number;
     })
   | { isSuccess: boolean };
 
@@ -74,6 +75,6 @@ export default async function handler(
       });
       if (!exam) return res.status(404);
 
-      return res.status(200).json(exam);
+      return res.status(200).json({ ...exam, currentQuestionIndex });
   }
 }

@@ -61,6 +61,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   const updateExamMutation = useMutation(updateExam, {
     onSuccess: () => {
       queryClient.invalidateQueries([fullExam, exam?.code]);
+      queryClient.refetchQueries([createdExams]);
       notifyUpdatedSuccessfully();
       onClose();
     },

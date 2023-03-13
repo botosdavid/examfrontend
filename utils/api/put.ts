@@ -9,7 +9,7 @@ export const updateExam = async ({ name, code, date, questions }: any) => {
     body: JSON.stringify({
       name,
       code,
-      date: moment(date).toDate(),
+      date: moment(date).add(1, "hours").toDate(),
       questions,
     }),
   });

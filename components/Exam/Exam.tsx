@@ -20,9 +20,9 @@ const Exam = ({ exam }: ExamProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
-  const currentDate = new Date().toISOString().slice(0.1);
-  const examDate = exam.date.toString();
-  const hasStarted = currentDate > examDate;
+  const currentDate = new Date().toISOString().slice(0, 16);
+  const examDate = exam.date.toString().slice(0, 16);
+  const hasStarted = currentDate >= examDate;
   const router = useRouter();
   const session: AuthSession = useSession();
   const canEdit =

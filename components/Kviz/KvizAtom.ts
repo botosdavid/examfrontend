@@ -10,6 +10,7 @@ export const KvizContainer = styled.div`
   flex-direction: column;
   text-align: center;
   gap: 3rem;
+  position: relative;
 
   button {
     height: 2.5rem;
@@ -52,4 +53,10 @@ export const NextButtonContainer = styled.div`
   align-self: flex-end;
   display: flex;
   justify-content: flex-end;
+`;
+
+export const CountdownContainer = styled.div`
+  position: absolute;
+  right: 2rem;
+  top: 2rem;
 `;

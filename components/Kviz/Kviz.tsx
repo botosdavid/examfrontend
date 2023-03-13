@@ -14,7 +14,7 @@ import {
 } from "@/utils/querykeys/querykeys";
 import { CircularProgress } from "@mui/material";
 import { Answer } from "@prisma/client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import Button from "../Button/Button";
 import ExamResult from "../ExamResult/ExamResult";
@@ -23,6 +23,8 @@ import SplitscreenIcon from "@mui/icons-material/Splitscreen";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import StarIcon from "@mui/icons-material/Star";
 import Image from "next/image";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import moment from "moment";
 
 export const noSelectedAnswer = -1;
 
@@ -45,6 +47,10 @@ const Kviz = ({ code, ip }: KvizProps) => {
     isFetching,
   } = useQuery([currentQuestion, { code }], () => getExamQuestion(code), {
     onSuccess: (exam) => setIsFinished(!exam?.questions?.length),
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: Infinity,
   });
 
   const { data: eliminatedAnswerIndexes } = useQuery(
@@ -97,7 +103,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
   });
 
   const handleGoToNextQuestion = () => {
-    const questionId = exam.questions[0].id;
+    const questionId = exam?.questions[0]?.id;
     selectAnswerMutation.mutate({ questionId, selectedAnswer });
   };
 
@@ -105,6 +111,14 @@ const Kviz = ({ code, ip }: KvizProps) => {
     if (selectedAnswer === index) return setSelectedAnswer(noSelectedAnswer);
     setSelectedAnswer(index);
   };
+
+  const countdownDuration = useMemo(
+    () =>
+      moment(exam?.date)
+        .add(exam?.currentQuestionIndex * 60, "seconds")
+        .diff(moment(new Date()), "seconds"),
+    [exam]
+  );
 
   if (isLoading || isFetching) return <CircularProgress />;
 
@@ -114,9 +128,12 @@ const Kviz = ({ code, ip }: KvizProps) => {
   if (!exam?.subscribers?.length)
     return <div>You are not subscribed to this exam</div>;
 
+  if (!isFinished && countdownDuration < 0) return handleGoToNextQuestion();
+
   const { hasHalving, hasStatistics, hasBestAnswer } = exam.subscribers[0];
   const isInSecondPhase =
     exam.questions[0]?.group !== exam.subscribers[0]?.group;
+
   return (
     <s.KvizContainer>
       <s.Info>
@@ -128,6 +145,20 @@ const Kviz = ({ code, ip }: KvizProps) => {
         <ExamResult code={code} />
       ) : (
         <>
+          <s.CountdownContainer>
+            <CountdownCircleTimer
+              size={45}
+              key={0}
+              isPlaying
+              duration={countdownDuration}
+              colors={["#008e00", "#d5b500", "#A30000"]}
+              colorsTime={[60, 30, 0]}
+              strokeWidth={6}
+              onComplete={handleGoToNextQuestion}
+            >
+              {({ remainingTime }) => remainingTime}
+            </CountdownCircleTimer>
+          </s.CountdownContainer>
           {isInSecondPhase && (
             <s.HelpersContainer>
               <Button
@@ -158,7 +189,11 @@ const Kviz = ({ code, ip }: KvizProps) => {
               alt=""
               width="300"
               height="200"
-              style={{ objectFit: "cover", alignSelf: "center" }}
+              style={{
+                objectFit: "cover",
+                alignSelf: "center",
+                borderRadius: "0.5rem",
+              }}
               unoptimized
               src={exam.questions[0].image}
             />
