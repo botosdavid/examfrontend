@@ -1,0 +1,12 @@
+import styled from "styled-components";
+
+export const Code = styled.h2`
+  cursor: pointer;
+  background-color: white;
+  padding: 0.5rem 2rem;
+  border-radius: 1rem;
+
+  &:hover {
+    color: ${(props) => props.theme.main};
+  }
+`;

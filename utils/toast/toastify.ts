@@ -35,3 +35,10 @@ export const notifySelectAnswer = () =>
     position: "top-center",
     type: "error",
   });
+
+export const notifyCopiedToClipboard = () =>
+  toast("Copied to clipboard!", {
+    position: "top-center",
+    type: "success",
+    hideProgressBar: true,
+  });

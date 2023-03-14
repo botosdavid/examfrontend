@@ -1,16 +1,23 @@
+import { notifyCopiedToClipboard } from "@/utils/toast/toastify";
 import { Exam } from "@prisma/client";
 import QRCode from "react-qr-code";
 import Modal from "../Modal/Modal";
+import * as s from "./ExamIndoModalAtom";
 
 interface ExamInfoModal {
   exam: Exam;
   onClose: () => void;
 }
 
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
+  notifyCopiedToClipboard();
+};
+
 const ExamInfoModal = ({ exam, onClose }: ExamInfoModal) => {
   return (
     <Modal height="60vh" onClose={onClose}>
-      <h2>{exam.code}</h2>
+      <s.Code onClick={() => copyToClipboard(exam.code)}>{exam.code}</s.Code>
       <QRCode
         size={256}
         style={{ height: "auto", maxWidth: "100%", width: "70%" }}
