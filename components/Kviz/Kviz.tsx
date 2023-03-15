@@ -161,7 +161,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
             <>
               <s.Levels levels={exam.levels}>
                 {exam.levels.split(",").map((level: string, index: number) => (
-                  <s.Dot current={level === "1"}></s.Dot>
+                  <s.Dot current={level === "1"} key={index}></s.Dot>
                 ))}
               </s.Levels>
               <s.HelpersContainer>
