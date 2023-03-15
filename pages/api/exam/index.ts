@@ -4,7 +4,6 @@ import prisma from "../../../prisma/lib/prismadb";
 import { Exam, Group, Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
-import { shuffleQuestions } from "@/utils/functions/functions";
 
 type Response =
   | {
@@ -18,7 +17,7 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions);
   const {
-    body: { name, code, questions, date },
+    body: { name, code, questions, date, levels },
     method,
     query,
   } = req;
@@ -52,6 +51,7 @@ export default async function handler(
           authorId,
           date,
           code: newCode,
+          levels,
           questions: {
             create: formatedQuestions,
           },
@@ -116,6 +116,7 @@ export default async function handler(
         data: {
           name,
           date,
+          levels,
           questions: {
             create: formatedQuestionsUpdate,
           },

@@ -14,7 +14,12 @@ export const createUser = async (user: RegistrationCredentials) => {
   }
 };
 
-export const createExam = async ({ name, date, questions }: CreateExam) => {
+export const createExam = async ({
+  name,
+  date,
+  questions,
+  levels,
+}: CreateExam) => {
   try {
     await fetch("/api/exam", {
       method: "POST",
@@ -25,6 +30,7 @@ export const createExam = async ({ name, date, questions }: CreateExam) => {
         name,
         date: moment(date),
         questions,
+        levels: levels.join(","),
       }),
     });
   } catch (error) {

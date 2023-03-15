@@ -52,6 +52,7 @@ model Exam {
     date        DateTime
     code        String         @unique
     subscribers ExamsOnUsers[]
+    levels      String         @default("0")
     createdAt   DateTime       @default(now())
 
     @@index([authorId])

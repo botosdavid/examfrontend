@@ -61,3 +61,30 @@ export const CountdownContainer = styled.div`
   right: 2rem;
   top: 2rem;
 `;
+
+interface LevelProps {
+  levels: number;
+}
+
+export const Levels = styled.div<LevelProps>`
+  width: calc("${(props) => props.levels - 1}px * 30px");
+  width: 40%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #b1d8b7;
+  border-radius: 3rem;
+  height: 7px;
+  align-self: center;
+`;
+
+export const Dot = styled.div<{ current: boolean }>`
+  border-radius: 50%;
+  width: ${(props) => (props.current ? "25px" : "15px")};
+  height: ${(props) => (props.current ? "25px" : "15px")};
+  background-color: #76b947;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;

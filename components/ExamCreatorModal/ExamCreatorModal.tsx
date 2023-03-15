@@ -34,10 +34,16 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   const [name, setName] = useState(exam?.name || "");
   const [date, setDate] = useState<Moment | null>(moment.utc(exam?.date));
   const [questions, setQuestions] = useState<CreateQuestion[]>([]);
+  const [levels, setLevels] = useState<number[]>([]);
 
+  const levelsMinCount = Math.min(
+    questions.filter(({ group }) => group === Group.A).length,
+    questions.filter(({ group }) => group === Group.B).length
+  );
   useEffect(() => {
-    console.log(questions);
-  }, [questions]);
+    if (levelsMinCount > levels.length) setLevels([...levels, 0]);
+    if (levelsMinCount < levels.length) setLevels(levels.slice(0, -1));
+  }, [levelsMinCount]);
 
   const { isLoading } = useQuery(
     [fullExam, exam?.code],
@@ -53,6 +59,9 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
             ...question,
             imageFile: new File([], ""),
           }))
+        );
+        setLevels(
+          data?.levels.split(",").map((level: string) => Number(level))
         );
       },
     }
@@ -77,10 +86,16 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   const uploadImagesMutation = useMutation(uploadImages, {
     onSuccess: (questions) =>
       !exam
-        ? createExamMutation.mutate({ name, date, questions })
+        ? createExamMutation.mutate({
+            name,
+            date,
+            questions,
+            levels,
+          })
         : updateExamMutation.mutate({
             code: exam.code,
             questions,
+            levels,
             name,
             date,
           }),
@@ -167,6 +182,14 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
     );
   };
 
+  const handleLevelChange = (levelIndex: number) => {
+    setLevels(
+      levels.map((level, index) => {
+        return index === levelIndex ? Number(!level) : level;
+      })
+    );
+  };
+
   if (isLoading) return <CircularProgress />;
 
   return (
@@ -194,6 +217,16 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
+      Where should the levels be?
+      {levels.map((level, index) => (
+        <div key={index}>
+          {index + 1}
+          <CustomSwitch
+            checked={Boolean(level)}
+            onChange={() => handleLevelChange(index)}
+          />
+        </div>
+      ))}
       Select the right answer for every question by clicking on it.
       {questions.map((question, index) => (
         <s.QuestionContainer key={index}>

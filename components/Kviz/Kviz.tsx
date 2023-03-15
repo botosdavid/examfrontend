@@ -158,29 +158,36 @@ const Kviz = ({ code, ip }: KvizProps) => {
             </CountdownCircleTimer>
           </s.CountdownContainer>
           {isInSecondPhase && (
-            <s.HelpersContainer>
-              <Button
-                disabled={!hasHalving}
-                onClick={() => setShowHalving(true)}
-              >
-                Halving
-                <SplitscreenIcon fontSize="small" />
-              </Button>
-              <Button
-                disabled={!hasStatistics}
-                onClick={() => setShowStatistics(true)}
-              >
-                Statistics
-                <BarChartIcon fontSize="small" />
-              </Button>
-              <Button
-                disabled={!hasBestAnswer}
-                onClick={() => setShowBestAnswer(true)}
-              >
-                Best Answer
-                <StarIcon fontSize="small" />
-              </Button>
-            </s.HelpersContainer>
+            <>
+              <s.Levels levels={exam.levels}>
+                {exam.levels.split(",").map((level: string, index: number) => (
+                  <s.Dot current={level === "1"}></s.Dot>
+                ))}
+              </s.Levels>
+              <s.HelpersContainer>
+                <Button
+                  disabled={!hasHalving}
+                  onClick={() => setShowHalving(true)}
+                >
+                  Halving
+                  <SplitscreenIcon fontSize="small" />
+                </Button>
+                <Button
+                  disabled={!hasStatistics}
+                  onClick={() => setShowStatistics(true)}
+                >
+                  Statistics
+                  <BarChartIcon fontSize="small" />
+                </Button>
+                <Button
+                  disabled={!hasBestAnswer}
+                  onClick={() => setShowBestAnswer(true)}
+                >
+                  Best Answer
+                  <StarIcon fontSize="small" />
+                </Button>
+              </s.HelpersContainer>
+            </>
           )}
           {exam.questions[0]?.image && (
             <Image
@@ -196,9 +203,9 @@ const Kviz = ({ code, ip }: KvizProps) => {
               src={exam.questions[0].image}
             />
           )}
-          <s.Question>{exam.questions[0].text}</s.Question>
+          <s.Question>{exam.questions[0]?.text}</s.Question>
           <s.AnswerButtonsContainer>
-            {exam.questions[0].answers.map((answer: Answer, index: number) => (
+            {exam.questions[0]?.answers.map((answer: Answer, index: number) => (
               <div key={index}>
                 <p>{showStatistics && statistics?.statistics[index]}</p>
                 <Button

@@ -34,6 +34,7 @@ interface CreateExam {
   name?: string;
   date: Moment;
   questions: CreateQuestion[];
+  levels: number[];
 }
 
 interface CreateQuestion {
