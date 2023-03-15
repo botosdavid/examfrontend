@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { Exam, ExamsOnUsers } from "@prisma/client";
+import { Exam, ExamsOnUsers, Group } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import prisma from "../../../prisma/lib/prismadb";
@@ -26,15 +26,16 @@ export default async function handler(
 
   switch (method) {
     case "GET":
-      const { id } = await prisma.exam.findUniqueOrThrow({
+      const examInfo = await prisma.exam.findUnique({
         where: { code: code?.toString() },
+        select: { id: true, _count: { select: { questions: true } } },
       });
-      if (!id) return res.status(404);
+      if (!examInfo) return res.status(404);
 
       const currentQuestionIndex = await prisma.questionsOnUsers.count({
         where: {
           userId: user.id,
-          question: { examId: id },
+          question: { examId: examInfo.id },
         },
       });
 
@@ -42,22 +43,74 @@ export default async function handler(
         where: {
           userId_examId: {
             userId: user.id,
-            examId: id,
+            examId: examInfo.id,
           },
         },
-        select: { questionsOrder: true },
+        select: { questionsOrder: true, group: true },
       });
       if (!questionsOrder?.questionsOrder)
         return res.status(404).json({ isSuccess: false });
 
-      const order = questionsOrder.questionsOrder.split(",");
+      let order = questionsOrder.questionsOrder.split(",");
+      const shouldGenerateSecondPhase =
+        currentQuestionIndex === order.length &&
+        order.length < examInfo._count.questions;
+
+      const generateSecondPhaseOrder = async () => {
+        const secondGroup =
+          questionsOrder.group === Group.A ? Group.B : Group.A;
+
+        const questions = await prisma.question.findMany({
+          where: { examId: examInfo.id },
+          include: {
+            selectedAnswers: true,
+          },
+        });
+        const questionsCorrectAnswers = questions.map((question, index) => {
+          const correctAnswerCount = question.selectedAnswers.reduce(
+            (acc, curr) =>
+              acc + Number(curr.selectedAnswer === question.correctAnswer),
+            0
+          );
+          return { index, correctAnswerCount, group: question.group };
+        });
+        return questionsCorrectAnswers
+          .sort(
+            (question1, question2) =>
+              question2.correctAnswerCount - question1.correctAnswerCount
+          )
+          .filter((question) => question.group === secondGroup)
+          .map(({ index }) => index)
+          .join(",");
+      };
+
+      if (shouldGenerateSecondPhase) {
+        const secondPhaseOrder = await generateSecondPhaseOrder();
+        await prisma.examsOnUsers.update({
+          where: { userId_examId: { userId: user.id, examId: examInfo.id } },
+          data: {
+            questionsOrder: `${questionsOrder.questionsOrder},${secondPhaseOrder}`,
+          },
+        });
+        const newQuestionsOrder = await prisma.examsOnUsers.findUnique({
+          where: {
+            userId_examId: {
+              userId: user.id,
+              examId: examInfo.id,
+            },
+          },
+          select: { questionsOrder: true },
+        });
+        order = newQuestionsOrder?.questionsOrder?.split(",")!;
+      }
+
       const skip =
         currentQuestionIndex in order
           ? Number(order[currentQuestionIndex])
           : currentQuestionIndex;
 
       const exam = await prisma.exam.findUnique({
-        where: { id },
+        where: { id: examInfo.id },
         include: {
           subscribers: { where: { userId: user.id } },
           questions: {

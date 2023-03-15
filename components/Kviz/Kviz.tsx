@@ -116,7 +116,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
     () =>
       moment(exam?.date)
         .add(exam?.currentQuestionIndex * 60, "seconds")
-        .diff(moment(new Date()), "seconds"),
+        .diff(moment(new Date()).add(1, "hours"), "seconds"),
     [exam]
   );
 
@@ -127,8 +127,6 @@ const Kviz = ({ code, ip }: KvizProps) => {
 
   if (!exam?.subscribers?.length)
     return <div>You are not subscribed to this exam</div>;
-
-  if (!isFinished && countdownDuration < 0) handleGoToNextQuestion();
 
   const { hasHalving, hasStatistics, hasBestAnswer } = exam.subscribers[0];
   const isInSecondPhase =
@@ -184,7 +182,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
               </Button>
             </s.HelpersContainer>
           )}
-          {exam.questions[0].image && (
+          {exam.questions[0]?.image && (
             <Image
               alt=""
               width="300"

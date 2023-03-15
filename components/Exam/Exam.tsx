@@ -11,6 +11,8 @@ import { useSession } from "next-auth/react";
 import ExamCreatorModal from "../ExamCreatorModal/ExamCreatorModal";
 import moment from "moment";
 import ExamInfoModal from "../ExamInfoModal/ExamInfoModal";
+import { useMutation } from "react-query";
+import { startExam } from "@/utils/api/patch";
 
 interface ExamProps {
   exam: IExam;
@@ -20,7 +22,10 @@ const Exam = ({ exam }: ExamProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
-  const currentDate = new Date().toISOString().slice(0, 16);
+  const currentDate = moment(new Date())
+    .add(1, "hours")
+    .toISOString()
+    .slice(0, 16);
   const examDate = exam.date.toString().slice(0, 16);
   const hasStarted = currentDate >= examDate;
   const router = useRouter();
@@ -29,9 +34,9 @@ const Exam = ({ exam }: ExamProps) => {
     session.data?.user.id === exam.authorId ||
     session.data?.user.role === Role.ADMIN;
 
-  const handleStartExam = () => {
-    router.push(`/exam/${exam.code}`);
-  };
+  const startExamMutation = useMutation(startExam, {
+    onSuccess: () => router.push(`/exam/${exam.code}`),
+  });
 
   const handleEditExam = () => {
     setIsEditModalOpen(true);
@@ -50,7 +55,11 @@ const Exam = ({ exam }: ExamProps) => {
           </Button>
         )}
         {hasStarted && (
-          <Button small secondary onClick={handleStartExam}>
+          <Button
+            small
+            secondary
+            onClick={() => startExamMutation.mutate(exam.code)}
+          >
             <PlayCircleFilledRoundedIcon />
           </Button>
         )}

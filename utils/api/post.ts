@@ -23,7 +23,7 @@ export const createExam = async ({ name, date, questions }: CreateExam) => {
       },
       body: JSON.stringify({
         name,
-        date: moment(date).add(1, "hours").toDate(),
+        date: moment(date),
         questions,
       }),
     });

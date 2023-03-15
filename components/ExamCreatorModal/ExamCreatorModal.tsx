@@ -32,7 +32,7 @@ interface ExamCreatorModalProps {
 
 const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   const [name, setName] = useState(exam?.name || "");
-  const [date, setDate] = useState<Moment | null>(moment(exam?.date));
+  const [date, setDate] = useState<Moment | null>(moment.utc(exam?.date));
   const [questions, setQuestions] = useState<CreateQuestion[]>([]);
 
   useEffect(() => {
@@ -60,8 +60,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
 
   const updateExamMutation = useMutation(updateExam, {
     onSuccess: () => {
-      queryClient.invalidateQueries([fullExam, exam?.code]);
-      queryClient.refetchQueries([createdExams]);
+      queryClient.invalidateQueries(createdExams);
       notifyUpdatedSuccessfully();
       onClose();
     },

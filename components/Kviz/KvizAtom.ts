@@ -14,6 +14,7 @@ export const KvizContainer = styled.div`
 
   button {
     height: 2.5rem;
+    width: 20%;
   }
 `;
 

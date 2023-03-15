@@ -1,9 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../prisma/lib/prismadb";
+import prisma from "../../../prisma/lib/prismadb";
 import { Exam, Group, Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
-import { authOptions } from "./auth/[...nextauth]";
+import { authOptions } from "../auth/[...nextauth]";
 import { shuffleQuestions } from "@/utils/functions/functions";
 
 type Response =
@@ -64,7 +64,6 @@ export default async function handler(
         where: { code },
         select: {
           id: true,
-          questions: true,
           _count: {
             select: {
               subscribers: true,
@@ -74,23 +73,7 @@ export default async function handler(
       });
       if (!examToSubscribe) return res.status(404);
 
-      const [group, secondGroup] = [
-        examToSubscribe._count.subscribers % 2 ? Group.A : Group.B,
-        !(examToSubscribe._count.subscribers % 2) ? Group.A : Group.B,
-      ];
-
-      const questionsIndexGroups = examToSubscribe.questions.reduce(
-        (sum, curr, index) => ({
-          ...sum,
-          [curr.group]: [...sum[curr.group], index],
-        }),
-        { A: [], B: [] }
-      );
-
-      const questionsOrder = [
-        ...shuffleQuestions(questionsIndexGroups[group]),
-        ...questionsIndexGroups[secondGroup],
-      ].join(",");
+      const group = examToSubscribe._count.subscribers % 2 ? Group.A : Group.B;
 
       await prisma.examsOnUsers.upsert({
         where: {
@@ -103,7 +86,6 @@ export default async function handler(
         create: {
           userId: session.user.id,
           examId: examToSubscribe.id,
-          questionsOrder,
           group,
         },
       });
