@@ -148,11 +148,14 @@ const Kviz = ({ code, ip }: KvizProps) => {
               size={45}
               key={0}
               isPlaying
-              duration={countdownDuration}
+              duration={60}
               colors={["#008e00", "#d5b500", "#A30000"]}
               colorsTime={[60, 30, 0]}
               strokeWidth={6}
               onComplete={handleGoToNextQuestion}
+              initialRemainingTime={
+                countdownDuration >= 0 ? countdownDuration : 0
+              }
             >
               {({ remainingTime }) => remainingTime}
             </CountdownCircleTimer>

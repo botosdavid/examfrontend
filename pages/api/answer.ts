@@ -85,7 +85,7 @@ export default async function handler(
         where: { id: questionId },
         select: { examId: true },
       });
-      if (!question) return res.status(404);
+      if (!question) return res.status(404).json({ isSuccess: false });
 
       res.status(200).json({ isSuccess: true });
   }
