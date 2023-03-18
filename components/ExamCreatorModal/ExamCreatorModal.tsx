@@ -217,16 +217,6 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
-      Where should the levels be?
-      {levels.map((level, index) => (
-        <div key={index}>
-          {index + 1}
-          <CustomSwitch
-            checked={Boolean(level)}
-            onChange={() => handleLevelChange(index)}
-          />
-        </div>
-      ))}
       Select the right answer for every question by clicking on it.
       {questions.map((question, index) => (
         <s.QuestionContainer key={index}>
@@ -280,6 +270,16 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
       <Button secondary onClick={handleAddQuestion}>
         Add Question
       </Button>
+      Where should the levels be?
+      {levels.map((level, index) => (
+        <div key={index}>
+          {index + 1}
+          <CustomSwitch
+            checked={Boolean(level)}
+            onChange={() => handleLevelChange(index)}
+          />
+        </div>
+      ))}
       <Button onClick={() => uploadImagesMutation.mutate(questions)}>
         {exam ? "Update" : "Create"}
       </Button>

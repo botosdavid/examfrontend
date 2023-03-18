@@ -4,4 +4,5 @@ export const theme = {
   main: "rgba(93,107,237,255)",
   fontColor: "rgba(31,47,86,255)",
   boxShadow: "rgba(0, 0, 0, 0.1) 0px 10px 50px",
+  red: "rgb(250, 128, 114)",
 };

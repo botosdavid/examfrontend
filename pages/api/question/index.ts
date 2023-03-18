@@ -10,6 +10,7 @@ type Response =
       questions: { text: string; answers: { text: string }[] }[];
       subscribers: ExamsOnUsers[];
       currentQuestionIndex?: number;
+      currentQuestionIndexInSecondPhase?: number;
     })
   | { isSuccess: boolean };
 
@@ -128,6 +129,21 @@ export default async function handler(
       });
       if (!exam) return res.status(404);
 
-      return res.status(200).json({ ...exam, currentQuestionIndex });
+      const currentQuestionIndexInSecondPhase =
+        await prisma.questionsOnUsers.count({
+          where: {
+            userId: user.id,
+            question: {
+              examId: examInfo.id,
+              group: { not: { equals: questionsOrder.group } },
+            },
+          },
+        });
+
+      return res.status(200).json({
+        ...exam,
+        currentQuestionIndex,
+        currentQuestionIndexInSecondPhase,
+      });
   }
 }

@@ -17,3 +17,13 @@ export const startExam = async (code: string) => {
     body: JSON.stringify({ code }),
   });
 };
+
+export const finishExam = async (examId: string) => {
+  return fetch("/api/exam/finish", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ examId }),
+  });
+};

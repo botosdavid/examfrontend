@@ -16,16 +16,22 @@ const ExamResult = ({ code }: ExamResultProps) => {
     getExamCorrectAnswers(code)
   );
 
+  useEffect(() => {
+    getExamCorrectAnswers(code).then(console.log);
+  }, []);
+
+  if (isLoading) return <CircularProgress />;
+
   const correctAnswersCount = examResult?.exam?.questions?.reduce(
     (sum: number, curr: Question & { selectedAnswers: any }) =>
       sum +
-      Number(curr.correctAnswer === curr.selectedAnswers[0].selectedAnswer),
+      Number(curr.correctAnswer === curr?.selectedAnswers[0]?.selectedAnswer),
     0
   );
 
   const points = examResult?.exam?.questions?.reduce(
     (sum: number, curr: Question & { selectedAnswers: any }) => {
-      const selectedAnswer = curr.selectedAnswers[0].selectedAnswer;
+      const selectedAnswer = curr.selectedAnswers[0]?.selectedAnswer;
       const correct = curr.correctAnswer === selectedAnswer;
       const skipped = selectedAnswer === noSelectedAnswer;
       return sum + (correct ? 1 : skipped ? 0 : -1);
@@ -37,12 +43,6 @@ const ExamResult = ({ code }: ExamResultProps) => {
   const percentage = Math.round(
     (correctAnswersCount / totalAnswersCount) * 100
   );
-
-  useEffect(() => {
-    getExamCorrectAnswers(code).then(console.log);
-  }, []);
-
-  if (isLoading) return <CircularProgress />;
 
   return (
     <s.ExamResultContainer>
@@ -56,10 +56,10 @@ const ExamResult = ({ code }: ExamResultProps) => {
       {examResult.exam.questions.map((question: any, index: number) => (
         <s.QuestionContainer key={index}>
           <s.Points>
-            {question.selectedAnswers[0].selectedAnswer ===
+            {question.selectedAnswers[0]?.selectedAnswer ===
             question.correctAnswer
               ? "+ 1"
-              : question.selectedAnswers[0].selectedAnswer === noSelectedAnswer
+              : question.selectedAnswers[0]?.selectedAnswer === noSelectedAnswer
               ? "+ 0"
               : "- 1"}
           </s.Points>
@@ -70,11 +70,11 @@ const ExamResult = ({ code }: ExamResultProps) => {
             <s.Answer
               correct={index === question.correctAnswer}
               wrong={
-                question.selectedAnswers[0].selectedAnswer === index &&
+                question.selectedAnswers[0]?.selectedAnswer === index &&
                 index !== question.correctAnswer
               }
               right={
-                question.selectedAnswers[0].selectedAnswer === index &&
+                question.selectedAnswers[0]?.selectedAnswer === index &&
                 index === question.correctAnswer
               }
               key={index}

@@ -7,6 +7,7 @@ interface ButtonProps {
   secondary?: boolean;
   small?: boolean;
   selected?: boolean;
+  danger?: boolean;
   onClick: () => void;
 }
 
@@ -16,6 +17,7 @@ const Button = ({
   disabled = false,
   small = false,
   selected = false,
+  danger = false,
   onClick = () => {},
 }: ButtonProps) => {
   return (
@@ -25,6 +27,7 @@ const Button = ({
       disabled={disabled}
       small={small}
       selected={selected}
+      danger={danger}
     >
       {children}
     </s.ButtonContainer>

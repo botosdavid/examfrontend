@@ -5,11 +5,16 @@ interface ButtonProps {
   secondary?: boolean;
   small?: boolean;
   selected?: boolean;
+  danger?: boolean;
 }
 
 export const ButtonContainer = styled.button<ButtonProps>`
   background-color: ${(props) =>
-    props.secondary ? props.theme.grey : props.theme.main};
+    props.secondary
+      ? props.theme.grey
+      : props.danger
+      ? props.theme.red
+      : props.theme.main};
   color: ${(props) => (props.secondary ? props.theme.main : "white")};
   opacity: ${(props) => (props.disabled ? "0.5" : "1")};
   border-radius: 0.5rem;

@@ -54,6 +54,7 @@ export const NextButtonContainer = styled.div`
   align-self: flex-end;
   display: flex;
   justify-content: flex-end;
+  gap: 1rem;
 `;
 
 export const CountdownContainer = styled.div`
@@ -78,10 +79,16 @@ export const Levels = styled.div<LevelProps>`
   align-self: center;
 `;
 
-export const Dot = styled.div<{ current: boolean }>`
+interface DotProps {
+  isCurrent: boolean;
+  isLevel: boolean;
+}
+
+export const Dot = styled.div<DotProps>`
   border-radius: 50%;
-  width: ${(props) => (props.current ? "25px" : "15px")};
-  height: ${(props) => (props.current ? "25px" : "15px")};
+  width: ${(props) => (props.isCurrent ? "25px" : "15px")};
+  height: ${(props) => (props.isCurrent ? "25px" : "15px")};
+  border: ${(props) => (props.isLevel ? "2px solid green" : "none")};
   background-color: #76b947;
   color: white;
   display: flex;

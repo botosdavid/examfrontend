@@ -25,6 +25,7 @@ import StarIcon from "@mui/icons-material/Star";
 import Image from "next/image";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import moment from "moment";
+import { finishExam } from "@/utils/api/patch";
 
 export const noSelectedAnswer = -1;
 
@@ -46,11 +47,9 @@ const Kviz = ({ code, ip }: KvizProps) => {
     isLoading,
     isFetching,
   } = useQuery([currentQuestion, { code }], () => getExamQuestion(code), {
-    onSuccess: (exam) => setIsFinished(!exam?.questions?.length),
-    refetchOnReconnect: false,
+    onSuccess: (exam) =>
+      setIsFinished(exam.subscribers[0].hasFinished || !exam.questions?.length),
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    staleTime: Infinity,
   });
 
   const { data: eliminatedAnswerIndexes } = useQuery(
@@ -106,6 +105,12 @@ const Kviz = ({ code, ip }: KvizProps) => {
     const questionId = exam?.questions[0]?.id;
     selectAnswerMutation.mutate({ questionId, selectedAnswer });
   };
+
+  const finishExamMutation = useMutation(finishExam, {
+    onSuccess: () => queryClient.invalidateQueries(currentQuestion),
+  });
+
+  const handleFinishExam = () => finishExamMutation.mutate(exam.id);
 
   const handleSelectAnswer = (index: number) => {
     if (selectedAnswer === index) return setSelectedAnswer(noSelectedAnswer);
@@ -164,7 +169,13 @@ const Kviz = ({ code, ip }: KvizProps) => {
             <>
               <s.Levels levels={exam.levels}>
                 {exam.levels.split(",").map((level: string, index: number) => (
-                  <s.Dot current={level === "1"} key={index}></s.Dot>
+                  <s.Dot
+                    isLevel={level === "1"}
+                    isCurrent={
+                      index === exam?.currentQuestionIndexInSecondPhase
+                    }
+                    key={index}
+                  ></s.Dot>
                 ))}
               </s.Levels>
               <s.HelpersContainer>
@@ -229,6 +240,11 @@ const Kviz = ({ code, ip }: KvizProps) => {
             ))}
           </s.AnswerButtonsContainer>
           <s.NextButtonContainer>
+            {isInSecondPhase && (
+              <Button danger onClick={handleFinishExam}>
+                Finish Exam
+              </Button>
+            )}
             <Button onClick={handleGoToNextQuestion}>
               {selectedAnswer === noSelectedAnswer ? "Skip" : "Next"}
             </Button>

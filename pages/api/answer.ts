@@ -67,6 +67,14 @@ export default async function handler(
       return res.status(200).json({ exam: examWIthQuestions });
 
     case "POST":
+      const question = await prisma.question.findUnique({
+        where: { id: questionId },
+        include: {
+          exam: { select: { subscribers: { where: { userId } } } },
+        },
+      });
+      if (!question) return res.status(404).json({ isSuccess: false });
+
       await prisma.questionsOnUsers.upsert({
         where: {
           userId_questionId: { userId, questionId },
@@ -81,12 +89,18 @@ export default async function handler(
         },
       });
 
-      const question = await prisma.question.findUnique({
-        where: { id: questionId },
-        select: { examId: true },
-      });
-      if (!question) return res.status(404).json({ isSuccess: false });
+      const isInSecondPhase =
+        question.exam.subscribers[0].group !== question.group;
+      const wasAnswerWrong = question.correctAnswer !== selectedAnswer;
 
-      res.status(200).json({ isSuccess: true });
+      if (isInSecondPhase && wasAnswerWrong) {
+        await prisma.examsOnUsers.update({
+          where: {
+            userId_examId: { examId: question.examId, userId },
+          },
+          data: { hasFinished: true },
+        });
+      }
+      return res.status(200).json({ isSuccess: true });
   }
 }
