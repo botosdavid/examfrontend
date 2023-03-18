@@ -4,7 +4,6 @@ import Layout from "@/components/Layout/Layout";
 import { getCreatedExams } from "@/utils/api/get";
 import { createdExams } from "@/utils/querykeys/querykeys";
 import { CircularProgress } from "@mui/material";
-import { Exam as IExam } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { GetServerSideProps } from "next/types";
 import { useQuery } from "react-query";
@@ -21,8 +20,10 @@ const ManagePage = ({ usersession }: ManagePageProps) => {
   return (
     <Layout usersession={usersession}>
       <h1>Manage your exams</h1>
+      <br />
       <ExamCreator />
-      {exams.map((exam: IExam, index: number) => (
+      <br />
+      {exams.map((exam: ExamListItem, index: number) => (
         <Exam exam={exam} key={index} />
       ))}
     </Layout>

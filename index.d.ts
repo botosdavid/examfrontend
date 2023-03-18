@@ -71,3 +71,7 @@ type Subscription = {
 interface HTMLInputEvent extends Event {
   target: HTMLInputElement & EventTarget;
 }
+
+type ExamListItem = import("@prisma/client").Exam & {
+  _count: { questions: number };
+};

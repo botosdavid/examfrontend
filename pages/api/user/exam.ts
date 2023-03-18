@@ -25,7 +25,17 @@ export default async function handler(
       switch (filter) {
         case "examsSubscribed":
           const user = await prisma.user.findMany({
-            include: { [`${filter}`]: { select: { exam: true } } },
+            include: {
+              [`${filter}`]: {
+                select: {
+                  exam: {
+                    include: {
+                      _count: { select: { questions: true } },
+                    },
+                  },
+                },
+              },
+            },
             where: { id },
           });
           if (!user) return res.status(404);

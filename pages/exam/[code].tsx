@@ -28,6 +28,16 @@ export async function getServerSideProps({
   const usersession = await getServerSession(req, res, authOptions);
   const ip = req.socket.remoteAddress;
   const { code } = query;
+
+  if (!usersession) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
       usersession,

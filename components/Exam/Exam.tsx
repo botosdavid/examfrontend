@@ -1,8 +1,9 @@
 import PlayCircleFilledRoundedIcon from "@mui/icons-material/PlayCircleFilledRounded";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import ScheduleIcon from "@mui/icons-material/Schedule";
-import { Exam as IExam, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { useRouter } from "next/router";
 import Button from "../Button/Button";
 import * as s from "./ExamAtom";
@@ -15,7 +16,7 @@ import { useMutation } from "react-query";
 import { startExam } from "@/utils/api/patch";
 
 interface ExamProps {
-  exam: IExam;
+  exam: ExamListItem;
 }
 
 const Exam = ({ exam }: ExamProps) => {
@@ -46,6 +47,12 @@ const Exam = ({ exam }: ExamProps) => {
     <s.ExamContainer>
       <s.ExamName>{exam.name}</s.ExamName>
       <s.ExamInfoContainer>
+        {exam?._count?.questions && (
+          <s.QuestionCount>
+            {exam._count.questions}
+            <HelpOutlineIcon />
+          </s.QuestionCount>
+        )}
         <Button small secondary onClick={() => setIsInfoModalOpen(true)}>
           <QrCodeScannerIcon />
         </Button>
