@@ -46,3 +46,8 @@ export const Answer = styled.div<AnswerProps>`
       ? "lightgreen"
       : props.theme.grey};
 `;
+
+export const PhaseTitle = styled.div`
+  padding-bottom: 2rem;
+  font-size: 1.2rem;
+`;
