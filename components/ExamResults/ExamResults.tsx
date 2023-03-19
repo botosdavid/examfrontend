@@ -1,8 +1,12 @@
 import { getExamResults } from "@/utils/api/get";
 import { examResults } from "@/utils/querykeys/querykeys";
 import CircularProgress from "@mui/material/CircularProgress";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import PersonIcon from "@mui/icons-material/Person";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
+import * as s from "./ExamResultsAtom";
+import Button from "../Button/Button";
 
 interface ExamResultsProps {
   code: string;
@@ -25,14 +29,24 @@ const ExamResults = ({ code }: ExamResultsProps) => {
     <div>
       Results of {code}
       <h2>Students subscribed</h2>
-      {examResult.exam.subscribers.map((subscriber: any, index: number) => (
-        <div
-          key={index}
-          onClick={() => handleGoToExamResult(code, subscriber.user.id)}
-        >
-          {subscriber.user.neptun} - {subscriber.user.name}
-        </div>
-      ))}
+      <br />
+      <s.SubscriberList>
+        {examResult.exam.subscribers.map((subscriber: any, index: number) => (
+          <s.Subscriber key={index}>
+            <s.SubscriberInfo>
+              <PersonIcon />
+              {subscriber.user.neptun} - {subscriber.user.name}
+            </s.SubscriberInfo>
+            <Button
+              secondary
+              small
+              onClick={() => handleGoToExamResult(code, subscriber.user.id)}
+            >
+              <VisibilityIcon />
+            </Button>
+          </s.Subscriber>
+        ))}
+      </s.SubscriberList>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import ScheduleIcon from "@mui/icons-material/Schedule";
+import BarChartIcon from "@mui/icons-material/BarChart";
 import { Role } from "@prisma/client";
 import { useRouter } from "next/router";
 import Button from "../Button/Button";
@@ -43,6 +44,10 @@ const Exam = ({ exam }: ExamProps) => {
     setIsEditModalOpen(true);
   };
 
+  const handleGoToExamResults = () => {
+    router.push(`/exam/${exam.code}/results`);
+  };
+
   return (
     <s.ExamContainer>
       <s.ExamName>{exam.name}</s.ExamName>
@@ -52,6 +57,11 @@ const Exam = ({ exam }: ExamProps) => {
             {exam._count.questions}
             <HelpOutlineIcon />
           </s.QuestionCount>
+        )}
+        {canEdit && (
+          <Button small secondary onClick={handleGoToExamResults}>
+            <BarChartIcon />
+          </Button>
         )}
         <Button small secondary onClick={() => setIsInfoModalOpen(true)}>
           <QrCodeScannerIcon />
