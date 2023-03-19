@@ -1,5 +1,4 @@
 import Head from "next/head";
-import { signOut } from "next-auth/react";
 import { GetServerSideProps } from "next";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";

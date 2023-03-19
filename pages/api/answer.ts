@@ -22,7 +22,7 @@ export default async function handler(
 ) {
   const {
     body: { questionId, selectedAnswer },
-    query: { code },
+    query: { code, userId: userIdParam },
     method,
   } = req;
 
@@ -42,7 +42,7 @@ export default async function handler(
               answers: true,
               selectedAnswers: {
                 where: {
-                  userId,
+                  userId: userIdParam?.toString(),
                 },
                 select: {
                   selectedAnswer: true,
@@ -52,7 +52,7 @@ export default async function handler(
           },
           subscribers: {
             where: {
-              userId,
+              userId: userIdParam?.toString(),
             },
           },
         },

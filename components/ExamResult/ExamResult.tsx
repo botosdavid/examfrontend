@@ -9,6 +9,7 @@ import { noSelectedAnswer } from "../Kviz/Kviz";
 
 interface ExamResultProps {
   code: string;
+  userId: string;
 }
 
 type ExtendedQuestion = Question & {
@@ -16,13 +17,13 @@ type ExtendedQuestion = Question & {
   answers: Answer[];
 };
 
-const ExamResult = ({ code }: ExamResultProps) => {
+const ExamResult = ({ code, userId }: ExamResultProps) => {
   const { data: examResult, isLoading } = useQuery([resultExam, { code }], () =>
-    getExamCorrectAnswers(code)
+    getExamCorrectAnswers(code, userId)
   );
 
   useEffect(() => {
-    getExamCorrectAnswers(code).then(console.log);
+    getExamCorrectAnswers(code, userId).then(console.log);
   }, []);
 
   if (isLoading) return <CircularProgress />;
@@ -34,7 +35,7 @@ const ExamResult = ({ code }: ExamResultProps) => {
     0
   );
 
-  const totalAnswersCount = examResult?.exam.questions.length;
+  const totalAnswersCount = examResult?.exam?.questions.length;
   const percentage = Math.round(
     (correctAnswersCount / totalAnswersCount) * 100
   );
@@ -44,9 +45,9 @@ const ExamResult = ({ code }: ExamResultProps) => {
   const isInPhaseTwo = (question: Question) =>
     question.group !== examResult.exam.subscribers[0].group;
 
-  const phaseTwoIndex = examResult.exam.questions.findIndex(isInPhaseTwo);
+  const phaseTwoIndex = examResult.exam?.questions.findIndex(isInPhaseTwo);
 
-  const phaseOnePoints = examResult.exam.questions
+  const phaseOnePoints = examResult.exam?.questions
     .filter(isInPhaseOne)
     .reduce(
       (sum: number, curr: Question & { selectedAnswers: SelectedAnswer[] }) => {
@@ -58,7 +59,7 @@ const ExamResult = ({ code }: ExamResultProps) => {
       0
     );
 
-  const wasPhaseTwoMistake = examResult.exam.questions
+  const wasPhaseTwoMistake = examResult.exam?.questions
     .filter(isInPhaseTwo)
     .some(
       (question: ExtendedQuestion) =>
@@ -66,7 +67,7 @@ const ExamResult = ({ code }: ExamResultProps) => {
         question.correctAnswer !== question.selectedAnswers[0].selectedAnswer
     );
 
-  const correctAnswersInPhaseTwo = examResult.exam.questions
+  const correctAnswersInPhaseTwo = examResult.exam?.questions
     .filter(isInPhaseTwo)
     .reduce(
       (acc: number, curr: ExtendedQuestion) =>
@@ -78,7 +79,7 @@ const ExamResult = ({ code }: ExamResultProps) => {
       0
     );
 
-  const getLastReachedLevelIndex = examResult.exam.levels
+  const getLastReachedLevelIndex = examResult.exam?.levels
     .split(",")
     .reduce(
       (acc: number, curr: string, index: number) =>
@@ -133,7 +134,7 @@ const ExamResult = ({ code }: ExamResultProps) => {
       </div>
       <hr />
       <s.PhaseTitle>Phase #1</s.PhaseTitle>
-      {examResult.exam.questions.map(
+      {examResult.exam?.questions.map(
         (question: ExtendedQuestion, index: number) => (
           <div key={index}>
             {index === phaseTwoIndex && <s.PhaseTitle>Phase #2</s.PhaseTitle>}

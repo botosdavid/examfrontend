@@ -13,8 +13,8 @@ export const getExam = async (code: string) => {
   return response.json();
 };
 
-export const getExamCorrectAnswers = async (code: string) => {
-  const response = await fetch(`/api/answer?code=${code}`);
+export const getExamCorrectAnswers = async (code: string, userId: string) => {
+  const response = await fetch(`/api/answer?code=${code}&userId=${userId}`);
   return response.json();
 };
 
@@ -35,5 +35,10 @@ export const getQuestionStatistics = async (id: string) => {
 
 export const getBestAnswer = async (id: string) => {
   const response = await fetch(`/api/question/helper?id=${id}&type=bestanswer`);
+  return response.json();
+};
+
+export const getExamResults = async (code: string) => {
+  const response = await fetch(`/api/exam/results?code=${code}`);
   return response.json();
 };

@@ -1,19 +1,18 @@
-import Kviz from "@/components/Kviz/Kviz";
+import ExamResults from "@/components/ExamResults/ExamResults";
 import Layout from "@/components/Layout/Layout";
 import { GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]";
+import { authOptions } from "../../../api/auth/[...nextauth]";
 
-interface ExamPageProps {
+interface ExamResultsPageProps {
   code: string;
   usersession: UserSession;
-  ip: string;
 }
 
-const ExamPage = ({ code, usersession, ip }: ExamPageProps) => {
+const ExamPage = ({ code, usersession }: ExamResultsPageProps) => {
   return (
     <Layout usersession={usersession}>
-      <Kviz code={code} ip={ip} />
+      <ExamResults code={code} />
     </Layout>
   );
 };
@@ -26,7 +25,6 @@ export async function getServerSideProps({
   res,
 }: GetServerSidePropsContext) {
   const usersession = await getServerSession(req, res, authOptions);
-  const ip = req.socket.remoteAddress;
   const { code } = query;
 
   if (!usersession) {
@@ -42,7 +40,6 @@ export async function getServerSideProps({
     props: {
       usersession,
       code,
-      ip,
     },
   };
 }

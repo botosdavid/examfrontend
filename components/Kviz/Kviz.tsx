@@ -32,9 +32,10 @@ export const noSelectedAnswer = -1;
 interface KvizProps {
   code: string;
   ip: string;
+  userId: string;
 }
 
-const Kviz = ({ code, ip }: KvizProps) => {
+const Kviz = ({ code, ip, userId }: KvizProps) => {
   const [showHalving, setShowHalving] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
   const [showBestAnswer, setShowBestAnswer] = useState(false);
@@ -145,7 +146,7 @@ const Kviz = ({ code, ip }: KvizProps) => {
         Code: {code}
       </s.Info>
       {isFinished ? (
-        <ExamResult code={code} />
+        <ExamResult code={code} userId={userId} />
       ) : (
         <>
           <s.CountdownContainer>
