@@ -36,6 +36,7 @@ export const QuestionContainer = styled.div`
   padding: 2rem;
   border-radius: 2rem;
   box-shadow: ${(props) => props.theme.boxShadow};
+  text-align: center;
 `;
 
 interface AnswerProps {
@@ -61,4 +62,5 @@ export const Answer = styled.div<AnswerProps>`
 export const PhaseTitle = styled.div`
   padding-bottom: 2rem;
   font-size: 1.2rem;
+  text-align: center;
 `;

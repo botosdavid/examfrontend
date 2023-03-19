@@ -83,7 +83,7 @@ const ExamResult = ({ code, userId }: ExamResultProps) => {
     .split(",")
     .reduce(
       (acc: number, curr: string, index: number) =>
-        curr && index < correctAnswersInPhaseTwo ? index : acc,
+        Number(curr) && index < correctAnswersInPhaseTwo ? index + 1 : acc,
       0
     );
 

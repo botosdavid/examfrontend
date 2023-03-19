@@ -121,7 +121,7 @@ const Kviz = ({ code, ip, userId }: KvizProps) => {
   const countdownDuration = useMemo(
     () =>
       moment(exam?.date)
-        .add(exam?.currentQuestionIndex * 60, "seconds")
+        .add((exam?.currentQuestionIndex + 1) * 60, "seconds")
         .diff(moment(new Date()).add(1, "hours"), "seconds"),
     [exam]
   );
