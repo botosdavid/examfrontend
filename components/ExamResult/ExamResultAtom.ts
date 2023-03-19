@@ -7,7 +7,18 @@ export const ExamResultContainer = styled.div`
   gap: 3rem;
 `;
 
-export const Title = styled.h2`
+export const Title = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3rem;
+  span {
+    opacity: 0.5;
+    font-size: 80%;
+  }
+`;
+
+export const TitleResult = styled.h2`
   font-weight: bold;
 `;
 

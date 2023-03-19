@@ -34,16 +34,6 @@ const ExamResult = ({ code }: ExamResultProps) => {
     0
   );
 
-  const points = examResult?.exam?.questions?.reduce(
-    (sum: number, curr: Question & { selectedAnswers: SelectedAnswer[] }) => {
-      const selectedAnswer = curr.selectedAnswers[0]?.selectedAnswer;
-      const correct = curr.correctAnswer === selectedAnswer;
-      const skipped = selectedAnswer === noSelectedAnswer;
-      return sum + (correct ? 1 : skipped ? 0 : -1);
-    },
-    0
-  );
-
   const totalAnswersCount = examResult?.exam.questions.length;
   const percentage = Math.round(
     (correctAnswersCount / totalAnswersCount) * 100
@@ -100,16 +90,46 @@ const ExamResult = ({ code }: ExamResultProps) => {
     ? getLastReachedLevelIndex
     : correctAnswersInPhaseTwo;
 
+  const point = (question: ExtendedQuestion) => {
+    const selectedAnswer = question.selectedAnswers[0]?.selectedAnswer;
+    if (isInPhaseOne(question)) {
+      switch (selectedAnswer) {
+        case question.correctAnswer:
+          return "+ 1";
+        case noSelectedAnswer:
+          return "+ 0";
+        default:
+          return "- 1";
+      }
+    }
+    switch (selectedAnswer) {
+      case question.correctAnswer:
+        return "+ 1";
+      default:
+        return "";
+    }
+  };
+
   return (
     <s.ExamResultContainer>
       <div>
         <s.Title>
-          Correct answers: {correctAnswersCount} / {totalAnswersCount}
+          <span>Correct answers:</span>
+          <s.TitleResult>
+            {correctAnswersCount} / {totalAnswersCount}
+          </s.TitleResult>
         </s.Title>
-        <s.Title>Percentage: {percentage}%</s.Title>
-        <s.Title>Points: {points}</s.Title>
-        <s.Title>Phase #1: {phaseOnePoints}</s.Title>
-        <s.Title>Phase #2: {phaseTwoPoints}</s.Title>
+        <s.Title>
+          <span>Percentage:</span> <s.TitleResult>{percentage} %</s.TitleResult>
+        </s.Title>
+        <s.Title>
+          <span>Phase #1:</span>{" "}
+          <s.TitleResult>{phaseOnePoints} pts</s.TitleResult>
+        </s.Title>
+        <s.Title>
+          <span>Phase #2:</span>{" "}
+          <s.TitleResult>{phaseTwoPoints} pts</s.TitleResult>
+        </s.Title>
       </div>
       <hr />
       <s.PhaseTitle>Phase #1</s.PhaseTitle>
@@ -118,15 +138,7 @@ const ExamResult = ({ code }: ExamResultProps) => {
           <div key={index}>
             {index === phaseTwoIndex && <s.PhaseTitle>Phase #2</s.PhaseTitle>}
             <s.QuestionContainer>
-              <s.Points>
-                {question.selectedAnswers[0]?.selectedAnswer ===
-                question.correctAnswer
-                  ? "+ 1"
-                  : question.selectedAnswers[0]?.selectedAnswer ===
-                    noSelectedAnswer
-                  ? "+ 0"
-                  : "- 1"}
-              </s.Points>
+              <s.Points>{point(question)}</s.Points>
               <s.QuestionText>
                 {index + 1}.- {question.text}
               </s.QuestionText>
