@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useQuery } from "react-query";
 import * as s from "./ExamResultAtom";
 import { noSelectedAnswer } from "../Kviz/Kviz";
+import moment from "moment";
 
 interface ExamResultProps {
   code: string;
@@ -27,6 +28,14 @@ const ExamResult = ({ code, userId }: ExamResultProps) => {
   }, []);
 
   if (isLoading) return <CircularProgress />;
+
+  const questionCount = examResult?.exam?.questions?.length;
+  const timeTillExamEnd = moment(examResult?.exam?.date)
+    .add(questionCount * 60, "seconds")
+    .diff(moment(new Date()).add(1, "hours"), "seconds");
+
+  if (timeTillExamEnd > 0)
+    return <div>Result can be seen only after the exam ended.</div>;
 
   const correctAnswersCount = examResult?.exam?.questions?.reduce(
     (sum: number, curr: Question & { selectedAnswers: SelectedAnswer[] }) =>
