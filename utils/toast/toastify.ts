@@ -42,3 +42,9 @@ export const notifyCopiedToClipboard = () =>
     type: "success",
     hideProgressBar: true,
   });
+
+export const notifyRegistered = () =>
+  toast("Registered successfully!", {
+    position: "top-center",
+    type: "success",
+  });

@@ -22,6 +22,10 @@ import * as s from "./ExamCreatorModalAtom";
 import CustomSwitch from "../CustomSwitch/CustomSwitch";
 import { uploadImages } from "@/utils/firebase/upload";
 import Image from "next/image";
+import { examCreateSchema } from "@/utils/validation/schema";
+import { ZodFormattedError } from "zod";
+import FormHelperText from "@mui/material/FormHelperText";
+import type { examCreateSchemaType } from "../../utils/validation/schema";
 
 const defaultAnswerCount = 4;
 
@@ -35,6 +39,8 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   const [date, setDate] = useState<Moment | null>(moment.utc(exam?.date));
   const [questions, setQuestions] = useState<CreateQuestion[]>([]);
   const [levels, setLevels] = useState<number[]>([]);
+  const [errors, setErrors] =
+    useState<ZodFormattedError<examCreateSchemaType>>();
 
   const levelsMinCount = Math.min(
     questions.filter(({ group }) => group === Group.A).length,
@@ -190,7 +196,24 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
     );
   };
 
-  if (isLoading) return <CircularProgress />;
+  const handleSubmit = () => {
+    const result = examCreateSchema.safeParse({
+      name,
+      date,
+      levels,
+      questions,
+    });
+    if (!result.success) return setErrors(result.error.format());
+    uploadImagesMutation.mutate(questions);
+  };
+
+  if (
+    isLoading ||
+    uploadImagesMutation.isLoading ||
+    createExamMutation.isLoading ||
+    updateExamMutation.isLoading
+  )
+    return <CircularProgress />;
 
   return (
     <Modal
@@ -216,6 +239,8 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
         label="Exam Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
+        error={!!errors?.name?._errors?.[0]}
+        helperText={errors?.name?._errors?.[0]}
       />
       Select the right answer for every question by clicking on it.
       {questions.map((question, index) => (
@@ -250,6 +275,8 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
             label={`${index + 1}. Question`}
             value={question.text}
             onChange={(e) => handleQuestionChange(e, index)}
+            error={!!errors?.questions?.[index]?.text?._errors?.[0]}
+            helperText={errors?.questions?.[index]?.text?._errors?.[0]}
           />
           <CustomInput
             type="file"
@@ -263,6 +290,14 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
               value={answer.text}
               onChange={(e) => handleAnswerChange(e, index, answerIndex)}
               onClick={() => handleCorrectAnswerChange(index, answerIndex)}
+              error={
+                !!errors?.questions?.[index]?.answers?.[answerIndex]?.text
+                  ?._errors?.[0]
+              }
+              helperText={
+                errors?.questions?.[index]?.answers?.[answerIndex]?.text
+                  ?._errors?.[0]
+              }
             />
           ))}
         </s.QuestionContainer>
@@ -270,6 +305,9 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
       <Button secondary onClick={handleAddQuestion}>
         Add Question
       </Button>
+      {errors?.questions?._errors?.[0] && (
+        <FormHelperText error>{errors?.questions?._errors?.[0]}</FormHelperText>
+      )}
       Where should the levels be?
       {levels.map((level, index) => (
         <div key={index}>
@@ -280,9 +318,10 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
           />
         </div>
       ))}
-      <Button onClick={() => uploadImagesMutation.mutate(questions)}>
-        {exam ? "Update" : "Create"}
-      </Button>
+      {errors?.levels?._errors?.[0] && (
+        <FormHelperText error>{errors?.levels?._errors?.[0]}</FormHelperText>
+      )}
+      <Button onClick={handleSubmit}>{exam ? "Update" : "Create"}</Button>
     </Modal>
   );
 };

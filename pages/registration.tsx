@@ -10,6 +10,11 @@ import { createUser } from "@/utils/api/post";
 import { useRouter } from "next/router";
 import CustomInput from "@/components/CustomInput/CustomInput";
 
+import { registrationSchema } from "@/utils/validation/schema";
+import type { registrationSchemaType } from "@/utils/validation/schema";
+import { ZodFormattedError } from "zod";
+import { notifyRegistered } from "@/utils/toast/toastify";
+
 interface RegistrationPageProps {
   session: Session;
 }
@@ -20,38 +25,56 @@ const Registration = ({ session }: RegistrationPageProps) => {
   const [neptun, setNeptun] = useState("");
   const [password, setPassword] = useState("");
   const [isTeacher, setIsTeacher] = useState(false);
+  const [errors, setErrors] =
+    useState<ZodFormattedError<registrationSchemaType>>();
 
   const createUserMutation = useMutation(createUser, {
     onSuccess: () => {
+      notifyRegistered();
       router.push("/login");
     },
   });
+
+  const handleSubmit = () => {
+    const result = registrationSchema.safeParse({
+      name,
+      neptun,
+      password,
+      isTeacher,
+    });
+    if (!result.success) return setErrors(result.error.format());
+    createUserMutation.mutate({ name, neptun, password, isTeacher });
+  };
 
   return (
     <AuthPage
       title={"Register"}
       confirmButtonLabel={"Sign Up"}
-      confirmButtonOnClick={() =>
-        createUserMutation.mutate({ name, neptun, password, isTeacher })
-      }
+      confirmButtonOnClick={handleSubmit}
     >
       <CustomInput
         type="text"
         placeholder="Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
+        error={!!errors?.name?._errors?.[0]}
+        helperText={errors?.name?._errors?.[0]}
       />
       <CustomInput
         type="text"
         placeholder="Neptun"
         value={neptun}
         onChange={(e) => setNeptun(e.target.value)}
+        error={!!errors?.neptun?._errors?.[0]}
+        helperText={errors?.neptun?._errors?.[0]}
       />
       <CustomInput
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        error={!!errors?.password?._errors?.[0]}
+        helperText={errors?.password?._errors?.[0]}
       />
       <FormControlLabel
         control={

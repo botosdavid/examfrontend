@@ -7,12 +7,12 @@ interface CustomInputProps {
 
 const CustomInput = styled(TextField)<CustomInputProps>(
   ({ theme, selected }) => ({
-    backgroundColor: `${selected ? "lightgreen" : "white"}`,
+    backgroundColor: `${selected ? "lightgreen" : "transparent"}`,
     ".css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused": {
       color: `${theme.main}`,
     },
     "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: `${theme.main} !important`,
+      borderColor: `${theme.main}`,
     },
     "& .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input": {
       color: `${theme.main}`,
