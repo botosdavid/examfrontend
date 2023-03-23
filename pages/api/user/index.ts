@@ -24,7 +24,7 @@ export default async function handler(
       const password = await bcrypt.hash(req.body.password, salt);
       const role = isTeacher ? Role.TEACHER : Role.STUDENT;
       const user = await prisma.user.findFirst({ where: { neptun } });
-      if (user) return res.status(401);
+      if (user) return res.status(404).json({ isSuccess: false });
 
       await prisma.user.create({
         data: {

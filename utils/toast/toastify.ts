@@ -48,3 +48,9 @@ export const notifyRegistered = () =>
     position: "top-center",
     type: "success",
   });
+
+export const notifyNeptunAlreadyExists = () =>
+  toast("Neptun already exists!", {
+    position: "top-center",
+    type: "error",
+  });

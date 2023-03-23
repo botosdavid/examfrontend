@@ -13,7 +13,11 @@ import CustomInput from "@/components/CustomInput/CustomInput";
 import { registrationSchema } from "@/utils/validation/schema";
 import type { registrationSchemaType } from "@/utils/validation/schema";
 import { ZodFormattedError } from "zod";
-import { notifyRegistered } from "@/utils/toast/toastify";
+import {
+  notifyNeptunAlreadyExists,
+  notifyRegistered,
+} from "@/utils/toast/toastify";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface RegistrationPageProps {
   session: Session;
@@ -26,10 +30,14 @@ const Registration = ({ session }: RegistrationPageProps) => {
   const [password, setPassword] = useState("");
   const [isTeacher, setIsTeacher] = useState(false);
   const [errors, setErrors] =
-    useState<ZodFormattedError<registrationSchemaType>>();
+    useState<ZodFormattedError<registrationSchemaType> | null>();
 
   const createUserMutation = useMutation(createUser, {
-    onSuccess: () => {
+    onSuccess: (res) => {
+      if (res.status === 404) {
+        notifyNeptunAlreadyExists();
+        return;
+      }
       notifyRegistered();
       router.push("/login");
     },
@@ -43,8 +51,11 @@ const Registration = ({ session }: RegistrationPageProps) => {
       isTeacher,
     });
     if (!result.success) return setErrors(result.error.format());
+    setErrors(null);
     createUserMutation.mutate({ name, neptun, password, isTeacher });
   };
+
+  if (createUserMutation.isLoading) return <CircularProgress />;
 
   return (
     <AuthPage

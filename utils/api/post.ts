@@ -1,17 +1,13 @@
 import moment from "moment";
 
 export const createUser = async (user: RegistrationCredentials) => {
-  try {
-    await fetch("/api/user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    });
-  } catch (error) {
-    console.error(error);
-  }
+  return await fetch("/api/user", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  });
 };
 
 export const createExam = async ({
