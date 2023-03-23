@@ -7,23 +7,30 @@ import { getServerSession, Session } from "next-auth";
 import { notifyInvalidCredentials } from "@/utils/toast/toastify";
 import CustomInput from "@/components/CustomInput/CustomInput";
 import Link from "next/link";
+import { loginSchema, loginSchemaType } from "@/utils/validation/schema";
+import { ZodFormattedError } from "zod";
 interface LoginPageProps {
   session: Session;
 }
 
-const handleLoginIn = async (credentials: LoginCredentials) => {
-  const { ok } = (await signIn("credentials", {
-    ...credentials,
-    redirect: false,
-  })) as SignInResponse;
-
-  if (!ok) return notifyInvalidCredentials();
-  window.location.replace("/");
-};
-
 const Login = ({ session }: LoginPageProps) => {
   const [neptun, setNeptun] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] =
+    useState<ZodFormattedError<loginSchemaType> | null>();
+
+  const handleLoginIn = async (credentials: LoginCredentials) => {
+    const validate = loginSchema.safeParse(credentials);
+    if (!validate.success) return setErrors(validate.error.format());
+    setErrors(null);
+    const { ok } = (await signIn("credentials", {
+      ...credentials,
+      redirect: false,
+    })) as SignInResponse;
+
+    if (!ok) return notifyInvalidCredentials();
+    window.location.replace("/");
+  };
 
   return (
     <AuthPage
@@ -36,12 +43,16 @@ const Login = ({ session }: LoginPageProps) => {
         label="Neptun"
         value={neptun}
         onChange={(e) => setNeptun(e.target.value)}
+        error={!!errors?.neptun?._errors?.[0]}
+        helperText={errors?.neptun?._errors?.[0]}
       />
       <CustomInput
         type="password"
         label="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        error={!!errors?.password?._errors?.[0]}
+        helperText={errors?.password?._errors?.[0]}
       />
       <Link href={"/registration"}>Haven&apos;t got an account yet?</Link>
     </AuthPage>
