@@ -7,9 +7,17 @@ import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 import * as s from "./ExamResultsAtom";
 import Button from "../Button/Button";
+import { Bar } from "react-chartjs-2";
+import "chart.js/auto";
+import { theme } from "@/styles/theme";
 
 interface ExamResultsProps {
   code: string;
+}
+
+interface QuestionCorrectAnswers {
+  index: number;
+  correctAnswerCount: number;
 }
 
 const ExamResults = ({ code }: ExamResultsProps) => {
@@ -28,6 +36,30 @@ const ExamResults = ({ code }: ExamResultsProps) => {
   return (
     <div>
       Results of {code}
+      <Bar
+        width={10}
+        height={2}
+        datasetIdKey="1"
+        data={{
+          labels: examResult.questionsCorrectAnswers.map(
+            (question: QuestionCorrectAnswers) =>
+              `Question ${question.index + 1}`
+          ),
+          datasets: [
+            {
+              label: "Correct answers for questions",
+              data: examResult.questionsCorrectAnswers.map(
+                (question: QuestionCorrectAnswers) =>
+                  question.correctAnswerCount
+              ),
+              backgroundColor: theme.chartBackgroundColor,
+              borderColor: theme.chartBorderColor,
+              borderWidth: 1,
+            },
+          ],
+        }}
+      />
+      <br />
       <h2>Students subscribed</h2>
       <br />
       <s.SubscriberList>
