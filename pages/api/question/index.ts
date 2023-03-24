@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { Exam, ExamsOnUsers, Group } from "@prisma/client";
+import moment from "moment";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import prisma from "../../../prisma/lib/prismadb";
@@ -29,7 +30,11 @@ export default async function handler(
     case "GET":
       const examInfo = await prisma.exam.findUnique({
         where: { code: code?.toString() },
-        select: { id: true, _count: { select: { questions: true } } },
+        select: {
+          id: true,
+          date: true,
+          _count: { select: { questions: true } },
+        },
       });
       if (!examInfo) return res.status(404);
 
@@ -39,6 +44,17 @@ export default async function handler(
           question: { examId: examInfo.id },
         },
       });
+
+      const currentQuestionIndexByTime = moment(new Date())
+        .add(1, "hours")
+        .diff(moment(examInfo?.date), "minutes");
+
+      if (currentQuestionIndexByTime > currentQuestionIndex) {
+        await prisma.examsOnUsers.update({
+          where: { userId_examId: { userId: user.id, examId: examInfo.id } },
+          data: { hasFinished: true },
+        });
+      }
 
       const questionsOrder = await prisma.examsOnUsers.findUnique({
         where: {
