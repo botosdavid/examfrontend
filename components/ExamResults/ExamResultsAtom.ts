@@ -24,3 +24,10 @@ export const SubscriberInfo = styled.div`
   align-items: center;
   gap: 1rem;
 `;
+
+export const Chart = styled.div`
+  position: relative;
+  margin: auto;
+  height: 30vh;
+  width: 100%;
+`;

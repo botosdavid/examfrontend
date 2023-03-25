@@ -36,7 +36,7 @@ const Home = ({ usersession }: HomePageProps) => {
         <ExamSubscriber />
         <br />
         {exams.map((exam: ExamListItem, index: number) => (
-          <Exam exam={exam} key={index} />
+          <Exam exam={exam} isSubscribed key={index} />
         ))}
       </Layout>
     </>

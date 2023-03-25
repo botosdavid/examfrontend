@@ -34,8 +34,10 @@ export default async function handler(
         },
       });
 
-      if (!exam) return res.status(404);
-      if (exam.subscribers[0].questionsOrder)
+      if (!exam || !exam.subscribers.length)
+        return res.status(404).json({ isSuccess: false });
+
+      if (exam.subscribers?.[0]?.questionsOrder)
         return res.json({ isSuccess: true });
 
       const questionsIndexGroups = exam.questions.reduce(

@@ -29,7 +29,12 @@ const getQuestionsCorrectAnswers = async (examId: string) => {
         acc + Number(curr.selectedAnswer === question.correctAnswer),
       0
     );
-    return { index, correctAnswerCount, group: question.group };
+    return {
+      index,
+      correctAnswerCount,
+      group: question.group,
+      text: question.text,
+    };
   });
 };
 

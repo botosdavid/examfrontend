@@ -18,6 +18,7 @@ interface ExamResultsProps {
 interface QuestionCorrectAnswers {
   index: number;
   correctAnswerCount: number;
+  text: string;
 }
 
 const ExamResults = ({ code }: ExamResultsProps) => {
@@ -33,32 +34,46 @@ const ExamResults = ({ code }: ExamResultsProps) => {
     router.push(`/exam/${code}/results/${userId}`);
   };
 
+  const options = {
+    plugins: {
+      tooltip: {
+        callbacks: {
+          footer: (tooltipItem: any) =>
+            examResult.questionsCorrectAnswers[tooltipItem[0].parsed.x].text,
+        },
+      },
+    },
+  };
+
   return (
     <div>
       Results of {code}
-      <Bar
-        width={10}
-        height={2}
-        datasetIdKey="1"
-        data={{
-          labels: examResult.questionsCorrectAnswers.map(
-            (question: QuestionCorrectAnswers) =>
-              `Question ${question.index + 1}`
-          ),
-          datasets: [
-            {
-              label: "Correct answers for questions",
-              data: examResult.questionsCorrectAnswers.map(
-                (question: QuestionCorrectAnswers) =>
-                  question.correctAnswerCount
-              ),
-              backgroundColor: theme.chartBackgroundColor,
-              borderColor: theme.chartBorderColor,
-              borderWidth: 1,
-            },
-          ],
-        }}
-      />
+      <s.Chart>
+        <Bar
+          options={options}
+          width={10}
+          height={2}
+          datasetIdKey="1"
+          data={{
+            labels: examResult.questionsCorrectAnswers.map(
+              (question: QuestionCorrectAnswers) =>
+                `Question ${question.index + 1}`
+            ),
+            datasets: [
+              {
+                label: "Correct answers for questions",
+                data: examResult.questionsCorrectAnswers.map(
+                  (question: QuestionCorrectAnswers) =>
+                    question.correctAnswerCount
+                ),
+                backgroundColor: theme.chartBackgroundColor,
+                borderColor: theme.chartBorderColor,
+                borderWidth: 1,
+              },
+            ],
+          }}
+        />
+      </s.Chart>
       <br />
       <h2>Students subscribed</h2>
       <br />

@@ -18,9 +18,10 @@ import { startExam } from "@/utils/api/patch";
 
 interface ExamProps {
   exam: ExamListItem;
+  isSubscribed?: boolean;
 }
 
-const Exam = ({ exam }: ExamProps) => {
+const Exam = ({ exam, isSubscribed }: ExamProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
@@ -71,7 +72,7 @@ const Exam = ({ exam }: ExamProps) => {
             <EditRoundedIcon />
           </Button>
         )}
-        {hasStarted && (
+        {isSubscribed && hasStarted && (
           <Button
             small
             secondary

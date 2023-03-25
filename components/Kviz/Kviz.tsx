@@ -49,7 +49,9 @@ const Kviz = ({ code, ip, userId }: KvizProps) => {
     isFetching,
   } = useQuery([currentQuestion, { code }], () => getExamQuestion(code), {
     onSuccess: (exam) =>
-      setIsFinished(exam.subscribers[0].hasFinished || !exam.questions?.length),
+      setIsFinished(
+        exam.subscribers?.[0]?.hasFinished || !exam.questions?.length
+      ),
     refetchOnWindowFocus: false,
   });
 
