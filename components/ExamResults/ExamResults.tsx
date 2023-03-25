@@ -18,6 +18,7 @@ interface ExamResultsProps {
 interface QuestionCorrectAnswers {
   index: number;
   correctAnswerCount: number;
+  skippedAnswerCount: number;
   text: string;
 }
 
@@ -35,6 +36,13 @@ const ExamResults = ({ code }: ExamResultsProps) => {
   };
 
   const options = {
+    scales: {
+      y: {
+        ticks: {
+          precision: 0,
+        },
+      },
+    },
     plugins: {
       tooltip: {
         callbacks: {
@@ -65,6 +73,16 @@ const ExamResults = ({ code }: ExamResultsProps) => {
                 data: examResult.questionsCorrectAnswers.map(
                   (question: QuestionCorrectAnswers) =>
                     question.correctAnswerCount
+                ),
+                backgroundColor: theme.chartBackgroundColor,
+                borderColor: theme.chartBorderColor,
+                borderWidth: 1,
+              },
+              {
+                label: "Skipped answers for questions",
+                data: examResult.questionsCorrectAnswers.map(
+                  (question: QuestionCorrectAnswers) =>
+                    question.skippedAnswerCount
                 ),
                 backgroundColor: theme.chartBackgroundColor,
                 borderColor: theme.chartBorderColor,

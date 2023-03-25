@@ -4,12 +4,14 @@ import prisma from "../../../prisma/lib/prismadb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
 import { Exam } from "@prisma/client";
+import { noSelectedAnswer } from "@/components/Kviz/Kviz";
 
 type Response = {
   exam?: Partial<Exam>;
   questionsCorrectAnswers?: {
     index: number;
     correctAnswerCount: number;
+    skippedAnswerCount: number;
     group: string;
   }[];
   isSuccess: boolean;
@@ -29,9 +31,14 @@ const getQuestionsCorrectAnswers = async (examId: string) => {
         acc + Number(curr.selectedAnswer === question.correctAnswer),
       0
     );
+    const skippedAnswerCount = question.selectedAnswers.reduce(
+      (acc, curr) => acc + Number(curr.selectedAnswer === noSelectedAnswer),
+      0
+    );
     return {
       index,
       correctAnswerCount,
+      skippedAnswerCount,
       group: question.group,
       text: question.text,
     };
