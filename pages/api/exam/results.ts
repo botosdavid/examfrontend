@@ -8,12 +8,7 @@ import { noSelectedAnswer } from "@/components/Kviz/Kviz";
 
 type Response = {
   exam?: Partial<Exam>;
-  questionsCorrectAnswers?: {
-    index: number;
-    correctAnswerCount: number;
-    skippedAnswerCount: number;
-    group: string;
-  }[];
+  questionsCorrectAnswers?: QuestionStatistics[];
   isSuccess: boolean;
 };
 
@@ -35,10 +30,16 @@ const getQuestionsCorrectAnswers = async (examId: string) => {
       (acc, curr) => acc + Number(curr.selectedAnswer === noSelectedAnswer),
       0
     );
+    const wrongAnswerCount = question.selectedAnswers.reduce(
+      (acc, curr) =>
+        acc + Number(curr.selectedAnswer !== question.correctAnswer),
+      0
+    );
     return {
       index,
       correctAnswerCount,
       skippedAnswerCount,
+      wrongAnswerCount,
       group: question.group,
       text: question.text,
     };

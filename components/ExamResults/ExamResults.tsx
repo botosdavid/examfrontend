@@ -15,13 +15,6 @@ interface ExamResultsProps {
   code: string;
 }
 
-interface QuestionCorrectAnswers {
-  index: number;
-  correctAnswerCount: number;
-  skippedAnswerCount: number;
-  text: string;
-}
-
 const ExamResults = ({ code }: ExamResultsProps) => {
   const router = useRouter();
 
@@ -64,28 +57,34 @@ const ExamResults = ({ code }: ExamResultsProps) => {
           datasetIdKey="1"
           data={{
             labels: examResult.questionsCorrectAnswers.map(
-              (question: QuestionCorrectAnswers) =>
-                `Question ${question.index + 1}`
+              (question: QuestionStatistics) => `Question ${question.index + 1}`
             ),
             datasets: [
               {
                 label: "Correct answers for questions",
                 data: examResult.questionsCorrectAnswers.map(
-                  (question: QuestionCorrectAnswers) =>
-                    question.correctAnswerCount
+                  (question: QuestionStatistics) => question.correctAnswerCount
                 ),
-                backgroundColor: theme.chartBackgroundColor,
-                borderColor: theme.chartBorderColor,
+                backgroundColor: theme.greenChart.color,
+                borderColor: theme.greenChart.border,
                 borderWidth: 1,
               },
               {
                 label: "Skipped answers for questions",
                 data: examResult.questionsCorrectAnswers.map(
-                  (question: QuestionCorrectAnswers) =>
-                    question.skippedAnswerCount
+                  (question: QuestionStatistics) => question.skippedAnswerCount
                 ),
-                backgroundColor: theme.chartBackgroundColor,
-                borderColor: theme.chartBorderColor,
+                backgroundColor: theme.yellowChart.color,
+                borderColor: theme.yellowChart.border,
+                borderWidth: 1,
+              },
+              {
+                label: "Wrong answers for questions",
+                data: examResult.questionsCorrectAnswers.map(
+                  (question: QuestionStatistics) => question.wrongAnswerCount
+                ),
+                backgroundColor: theme.redChart.color,
+                borderColor: theme.redChart.border,
                 borderWidth: 1,
               },
             ],

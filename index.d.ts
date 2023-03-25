@@ -75,3 +75,12 @@ interface HTMLInputEvent extends Event {
 type ExamListItem = import("@prisma/client").Exam & {
   _count: { questions: number };
 };
+
+interface QuestionStatistics {
+  index: number;
+  correctAnswerCount: number;
+  skippedAnswerCount: number;
+  wrongAnswerCount: number;
+  text: string;
+  group?: import("@prisma/client").Group;
+}
