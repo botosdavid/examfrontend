@@ -18,6 +18,7 @@ import {
   notifyRegistered,
 } from "@/utils/toast/toastify";
 import CircularProgress from "@mui/material/CircularProgress";
+import Link from "next/link";
 
 interface RegistrationPageProps {
   session: Session;
@@ -96,6 +97,7 @@ const Registration = ({ session }: RegistrationPageProps) => {
         }
         label="I'm a teacher"
       />
+      <Link href={"/login"}>Already have an account?</Link>
     </AuthPage>
   );
 };

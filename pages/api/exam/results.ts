@@ -35,7 +35,11 @@ const getQuestionsCorrectAnswers = async (examId: string) => {
     );
     const wrongAnswerCount = question.selectedAnswers.reduce(
       (acc, curr) =>
-        acc + Number(curr.selectedAnswer !== question.correctAnswer),
+        acc +
+        Number(
+          curr.selectedAnswer !== question.correctAnswer &&
+            curr.selectedAnswer !== noSelectedAnswer
+        ),
       0
     );
     return {

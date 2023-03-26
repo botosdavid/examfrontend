@@ -11,7 +11,7 @@ export const PageContainer = styled.div`
 
 export const CredentialsContainer = styled.div`
   width: 30vw;
-  height: 70vh;
+  height: 80vh;
   padding: 3rem;
   display: flex;
   align-items: center;
