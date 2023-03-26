@@ -11,4 +11,8 @@ export const theme = {
     border: "rgb(255, 205, 86)",
   },
   greenChart: { color: "rgba(75, 192, 192, 0.2)", border: "rgb(75, 192, 192)" },
+  orangeChart: {
+    color: "rgba(255, 159, 64, 0.2)",
+    border: "rgb(255, 159, 64)",
+  },
 };

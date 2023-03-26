@@ -14,6 +14,9 @@ const CustomInput = styled(TextField)<CustomInputProps>(
     "& .MuiOutlinedInput-notchedOutline": {
       borderColor: `${theme.main}`,
     },
+    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: `${theme.main}`,
+    },
     "& .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input": {
       color: `${theme.main}`,
     },

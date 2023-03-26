@@ -7,9 +7,10 @@ import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 import * as s from "./ExamResultsAtom";
 import Button from "../Button/Button";
-import { Bar } from "react-chartjs-2";
+import { Bar, Doughnut, getElementAtEvent } from "react-chartjs-2";
 import "chart.js/auto";
 import { theme } from "@/styles/theme";
+import { useRef, useState } from "react";
 
 interface ExamResultsProps {
   code: string;
@@ -17,6 +18,8 @@ interface ExamResultsProps {
 
 const ExamResults = ({ code }: ExamResultsProps) => {
   const router = useRouter();
+  const barChartRef = useRef();
+  const [questionIndex, setQuestionIndex] = useState(0);
 
   const { data: examResult, isLoading } = useQuery(examResults, () =>
     getExamResults(code)
@@ -45,12 +48,32 @@ const ExamResults = ({ code }: ExamResultsProps) => {
       },
     },
   };
+  const doughnutChartOptions: any = {
+    plugins: {
+      legend: { position: "right" },
+      tooltip: {
+        callbacks: {
+          footer: (tooltipItem: any) =>
+            examResult.questionsCorrectAnswers[questionIndex].answers[
+              tooltipItem[0].dataIndex
+            ].text,
+        },
+      },
+    },
+  };
+
+  const handleBarChartClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!getElementAtEvent(barChartRef.current!, e).length) return;
+    setQuestionIndex(getElementAtEvent(barChartRef.current!, e)[0].index);
+  };
 
   return (
     <div>
       Results of {code}
       <s.Chart>
         <Bar
+          ref={barChartRef}
+          onClick={handleBarChartClick}
           options={options}
           width={10}
           height={2}
@@ -85,6 +108,32 @@ const ExamResults = ({ code }: ExamResultsProps) => {
                 ),
                 backgroundColor: theme.redChart.color,
                 borderColor: theme.redChart.border,
+                borderWidth: 1,
+              },
+            ],
+          }}
+        />
+      </s.Chart>
+      <s.Chart>
+        <Doughnut
+          options={doughnutChartOptions}
+          data={{
+            labels: ["Answer 1", "Answer 2", "Answer 3", "Answer 4"],
+            datasets: [
+              {
+                data: examResult.allQuestionStatistics[questionIndex],
+                backgroundColor: [
+                  theme.redChart.color,
+                  theme.yellowChart.color,
+                  theme.greenChart.color,
+                  theme.orangeChart.color,
+                ],
+                borderColor: [
+                  theme.redChart.border,
+                  theme.yellowChart.border,
+                  theme.greenChart.border,
+                  theme.orangeChart.border,
+                ],
                 borderWidth: 1,
               },
             ],

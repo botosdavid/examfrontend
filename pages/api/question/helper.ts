@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import prisma from "../../../prisma/lib/prismadb";
 import { authOptions } from "../auth/[...nextauth]";
 import { getPointSum } from "@/utils/functions/functions";
+import { noSelectedAnswer } from "@/components/Kviz/Kviz";
 
 const hasHalving = "hasHalving";
 const hasStatistics = "hasStatistics";
@@ -15,6 +16,25 @@ type Response = {
   statistics?: number[];
   bestAnswer?: number;
   isSuccess?: boolean;
+};
+
+export const getQuestionStatistics = async (questionId: string) => {
+  const questionStatistics = await prisma.questionsOnUsers.findMany({
+    where: {
+      questionId,
+    },
+    select: { selectedAnswer: true },
+  });
+
+  return questionStatistics.reduce(
+    (acc, curr) => {
+      if (curr.selectedAnswer !== noSelectedAnswer) {
+        acc[curr.selectedAnswer]++;
+      }
+      return acc;
+    },
+    [0, 0, 0, 0]
+  );
 };
 
 export default async function handler(
@@ -66,20 +86,7 @@ export default async function handler(
           return res.status(200).json({ eliminatedAnswerIndexes });
 
         case "statistics":
-          const questionStatistics = await prisma.questionsOnUsers.findMany({
-            where: {
-              questionId: id?.toString(),
-            },
-            select: { selectedAnswer: true },
-          });
-
-          const statistics = questionStatistics.reduce(
-            (acc, curr) => {
-              acc[curr.selectedAnswer]++;
-              return acc;
-            },
-            [0, 0, 0, 0]
-          );
+          const statistics = await getQuestionStatistics(id?.toString()!);
 
           const questionExam = await prisma.question.findUnique({
             where: { id: id?.toString() },

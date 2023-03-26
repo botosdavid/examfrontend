@@ -5,10 +5,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
 import { Exam } from "@prisma/client";
 import { noSelectedAnswer } from "@/components/Kviz/Kviz";
+import { getQuestionStatistics } from "../question/helper";
 
 type Response = {
   exam?: Partial<Exam>;
   questionsCorrectAnswers?: QuestionStatistics[];
+  allQuestionStatistics?: any;
   isSuccess: boolean;
 };
 
@@ -18,6 +20,7 @@ const getQuestionsCorrectAnswers = async (examId: string) => {
     where: { examId },
     include: {
       selectedAnswers: true,
+      answers: { select: { text: true } },
     },
   });
   return questions.map((question, index) => {
@@ -42,6 +45,7 @@ const getQuestionsCorrectAnswers = async (examId: string) => {
       wrongAnswerCount,
       group: question.group,
       text: question.text,
+      answers: question.answers,
     };
   });
 };
@@ -65,6 +69,7 @@ export default async function handler(
         select: {
           id: true,
           subscribers: { select: { user: true } },
+          questions: { select: { id: true, answers: true } },
         },
       });
       if (!examResults) return res.status(404).json({ isSuccess: false });
@@ -73,8 +78,17 @@ export default async function handler(
         examResults.id
       );
 
-      return res
-        .status(200)
-        .json({ exam: examResults, questionsCorrectAnswers, isSuccess: true });
+      const allQuestionStatistics = await Promise.all(
+        examResults.questions.map((question) =>
+          getQuestionStatistics(question.id)
+        )
+      );
+
+      return res.status(200).json({
+        exam: examResults,
+        questionsCorrectAnswers,
+        allQuestionStatistics,
+        isSuccess: true,
+      });
   }
 }

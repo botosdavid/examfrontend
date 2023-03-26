@@ -227,13 +227,13 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
         inputFormat="MM/DD/YYYY"
         value={date}
         onChange={handleDateChange}
-        renderInput={(params) => <TextField {...params} />}
+        renderInput={(params) => <CustomInput {...params} />}
       />
       <TimePicker
         label="Time"
         value={date}
         onChange={handleDateChange}
-        renderInput={(params) => <TextField {...params} />}
+        renderInput={(params) => <CustomInput {...params} />}
       />
       <CustomInput
         label="Exam Name"
