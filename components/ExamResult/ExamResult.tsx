@@ -30,9 +30,11 @@ const ExamResult = ({ code, userId }: ExamResultProps) => {
   if (isLoading) return <CircularProgress />;
 
   const questionCount = examResult?.exam?.questions?.length;
-  const timeTillExamEnd = moment(examResult?.exam?.date)
-    .add(questionCount * 60, "seconds")
-    .diff(moment(new Date()).add(1, "hours"), "seconds");
+  const timeTillExamEnd = moment
+    .utc(examResult?.exam?.date)
+    .startOf("minute")
+    .add(questionCount, "minutes")
+    .diff(moment.utc(new Date()), "seconds");
 
   if (timeTillExamEnd > 0)
     return <div>Result can be seen only after the exam ended.</div>;

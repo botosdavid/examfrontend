@@ -24,7 +24,7 @@ export const createExam = async ({
       },
       body: JSON.stringify({
         name,
-        date: moment(date),
+        date: moment.utc(date),
         questions,
         levels: levels.join(","),
       }),

@@ -25,11 +25,8 @@ const Exam = ({ exam, isSubscribed }: ExamProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
-  const currentDate = moment(new Date())
-    .add(1, "hours")
-    .toISOString()
-    .slice(0, 16);
-  const examDate = exam.date.toString().slice(0, 16);
+  const currentDate = moment.utc(new Date()).startOf("minute");
+  const examDate = moment.utc(exam.date).startOf("minute");
   const hasStarted = currentDate >= examDate;
   const router = useRouter();
   const session: AuthSession = useSession();
@@ -81,7 +78,7 @@ const Exam = ({ exam, isSubscribed }: ExamProps) => {
             <PlayCircleFilledRoundedIcon />
           </Button>
         )}
-        <s.ExamDate>{moment(examDate).format("YY/MM/DD HH:mm")}</s.ExamDate>
+        <s.ExamDate>{examDate.local().format("YY/MM/DD HH:mm")}</s.ExamDate>
         <ScheduleIcon />
       </s.ExamInfoContainer>
       {isEditModalOpen && (

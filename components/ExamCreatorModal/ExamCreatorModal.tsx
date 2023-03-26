@@ -9,7 +9,7 @@ import {
 import Button from "../Button/Button";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { CircularProgress, TextField } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import moment, { Moment } from "moment";
 import { queryClient } from "@/pages/_app";
 import { useMutation, useQuery } from "react-query";
@@ -36,7 +36,9 @@ interface ExamCreatorModalProps {
 
 const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   const [name, setName] = useState(exam?.name || "");
-  const [date, setDate] = useState<Moment | null>(moment.utc(exam?.date));
+  const [date, setDate] = useState<Moment | null>(
+    moment.utc(exam?.date).local()
+  );
   const [questions, setQuestions] = useState<CreateQuestion[]>([]);
   const [levels, setLevels] = useState<number[]>([]);
   const [errors, setErrors] =

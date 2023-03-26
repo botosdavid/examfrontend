@@ -15,7 +15,7 @@ export const updateExam = async ({
     body: JSON.stringify({
       name,
       code,
-      date: moment(date),
+      date: moment.utc(date),
       questions,
       levels: levels.join(","),
     }),

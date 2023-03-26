@@ -45,9 +45,10 @@ export default async function handler(
         },
       });
 
-      const currentQuestionIndexByTime = moment(new Date())
-        .add(1, "hours")
-        .diff(moment(examInfo?.date), "minutes");
+      const currentQuestionIndexByTime = moment
+        .utc(new Date())
+        .startOf("minute")
+        .diff(moment.utc(examInfo?.date).startOf("minute"), "minutes");
 
       if (currentQuestionIndexByTime > currentQuestionIndex) {
         await prisma.examsOnUsers.update({
