@@ -1,4 +1,5 @@
 import { notifyCopiedToClipboard } from "@/utils/toast/toastify";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { Exam } from "@prisma/client";
 import QRCode from "react-qr-code";
 import Modal from "../Modal/Modal";
@@ -17,7 +18,10 @@ const copyToClipboard = (text: string) => {
 const ExamInfoModal = ({ exam, onClose }: ExamInfoModal) => {
   return (
     <Modal height="60vh" onClose={onClose}>
-      <s.Code onClick={() => copyToClipboard(exam.code)}>{exam.code}</s.Code>
+      <s.Code onClick={() => copyToClipboard(exam.code)}>
+        {exam.code}
+        <ContentCopyIcon />
+      </s.Code>
       <QRCode
         size={256}
         style={{ height: "auto", maxWidth: "100%", width: "70%" }}

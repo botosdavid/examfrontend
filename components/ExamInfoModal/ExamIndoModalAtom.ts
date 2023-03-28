@@ -5,6 +5,9 @@ export const Code = styled.h2`
   background-color: white;
   padding: 0.5rem 2rem;
   border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 
   &:hover {
     color: ${(props) => props.theme.main};
