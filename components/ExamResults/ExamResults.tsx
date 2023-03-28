@@ -139,6 +139,27 @@ const ExamResults = ({ code }: ExamResultsProps) => {
             ],
           }}
         />
+        <s.Highlights>
+          <s.HighlightElement>
+            Highest:
+            <s.HighlightValue>
+              {examResult.correctAnswersHighlight.highest}
+            </s.HighlightValue>
+          </s.HighlightElement>
+          <s.HighlightElement>
+            Average:
+            <s.HighlightValue>
+              {examResult.correctAnswersHighlight.sum /
+                examResult.correctAnswersHighlight.count}
+            </s.HighlightValue>
+          </s.HighlightElement>
+          <s.HighlightElement>
+            Lowerst:
+            <s.HighlightValue>
+              {examResult.correctAnswersHighlight.lowest}
+            </s.HighlightValue>
+          </s.HighlightElement>
+        </s.Highlights>
       </s.Chart>
       <br />
       <h2>Students subscribed</h2>

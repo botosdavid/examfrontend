@@ -6,11 +6,13 @@ import { authOptions } from "../auth/[...nextauth]";
 import { Exam } from "@prisma/client";
 import { noSelectedAnswer } from "@/components/Kviz/Kviz";
 import { getQuestionStatistics } from "../question/helper";
+import { getPointSum } from "@/utils/functions/functions";
 
 type Response = {
   exam?: Partial<Exam>;
   questionsCorrectAnswers?: QuestionStatistics[];
   allQuestionStatistics?: any;
+  correctAnswersHighlight?: any;
   isSuccess: boolean;
 };
 
@@ -54,6 +56,45 @@ const getQuestionsCorrectAnswers = async (examId: string) => {
   });
 };
 
+const getCorrectAnswersHighlight = async (examId: string) => {
+  const examData = await prisma.exam.findUnique({
+    where: { id: examId },
+    select: {
+      subscribers: {
+        select: {
+          questionsOrder: true,
+          user: {
+            select: {
+              selectedAnswers: {
+                where: {
+                  question: { examId },
+                },
+                include: { question: true },
+              },
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!examData?.subscribers.length)
+    return { highest: 0, lowerst: 0, sum: 0, count: 1 };
+
+  const highestCorrectAnswerCount = examData.subscribers.reduce(
+    (acc, curr) => {
+      const userCorrectAnswerCount = getPointSum(curr.user.selectedAnswers);
+      const highest = Math.max(userCorrectAnswerCount, acc.highest);
+      const lowest = Math.min(userCorrectAnswerCount, acc.lowest);
+      const sum = acc.sum + userCorrectAnswerCount;
+      const count = acc.count + Number(!!curr.questionsOrder?.length);
+      return { highest, lowest, sum, count };
+    },
+    { highest: 0, lowest: Infinity, sum: 0, count: 0 }
+  );
+  return highestCorrectAnswerCount;
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Response>
@@ -88,10 +129,15 @@ export default async function handler(
         )
       );
 
+      const correctAnswersHighlight = await getCorrectAnswersHighlight(
+        examResults.id
+      );
+
       return res.status(200).json({
         exam: examResults,
         questionsCorrectAnswers,
         allQuestionStatistics,
+        correctAnswersHighlight,
         isSuccess: true,
       });
   }

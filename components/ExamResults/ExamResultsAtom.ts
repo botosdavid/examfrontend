@@ -26,8 +26,37 @@ export const SubscriberInfo = styled.div`
 `;
 
 export const Chart = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   position: relative;
   margin: auto;
   height: 30vh;
   width: 100%;
+`;
+
+export const Highlights = styled.div`
+  width: 30%;
+  height: 80%;
+  color: white;
+  background-color: ${(props) => props.theme.main};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 2rem;
+  box-shadow: ${(props) => props.theme.boxShadow};
+`;
+
+export const HighlightValue = styled.span`
+  font-weight: bold;
+  font-size: 1.3rem;
+`;
+
+export const HighlightElement = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 40%;
 `;
