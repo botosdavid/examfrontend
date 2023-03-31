@@ -27,12 +27,12 @@ export const SubscriberInfo = styled.div`
 
 export const Chart = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   position: relative;
   margin: auto;
   height: 30vh;
-  width: 100%;
+  width: 95%;
 `;
 
 export const Highlights = styled.div`
@@ -52,11 +52,14 @@ export const Highlights = styled.div`
 export const HighlightValue = styled.span`
   font-weight: bold;
   font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 `;
 
 export const HighlightElement = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 40%;
+  width: 60%;
 `;

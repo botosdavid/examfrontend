@@ -2,6 +2,7 @@ import { getExamResults } from "@/utils/api/get";
 import { examResults } from "@/utils/querykeys/querykeys";
 import CircularProgress from "@mui/material/CircularProgress";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import CheckIcon from "@mui/icons-material/Check";
 import PersonIcon from "@mui/icons-material/Person";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
@@ -68,7 +69,7 @@ const ExamResults = ({ code }: ExamResultsProps) => {
   };
 
   return (
-    <div>
+    <>
       Results of {code}
       <s.Chart>
         <Bar
@@ -144,19 +145,22 @@ const ExamResults = ({ code }: ExamResultsProps) => {
             Highest:
             <s.HighlightValue>
               {examResult.correctAnswersHighlight.highest}
+              <CheckIcon />
             </s.HighlightValue>
           </s.HighlightElement>
           <s.HighlightElement>
             Average:
             <s.HighlightValue>
               {examResult.correctAnswersHighlight.sum /
-                examResult.correctAnswersHighlight.count}
+                (examResult.correctAnswersHighlight.count || 1)}
+              <CheckIcon />
             </s.HighlightValue>
           </s.HighlightElement>
           <s.HighlightElement>
             Lowerst:
             <s.HighlightValue>
               {examResult.correctAnswersHighlight.lowest}
+              <CheckIcon />
             </s.HighlightValue>
           </s.HighlightElement>
         </s.Highlights>
@@ -181,7 +185,7 @@ const ExamResults = ({ code }: ExamResultsProps) => {
           </s.Subscriber>
         ))}
       </s.SubscriberList>
-    </div>
+    </>
   );
 };
 
