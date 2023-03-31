@@ -10,6 +10,9 @@ export const ExamContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   margin: 0.4rem 0;
+  &:nth-child(even) {
+    background-color: ${(props) => props.theme.lightMain};
+  }
 `;
 
 export const ExamName = styled.div`

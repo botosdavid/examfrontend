@@ -26,6 +26,7 @@ import { examCreateSchema } from "@/utils/validation/schema";
 import { ZodFormattedError } from "zod";
 import FormHelperText from "@mui/material/FormHelperText";
 import type { examCreateSchemaType } from "../../utils/validation/schema";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const defaultAnswerCount = 4;
 
@@ -43,6 +44,8 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   const [levels, setLevels] = useState<number[]>([]);
   const [errors, setErrors] =
     useState<ZodFormattedError<examCreateSchemaType>>();
+
+  const [animationParent] = useAutoAnimate();
 
   const levelsMinCount = Math.min(
     questions.filter(({ group }) => group === Group.A).length,
@@ -245,65 +248,67 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
         helperText={errors?.name?._errors?.[0]}
       />
       Select the right answer for every question by clicking on it.
-      {questions.map((question, index) => (
-        <s.QuestionContainer key={index}>
-          {(question.imageFile?.name || question.image) && (
-            <Image
-              alt=""
-              width="400"
-              height="100"
-              style={{ gridColumn: "span 2", objectFit: "cover" }}
-              unoptimized
-              src={
-                question.imageFile?.name
-                  ? URL.createObjectURL(question.imageFile)
-                  : question.image
-              }
-            />
-          )}
-          <s.QuestionEditContainer>
-            <b>A</b>
-            <CustomSwitch
-              checked={question.group === Group.B}
-              onChange={() => handleQuestionGroupChange(index)}
-            />
-            <b>B</b>
-            <Button onClick={() => handleDeleteQuestion(index)} secondary>
-              <DeleteRoundedIcon />
-            </Button>
-          </s.QuestionEditContainer>
-          <br />
-          <CustomInput
-            label={`${index + 1}. Question`}
-            value={question.text}
-            onChange={(e) => handleQuestionChange(e, index)}
-            error={!!errors?.questions?.[index]?.text?._errors?.[0]}
-            helperText={errors?.questions?.[index]?.text?._errors?.[0]}
-          />
-          <CustomInput
-            type="file"
-            onChange={(e) => handleImageChange(index, e)}
-          />
-          {question.answers.map((answer, answerIndex) => (
+      <div ref={animationParent}>
+        {questions.map((question, index) => (
+          <s.QuestionContainer key={index}>
+            {(question.imageFile?.name || question.image) && (
+              <Image
+                alt=""
+                width="400"
+                height="100"
+                style={{ gridColumn: "span 2", objectFit: "cover" }}
+                unoptimized
+                src={
+                  question.imageFile?.name
+                    ? URL.createObjectURL(question.imageFile)
+                    : question.image
+                }
+              />
+            )}
+            <s.QuestionEditContainer>
+              <b>A</b>
+              <CustomSwitch
+                checked={question.group === Group.B}
+                onChange={() => handleQuestionGroupChange(index)}
+              />
+              <b>B</b>
+              <Button onClick={() => handleDeleteQuestion(index)} secondary>
+                <DeleteRoundedIcon />
+              </Button>
+            </s.QuestionEditContainer>
+            <br />
             <CustomInput
-              selected={answerIndex === question.correctAnswer}
-              key={answerIndex}
-              placeholder={`${answerIndex + 1}. Answer`}
-              value={answer.text}
-              onChange={(e) => handleAnswerChange(e, index, answerIndex)}
-              onClick={() => handleCorrectAnswerChange(index, answerIndex)}
-              error={
-                !!errors?.questions?.[index]?.answers?.[answerIndex]?.text
-                  ?._errors?.[0]
-              }
-              helperText={
-                errors?.questions?.[index]?.answers?.[answerIndex]?.text
-                  ?._errors?.[0]
-              }
+              label={`${index + 1}. Question`}
+              value={question.text}
+              onChange={(e) => handleQuestionChange(e, index)}
+              error={!!errors?.questions?.[index]?.text?._errors?.[0]}
+              helperText={errors?.questions?.[index]?.text?._errors?.[0]}
             />
-          ))}
-        </s.QuestionContainer>
-      ))}
+            <CustomInput
+              type="file"
+              onChange={(e) => handleImageChange(index, e)}
+            />
+            {question.answers.map((answer, answerIndex) => (
+              <CustomInput
+                selected={answerIndex === question.correctAnswer}
+                key={answerIndex}
+                placeholder={`${answerIndex + 1}. Answer`}
+                value={answer.text}
+                onChange={(e) => handleAnswerChange(e, index, answerIndex)}
+                onClick={() => handleCorrectAnswerChange(index, answerIndex)}
+                error={
+                  !!errors?.questions?.[index]?.answers?.[answerIndex]?.text
+                    ?._errors?.[0]
+                }
+                helperText={
+                  errors?.questions?.[index]?.answers?.[answerIndex]?.text
+                    ?._errors?.[0]
+                }
+              />
+            ))}
+          </s.QuestionContainer>
+        ))}
+      </div>
       <Button secondary onClick={handleAddQuestion}>
         Add Question
       </Button>
