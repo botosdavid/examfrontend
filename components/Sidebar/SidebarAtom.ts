@@ -94,7 +94,7 @@ export const MinimizeButton = styled.button`
   align-items: center;
   justify-content: center;
   color: ${(props) => props.theme.lightMain};
-  z-index: 10;
+  z-index: 1;
   position: absolute;
   top: 20px;
   right: -15px;

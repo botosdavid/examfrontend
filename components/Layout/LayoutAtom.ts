@@ -11,4 +11,8 @@ export const LayoutContainer = styled.div`
 export const Content = styled.div`
   padding: 3rem;
   width: 100%;
+
+  @media ${(props) => props.theme.device.mobile} {
+    padding: 1rem;
+  }
 `;
