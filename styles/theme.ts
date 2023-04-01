@@ -1,3 +1,9 @@
+const size = {
+  mobile: "768px",
+  tablet: "1100px",
+  desktop: "2560px",
+};
+
 export const theme = {
   grey: "rgba(242,241,251,255)",
   lightGrey: "rgba(249,248,252,255)",
@@ -15,5 +21,11 @@ export const theme = {
   orangeChart: {
     color: "rgba(255, 159, 64, 0.2)",
     border: "rgb(255, 159, 64)",
+  },
+
+  device: {
+    mobile: `(max-width: ${size.mobile})`,
+    tablet: `(max-width: ${size.tablet})`,
+    desktop: `(max-width: ${size.desktop})`,
   },
 };

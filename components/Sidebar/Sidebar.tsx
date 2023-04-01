@@ -2,11 +2,14 @@ import { Role } from "@prisma/client";
 import * as s from "./SidebarAtom";
 import MenuItem from "../MenuItem/MenuItem";
 import SchoolIcon from "@mui/icons-material/School";
-import GradeIcon from "@mui/icons-material/Grade";
 import WorkHistoryIcon from "@mui/icons-material/WorkHistory";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Button from "../Button/Button";
 import { signOut } from "next-auth/react";
+import { useState } from "react";
+import Image from "next/image";
 
 interface SidebarProps {
   usersession: UserSession;
@@ -15,17 +18,21 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ usersession }: SidebarProps) => {
+  const [isMinimized, setIsMinimized] = useState(false);
+
   const canManageExams =
     usersession.user.role === Role.TEACHER ||
     usersession.user.role === Role.ADMIN;
 
   return (
-    <s.SidebarContainer>
+    <s.SidebarContainer isMinimized={isMinimized}>
       <s.SidebarContentContainer>
-        <s.Logo>Logo</s.Logo>
+        <Image src={"/eltelogo.png"} width={100} height={40} alt="logo" />
+        <s.MinimizeButton onClick={() => setIsMinimized((prev) => !prev)}>
+          {isMinimized ? <KeyboardArrowRightIcon /> : <KeyboardArrowLeftIcon />}
+        </s.MinimizeButton>
         <s.MenuItemsContainer>
           <MenuItem label={"Exams"} link={"/"} Icon={<SchoolIcon />} />
-          <MenuItem label={"Grades"} link={"/grades"} Icon={<GradeIcon />} />
           {canManageExams && (
             <MenuItem
               label={"Manage"}
@@ -37,7 +44,8 @@ const Sidebar = ({ usersession }: SidebarProps) => {
 
         <s.LogoutButton>
           <Button secondary onClick={signOut}>
-            <LogoutIcon /> Logout
+            <LogoutIcon />
+            <span>Logout</span>
           </Button>
         </s.LogoutButton>
       </s.SidebarContentContainer>

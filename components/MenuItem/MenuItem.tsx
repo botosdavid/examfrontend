@@ -20,7 +20,7 @@ const MenuItem = ({ label, link = "/", Icon }: MenuItemProps) => {
     <Link href={link} style={{ textDecoration: "none" }}>
       <s.MenuItemContainer active={isActivePage}>
         {Icon}
-        {label}
+        <s.Label>{label}</s.Label>
       </s.MenuItemContainer>
     </Link>
   );
