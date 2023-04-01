@@ -1,4 +1,5 @@
 import * as s from "./ExamCreatorAtom";
+import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import ExamCreatorModal from "../ExamCreatorModal/ExamCreatorModal";
 import Button from "../Button/Button";
@@ -8,6 +9,7 @@ const ExamCreator = () => {
   return (
     <>
       <Button secondary onClick={() => setIsModalOpen(true)}>
+        <AddIcon />
         Create new exam
       </Button>
       {isModalOpen && (

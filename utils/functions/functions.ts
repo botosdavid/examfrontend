@@ -18,3 +18,9 @@ export const getPointSum = (selectedAnswers: SelectedAnswer[]) => {
     0
   );
 };
+
+export const search = (exams: ExamListItem[], searchQuery: string) => {
+  return exams.filter((exam: ExamListItem) =>
+    exam.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+};

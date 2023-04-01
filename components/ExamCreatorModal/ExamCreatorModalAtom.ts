@@ -5,6 +5,10 @@ export const QuestionContainer = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 0.3rem;
   width: 100%;
+
+  @media ${(props) => props.theme.device.tablet} {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const QuestionEditContainer = styled.div`

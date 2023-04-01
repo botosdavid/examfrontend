@@ -17,7 +17,7 @@ const copyToClipboard = (text: string) => {
 
 const ExamInfoModal = ({ exam, onClose }: ExamInfoModal) => {
   return (
-    <Modal height="60vh" onClose={onClose}>
+    <Modal height="60vh" width="50vw" onClose={onClose}>
       <s.Code onClick={() => copyToClipboard(exam.code)}>
         {exam.code}
         <ContentCopyIcon />

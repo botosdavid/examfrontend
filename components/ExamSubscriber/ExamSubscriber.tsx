@@ -1,5 +1,6 @@
 import * as s from "./ExamSubscriberAtom";
 import { useState } from "react";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import AuthCode from "react-auth-code-input";
 import Modal from "../Modal/Modal";
 import { notifySubscribedSuccessfully } from "@/utils/toast/toastify";
@@ -13,7 +14,10 @@ const ExamSubscriber = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <>
-      <Button onClick={() => setIsModalOpen(true)}>Add Exam</Button>
+      <Button onClick={() => setIsModalOpen(true)}>
+        <NotificationsNoneIcon />
+        Add Exam
+      </Button>
       {isModalOpen && (
         <ExamSubscriberModal onClose={() => setIsModalOpen(false)} />
       )}

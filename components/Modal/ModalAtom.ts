@@ -30,10 +30,13 @@ export const ModalContainer = styled.div<ModalContainerProps>`
   flex-direction: column;
   align-items: center;
   gap: 2rem;
-
   background-color: ${(props) => props.theme.grey};
   color: ${(props) => props.theme.fontColor};
   overflow: scroll;
+
+  @media ${(props) => props.theme.device.mobile} {
+    width: 90vw;
+  }
 `;
 
 export const ModalTitle = styled.h3`
