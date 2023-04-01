@@ -151,8 +151,10 @@ const ExamResults = ({ code }: ExamResultsProps) => {
           <s.HighlightElement>
             Average:
             <s.HighlightValue>
-              {examResult.correctAnswersHighlight.sum /
-                (examResult.correctAnswersHighlight.count || 1)}
+              {(
+                examResult.correctAnswersHighlight.sum /
+                (examResult.correctAnswersHighlight.count || 1)
+              ).toFixed(2)}
               <CheckIcon />
             </s.HighlightValue>
           </s.HighlightElement>

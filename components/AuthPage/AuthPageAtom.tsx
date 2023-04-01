@@ -18,6 +18,10 @@ export const CredentialsContainer = styled.div`
   justify-content: center;
   border-radius: 1rem;
   background-color: white;
+
+  @media ${(props) => props.theme.device.mobile} {
+    width: 90vw;
+  }
 `;
 
 export const CredentialsBox = styled.div`

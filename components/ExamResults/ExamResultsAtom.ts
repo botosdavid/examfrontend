@@ -11,6 +11,10 @@ export const Subscriber = styled.div`
   button {
     padding: 0;
   }
+
+  @media ${(props) => props.theme.device.mobile} {
+    padding: 0.3rem 0.6rem;
+  }
 `;
 
 export const SubscriberList = styled.div`
@@ -33,6 +37,11 @@ export const Chart = styled.div`
   margin: auto;
   height: 30vh;
   width: 95%;
+
+  @media ${(props) => props.theme.device.mobile} {
+    flex-direction: column;
+    height: auto;
+  }
 `;
 
 export const Highlights = styled.div`
@@ -47,6 +56,11 @@ export const Highlights = styled.div`
   gap: 0.5rem;
   border-radius: 2rem;
   box-shadow: ${(props) => props.theme.boxShadow};
+
+  @media ${(props) => props.theme.device.mobile} {
+    width: 100%;
+    padding: 1rem;
+  }
 `;
 
 export const HighlightValue = styled.span`
