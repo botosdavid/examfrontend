@@ -7,3 +7,4 @@ export const questionHalving = "questionHalving";
 export const questionStatistics = "questionStatistics";
 export const questionBestAnswer = "questionBestAnswer";
 export const examResults = "examResults";
+export const ipAddress = "ipAddress";

@@ -17,7 +17,7 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions);
   const {
-    body: { name, code, questions, date, levels },
+    body: { name, code, questions, date, levels, ip },
     method,
     query,
   } = req;
@@ -52,6 +52,7 @@ export default async function handler(
           date,
           code: newCode,
           levels,
+          ip,
           questions: {
             create: formatedQuestions,
           },
@@ -114,6 +115,7 @@ export default async function handler(
       await prisma.exam.update({
         where: { code },
         data: {
+          ip,
           name,
           date,
           levels,

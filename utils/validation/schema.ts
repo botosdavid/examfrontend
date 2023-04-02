@@ -11,6 +11,10 @@ export const examCreateSchema = z.object({
     .array()
     .min(2, { message: "Minimum 2 levels are required" })
     .max(10, { message: "Maximum number of levels is 10" }),
+  ip: z.union([
+    z.literal(""),
+    z.string().trim().ip({ version: "v4", message: "Invalid IPv4 format" }),
+  ]),
   questions: z
     .object({
       text: z

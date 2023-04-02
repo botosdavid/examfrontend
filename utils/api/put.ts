@@ -1,11 +1,9 @@
 import moment from "moment";
 
 export const updateExam = async ({
-  name,
-  code,
   date,
-  questions,
   levels,
+  ...examInfo
 }: CreateExam & { code: string }) => {
   return fetch("/api/exam", {
     method: "PUT",
@@ -13,11 +11,9 @@ export const updateExam = async ({
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name,
-      code,
       date: moment.utc(date),
-      questions,
       levels: levels.join(","),
+      ...examInfo,
     }),
   });
 };

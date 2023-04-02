@@ -27,6 +27,7 @@ import { ZodFormattedError } from "zod";
 import FormHelperText from "@mui/material/FormHelperText";
 import type { examCreateSchemaType } from "../../utils/validation/schema";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import AddIcon from "@mui/icons-material/Add";
 
 const defaultAnswerCount = 4;
 
@@ -42,6 +43,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   );
   const [questions, setQuestions] = useState<CreateQuestion[]>([]);
   const [levels, setLevels] = useState<number[]>([]);
+  const [ip, setIp] = useState("");
   const [errors, setErrors] =
     useState<ZodFormattedError<examCreateSchemaType>>();
 
@@ -74,6 +76,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
         setLevels(
           data?.levels.split(",").map((level: string) => Number(level))
         );
+        setIp(data.ip);
       },
     }
   );
@@ -102,6 +105,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
             date,
             questions,
             levels,
+            ip,
           })
         : updateExamMutation.mutate({
             code: exam.code,
@@ -109,6 +113,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
             levels,
             name,
             date,
+            ip,
           }),
   });
 
@@ -207,6 +212,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
       date,
       levels,
       questions,
+      ip,
     });
     if (!result.success) return setErrors(result.error.format());
     uploadImagesMutation.mutate(questions);
@@ -240,6 +246,13 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
             onChange={(e) => setName(e.target.value)}
             error={!!errors?.name?._errors?.[0]}
             helperText={errors?.name?._errors?.[0]}
+          />
+          <CustomInput
+            label="Allowed IP address"
+            value={ip}
+            onChange={(e) => setIp(e.target.value)}
+            error={!!errors?.ip?._errors?.[0]}
+            helperText={errors?.ip?._errors?.[0]}
           />
           Select the right answer for every question by clicking on it.
           <div ref={animationParent}>
@@ -306,6 +319,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
             ))}
           </div>
           <Button secondary onClick={handleAddQuestion}>
+            <AddIcon />
             Add Question
           </Button>
           {errors?.questions?._errors?.[0] && (

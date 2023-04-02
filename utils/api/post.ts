@@ -10,12 +10,7 @@ export const createUser = async (user: RegistrationCredentials) => {
   });
 };
 
-export const createExam = async ({
-  name,
-  date,
-  questions,
-  levels,
-}: CreateExam) => {
+export const createExam = async ({ date, levels, ...examInfo }: CreateExam) => {
   try {
     await fetch("/api/exam", {
       method: "POST",
@@ -23,10 +18,9 @@ export const createExam = async ({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name,
         date: moment.utc(date),
-        questions,
         levels: levels.join(","),
+        ...examInfo,
       }),
     });
   } catch (error) {

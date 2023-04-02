@@ -4,10 +4,12 @@ import {
   getQuestionHalving,
   getQuestionStatistics,
   getBestAnswer,
+  getIpAddress,
 } from "@/utils/api/get";
 import { createSelectedAnswer } from "@/utils/api/post";
 import {
   currentQuestion,
+  ipAddress,
   questionBestAnswer,
   questionHalving,
   questionStatistics,
@@ -31,17 +33,18 @@ export const noSelectedAnswer = -1;
 
 interface KvizProps {
   code: string;
-  ip: string;
   userId: string;
 }
 
-const Kviz = ({ code, ip, userId }: KvizProps) => {
+const Kviz = ({ code, userId }: KvizProps) => {
   const [showHalving, setShowHalving] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
   const [showBestAnswer, setShowBestAnswer] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [selectedAnswer, setSelectedAnswer] =
     useState<number>(noSelectedAnswer);
+
+  const ipQuery = useQuery(ipAddress, getIpAddress);
 
   const {
     data: exam,
@@ -130,9 +133,9 @@ const Kviz = ({ code, ip, userId }: KvizProps) => {
     [exam]
   );
 
-  if (isLoading || isFetching) return <CircularProgress />;
+  if (isLoading || isFetching || ipQuery.isLoading) return <CircularProgress />;
 
-  if (exam?.ip && exam?.ip !== ip)
+  if (!isFinished && exam?.ip && exam?.ip !== ipQuery?.data?.ip)
     return <div>Cannot access exam from this IP address</div>;
 
   if (!exam?.subscribers?.length)

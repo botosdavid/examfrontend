@@ -42,3 +42,8 @@ export const getExamResults = async (code: string) => {
   const response = await fetch(`/api/exam/results?code=${code}`);
   return response.json();
 };
+
+export const getIpAddress = async () => {
+  const response = await fetch("https://api.ipify.org/?format=json");
+  return response.json();
+};

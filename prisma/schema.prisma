@@ -53,6 +53,7 @@ model Exam {
     code        String         @unique
     subscribers ExamsOnUsers[]
     levels      String         @default("0")
+    ip          String         @default("")
     createdAt   DateTime       @default(now())
 
     @@index([authorId])
