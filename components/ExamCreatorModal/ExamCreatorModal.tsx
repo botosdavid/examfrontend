@@ -213,12 +213,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   };
 
   return (
-    <Modal
-      title="Enter New Exam Details"
-      width="60vw"
-      height="90vh"
-      onClose={onClose}
-    >
+    <Modal title="Exam Details" width="60vw" height="90vh" onClose={onClose}>
       {isLoading ||
       uploadImagesMutation.isLoading ||
       createExamMutation.isLoading ||

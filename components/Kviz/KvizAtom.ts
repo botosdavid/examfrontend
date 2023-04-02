@@ -16,6 +16,10 @@ export const KvizContainer = styled.div`
     height: 2.5rem;
     width: 20%;
   }
+
+  @media ${(props) => props.theme.device.mobile} {
+    padding: 2rem 0.5rem;
+  }
 `;
 
 export const AnswerButtonsContainer = styled.div`
@@ -30,6 +34,10 @@ export const AnswerButtonsContainer = styled.div`
     &:hover {
       font-size: 0.9rem;
     }
+  }
+
+  @media ${(props) => props.theme.device.mobile} {
+    grid-template-columns: 1fr;
   }
 `;
 
@@ -47,6 +55,11 @@ export const Info = styled.h3`
 export const HelpersContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
+
+  @media ${(props) => props.theme.device.mobile} {
+    flex-direction: column;
+  }
 `;
 
 export const NextButtonContainer = styled.div`
