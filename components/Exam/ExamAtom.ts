@@ -58,4 +58,7 @@ export const QuestionCount = styled.div`
   justify-content: flex-end;
   width: 3rem;
   gap: 0.5rem;
+  @media ${(props) => props.theme.device.mobile} {
+    display: none;
+  }
 `;

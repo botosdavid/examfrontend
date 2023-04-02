@@ -9,6 +9,7 @@ import CustomInput from "@/components/CustomInput/CustomInput";
 import Link from "next/link";
 import { loginSchema, loginSchemaType } from "@/utils/validation/schema";
 import { ZodFormattedError } from "zod";
+import { CircularProgress } from "@mui/material";
 interface LoginPageProps {
   session: Session;
 }
@@ -16,6 +17,7 @@ interface LoginPageProps {
 const Login = ({ session }: LoginPageProps) => {
   const [neptun, setNeptun] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] =
     useState<ZodFormattedError<loginSchemaType> | null>();
 
@@ -23,14 +25,19 @@ const Login = ({ session }: LoginPageProps) => {
     const validate = loginSchema.safeParse(credentials);
     if (!validate.success) return setErrors(validate.error.format());
     setErrors(null);
+
+    setIsLoading(true);
     const { ok } = (await signIn("credentials", {
       ...credentials,
       redirect: false,
     })) as SignInResponse;
+    setIsLoading(false);
 
     if (!ok) return notifyInvalidCredentials();
     window.location.replace("/");
   };
+
+  if (isLoading) return <CircularProgress />;
 
   return (
     <AuthPage

@@ -212,14 +212,6 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
     uploadImagesMutation.mutate(questions);
   };
 
-  if (
-    isLoading ||
-    uploadImagesMutation.isLoading ||
-    createExamMutation.isLoading ||
-    updateExamMutation.isLoading
-  )
-    return <CircularProgress />;
-
   return (
     <Modal
       title="Enter New Exam Details"
@@ -227,108 +219,123 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
       height="90vh"
       onClose={onClose}
     >
-      <DesktopDatePicker
-        label="Date desktop"
-        inputFormat="MM/DD/YYYY"
-        value={date}
-        onChange={handleDateChange}
-        renderInput={(params) => <CustomInput {...params} />}
-      />
-      <TimePicker
-        label="Time"
-        value={date}
-        onChange={handleDateChange}
-        renderInput={(params) => <CustomInput {...params} />}
-      />
-      <CustomInput
-        label="Exam Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        error={!!errors?.name?._errors?.[0]}
-        helperText={errors?.name?._errors?.[0]}
-      />
-      Select the right answer for every question by clicking on it.
-      <div ref={animationParent}>
-        {questions.map((question, index) => (
-          <s.QuestionContainer key={index}>
-            {(question.imageFile?.name || question.image) && (
-              <Image
-                alt=""
-                width="400"
-                height="100"
-                style={{ gridColumn: "span 2", objectFit: "cover" }}
-                unoptimized
-                src={
-                  question.imageFile?.name
-                    ? URL.createObjectURL(question.imageFile)
-                    : question.image
-                }
-              />
-            )}
-            <s.QuestionEditContainer>
-              <b>A</b>
-              <CustomSwitch
-                checked={question.group === Group.B}
-                onChange={() => handleQuestionGroupChange(index)}
-              />
-              <b>B</b>
-              <Button onClick={() => handleDeleteQuestion(index)} secondary>
-                <DeleteRoundedIcon />
-              </Button>
-            </s.QuestionEditContainer>
-            <br />
-            <CustomInput
-              label={`${index + 1}. Question`}
-              value={question.text}
-              onChange={(e) => handleQuestionChange(e, index)}
-              error={!!errors?.questions?.[index]?.text?._errors?.[0]}
-              helperText={errors?.questions?.[index]?.text?._errors?.[0]}
-            />
-            <CustomInput
-              type="file"
-              onChange={(e) => handleImageChange(index, e)}
-            />
-            {question.answers.map((answer, answerIndex) => (
-              <CustomInput
-                selected={answerIndex === question.correctAnswer}
-                key={answerIndex}
-                placeholder={`${answerIndex + 1}. Answer`}
-                value={answer.text}
-                onChange={(e) => handleAnswerChange(e, index, answerIndex)}
-                onClick={() => handleCorrectAnswerChange(index, answerIndex)}
-                error={
-                  !!errors?.questions?.[index]?.answers?.[answerIndex]?.text
-                    ?._errors?.[0]
-                }
-                helperText={
-                  errors?.questions?.[index]?.answers?.[answerIndex]?.text
-                    ?._errors?.[0]
-                }
-              />
-            ))}
-          </s.QuestionContainer>
-        ))}
-      </div>
-      <Button secondary onClick={handleAddQuestion}>
-        Add Question
-      </Button>
-      {errors?.questions?._errors?.[0] && (
-        <FormHelperText error>{errors?.questions?._errors?.[0]}</FormHelperText>
-      )}
-      Where should the levels be?
-      {levels.map((level, index) => (
-        <div key={index}>
-          {index + 1}
-          <CustomSwitch
-            checked={Boolean(level)}
-            onChange={() => handleLevelChange(index)}
+      {isLoading ||
+      uploadImagesMutation.isLoading ||
+      createExamMutation.isLoading ||
+      updateExamMutation.isLoading ? (
+        <CircularProgress />
+      ) : (
+        <>
+          <DesktopDatePicker
+            label="Date desktop"
+            inputFormat="MM/DD/YYYY"
+            value={date}
+            onChange={handleDateChange}
+            renderInput={(params) => <CustomInput {...params} />}
           />
-        </div>
-      ))}
-      {errors?.levels?._errors?.[0] && (
-        <FormHelperText error>{errors?.levels?._errors?.[0]}</FormHelperText>
+          <TimePicker
+            label="Time"
+            value={date}
+            onChange={handleDateChange}
+            renderInput={(params) => <CustomInput {...params} />}
+          />
+          <CustomInput
+            label="Exam Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            error={!!errors?.name?._errors?.[0]}
+            helperText={errors?.name?._errors?.[0]}
+          />
+          Select the right answer for every question by clicking on it.
+          <div ref={animationParent}>
+            {questions.map((question, index) => (
+              <s.QuestionContainer key={index}>
+                {(question.imageFile?.name || question.image) && (
+                  <Image
+                    alt=""
+                    width="400"
+                    height="100"
+                    style={{ gridColumn: "span 2", objectFit: "cover" }}
+                    unoptimized
+                    src={
+                      question.imageFile?.name
+                        ? URL.createObjectURL(question.imageFile)
+                        : question.image
+                    }
+                  />
+                )}
+                <s.QuestionEditContainer>
+                  <b>A</b>
+                  <CustomSwitch
+                    checked={question.group === Group.B}
+                    onChange={() => handleQuestionGroupChange(index)}
+                  />
+                  <b>B</b>
+                  <Button onClick={() => handleDeleteQuestion(index)} secondary>
+                    <DeleteRoundedIcon />
+                  </Button>
+                </s.QuestionEditContainer>
+                <br />
+                <CustomInput
+                  label={`${index + 1}. Question`}
+                  value={question.text}
+                  onChange={(e) => handleQuestionChange(e, index)}
+                  error={!!errors?.questions?.[index]?.text?._errors?.[0]}
+                  helperText={errors?.questions?.[index]?.text?._errors?.[0]}
+                />
+                <CustomInput
+                  type="file"
+                  onChange={(e) => handleImageChange(index, e)}
+                />
+                {question.answers.map((answer, answerIndex) => (
+                  <CustomInput
+                    selected={answerIndex === question.correctAnswer}
+                    key={answerIndex}
+                    placeholder={`${answerIndex + 1}. Answer`}
+                    value={answer.text}
+                    onChange={(e) => handleAnswerChange(e, index, answerIndex)}
+                    onClick={() =>
+                      handleCorrectAnswerChange(index, answerIndex)
+                    }
+                    error={
+                      !!errors?.questions?.[index]?.answers?.[answerIndex]?.text
+                        ?._errors?.[0]
+                    }
+                    helperText={
+                      errors?.questions?.[index]?.answers?.[answerIndex]?.text
+                        ?._errors?.[0]
+                    }
+                  />
+                ))}
+              </s.QuestionContainer>
+            ))}
+          </div>
+          <Button secondary onClick={handleAddQuestion}>
+            Add Question
+          </Button>
+          {errors?.questions?._errors?.[0] && (
+            <FormHelperText error>
+              {errors?.questions?._errors?.[0]}
+            </FormHelperText>
+          )}
+          Where should the levels be?
+          {levels.map((level, index) => (
+            <div key={index}>
+              {index + 1}
+              <CustomSwitch
+                checked={Boolean(level)}
+                onChange={() => handleLevelChange(index)}
+              />
+            </div>
+          ))}
+          {errors?.levels?._errors?.[0] && (
+            <FormHelperText error>
+              {errors?.levels?._errors?.[0]}
+            </FormHelperText>
+          )}
+          <Button onClick={handleSubmit}>{exam ? "Update" : "Create"}</Button>
+        </>
       )}
-      <Button onClick={handleSubmit}>{exam ? "Update" : "Create"}</Button>
     </Modal>
   );
 };
