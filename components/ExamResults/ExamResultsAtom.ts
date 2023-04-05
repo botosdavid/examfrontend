@@ -29,31 +29,45 @@ export const SubscriberInfo = styled.div`
   gap: 1rem;
 `;
 
-export const Chart = styled.div`
+export const BarChart = styled.div`
   display: flex;
-  justify-content: space-around;
   align-items: center;
   position: relative;
-  margin: auto;
   height: 30vh;
-  width: 95%;
+
+  @media ${(props) => props.theme.device.mobile} {
+    height: 50vh;
+  }
+`;
+
+export const DoughnutChart = styled.div`
+  height: 35vh;
+
+  @media ${(props) => props.theme.device.mobile} {
+    height: 50vh;
+  }
+`;
+
+export const DetailsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 
   @media ${(props) => props.theme.device.mobile} {
     flex-direction: column;
-    height: auto;
   }
 `;
 
 export const Highlights = styled.div`
   width: 30%;
-  height: 80%;
+  height: 10rem;
+  padding: 2rem 0;
   color: white;
   background-color: ${(props) => props.theme.main};
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  justify-content: space-around;
   border-radius: 2rem;
   box-shadow: ${(props) => props.theme.boxShadow};
 
@@ -65,7 +79,7 @@ export const Highlights = styled.div`
 
 export const HighlightValue = styled.span`
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   gap: 0.3rem;
@@ -75,5 +89,5 @@ export const HighlightElement = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 60%;
+  width: 70%;
 `;

@@ -33,6 +33,8 @@ const ExamResults = ({ code }: ExamResultsProps) => {
   };
 
   const options = {
+    responsive: true,
+    maintainAspectRatio: false,
     scales: {
       y: {
         ticks: {
@@ -71,7 +73,7 @@ const ExamResults = ({ code }: ExamResultsProps) => {
   return (
     <>
       Results of {code}
-      <s.Chart>
+      <s.BarChart>
         <Bar
           ref={barChartRef}
           onClick={handleBarChartClick}
@@ -114,32 +116,34 @@ const ExamResults = ({ code }: ExamResultsProps) => {
             ],
           }}
         />
-      </s.Chart>
-      <s.Chart>
-        <Doughnut
-          options={doughnutChartOptions}
-          data={{
-            labels: ["Answer 1", "Answer 2", "Answer 3", "Answer 4"],
-            datasets: [
-              {
-                data: examResult.allQuestionStatistics[questionIndex],
-                backgroundColor: [
-                  theme.redChart.color,
-                  theme.yellowChart.color,
-                  theme.greenChart.color,
-                  theme.orangeChart.color,
-                ],
-                borderColor: [
-                  theme.redChart.border,
-                  theme.yellowChart.border,
-                  theme.greenChart.border,
-                  theme.orangeChart.border,
-                ],
-                borderWidth: 1,
-              },
-            ],
-          }}
-        />
+      </s.BarChart>
+      <s.DetailsContainer>
+        <s.DoughnutChart>
+          <Doughnut
+            options={doughnutChartOptions}
+            data={{
+              labels: ["Answer 1", "Answer 2", "Answer 3", "Answer 4"],
+              datasets: [
+                {
+                  data: examResult.allQuestionStatistics[questionIndex],
+                  backgroundColor: [
+                    theme.redChart.color,
+                    theme.yellowChart.color,
+                    theme.greenChart.color,
+                    theme.orangeChart.color,
+                  ],
+                  borderColor: [
+                    theme.redChart.border,
+                    theme.yellowChart.border,
+                    theme.greenChart.border,
+                    theme.orangeChart.border,
+                  ],
+                  borderWidth: 1,
+                },
+              ],
+            }}
+          />
+        </s.DoughnutChart>
         <s.Highlights>
           <s.HighlightElement>
             Highest:
@@ -166,7 +170,7 @@ const ExamResults = ({ code }: ExamResultsProps) => {
             </s.HighlightValue>
           </s.HighlightElement>
         </s.Highlights>
-      </s.Chart>
+      </s.DetailsContainer>
       <br />
       <h2>Students subscribed</h2>
       <br />

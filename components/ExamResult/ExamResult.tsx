@@ -104,7 +104,9 @@ const ExamResult = ({ code, userId }: ExamResultProps) => {
 
   const point = (question: ExtendedQuestion) => {
     const selectedAnswer = question.selectedAnswers[0]?.selectedAnswer;
+    const noAnswer = !question.selectedAnswers.length;
     if (isInPhaseOne(question)) {
+      if (noAnswer) return "No Answer (- 1)";
       switch (selectedAnswer) {
         case question.correctAnswer:
           return "+ 1";
