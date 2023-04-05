@@ -36,7 +36,7 @@ export default async function handler(
           _count: { select: { questions: true } },
         },
       });
-      if (!examInfo) return res.status(404);
+      if (!examInfo) return res.status(404).json({ isSuccess: false });
 
       const currentQuestionIndex = await prisma.questionsOnUsers.count({
         where: {
@@ -144,7 +144,7 @@ export default async function handler(
           },
         },
       });
-      if (!exam) return res.status(404);
+      if (!exam) return res.status(404).json({ isSuccess: false });
 
       const currentQuestionIndexInSecondPhase =
         await prisma.questionsOnUsers.count({
@@ -161,6 +161,7 @@ export default async function handler(
         ...exam,
         currentQuestionIndex,
         currentQuestionIndexInSecondPhase,
+        isSuccess: true,
       });
   }
 }

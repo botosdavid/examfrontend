@@ -138,6 +138,8 @@ const Kviz = ({ code, userId }: KvizProps) => {
   if (!isFinished && exam?.ip && exam?.ip !== ipQuery?.data?.ip)
     return <div>Cannot access exam from this IP address</div>;
 
+  if (!exam.isSuccess) return <div>No exam found</div>;
+
   if (!exam?.subscribers?.length)
     return <div>You are not subscribed to this exam</div>;
 
