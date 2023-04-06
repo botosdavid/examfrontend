@@ -7,7 +7,7 @@ function Error({ statusCode }: { statusCode: number }) {
 
   return (
     <s.ErrorMessage>
-      Something went wrong
+      <h1>Something went wrong</h1>
       <Button onClick={router.refresh}>Try again</Button>
     </s.ErrorMessage>
   );
