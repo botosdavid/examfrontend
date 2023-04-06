@@ -1,10 +1,15 @@
-function Error({ statusCode }: any) {
+import * as s from "../styles/shared";
+import { useRouter } from "next/navigation";
+import Button from "@/components/Button/Button";
+
+function Error({ statusCode }: { statusCode: number }) {
+  const router = useRouter();
+
   return (
-    <p>
-      {statusCode
-        ? `An error ${statusCode} occurred on server`
-        : "An error occurred on client"}
-    </p>
+    <s.ErrorMessage>
+      Something went wrong
+      <Button onClick={router.refresh}>Try again</Button>
+    </s.ErrorMessage>
   );
 }
 
