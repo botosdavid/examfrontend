@@ -41,6 +41,7 @@ const Login = ({ session }: LoginPageProps) => {
   return (
     <AuthPage
       title={"Login"}
+      disableButton={isLoading}
       confirmButtonLabel={"Sign In"}
       confirmButtonOnClick={() => handleLoginIn({ neptun, password })}
     >

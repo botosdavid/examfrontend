@@ -4,6 +4,7 @@ import * as s from "./AuthPageAtom";
 interface AuthPageProps {
   title: string;
   children: React.ReactNode;
+  disableButton: boolean;
   confirmButtonLabel: string;
   confirmButtonOnClick: () => void;
 }
@@ -11,6 +12,7 @@ interface AuthPageProps {
 const AuthPage = ({
   title,
   children,
+  disableButton,
   confirmButtonLabel,
   confirmButtonOnClick,
 }: AuthPageProps) => {
@@ -20,7 +22,9 @@ const AuthPage = ({
         <s.CredentialsBox>
           <s.Title>{title}</s.Title>
           {children}
-          <Button onClick={confirmButtonOnClick}>{confirmButtonLabel}</Button>
+          <Button disabled={disableButton} onClick={confirmButtonOnClick}>
+            {confirmButtonLabel}
+          </Button>
         </s.CredentialsBox>
       </s.CredentialsContainer>
     </s.PageContainer>

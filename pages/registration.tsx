@@ -61,6 +61,7 @@ const Registration = ({ session }: RegistrationPageProps) => {
       title={"Register"}
       confirmButtonLabel={"Sign Up"}
       confirmButtonOnClick={handleSubmit}
+      disableButton={createUserMutation.isLoading}
     >
       {createUserMutation.isLoading ? (
         <Loading />
