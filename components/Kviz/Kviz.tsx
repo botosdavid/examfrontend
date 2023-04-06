@@ -147,6 +147,10 @@ const Kviz = ({ code, userId }: KvizProps) => {
   const isInSecondPhase =
     exam.questions[0]?.group !== exam.subscribers[0]?.group;
 
+  const isNextButtonDisabled =
+    (isInSecondPhase && selectedAnswer === noSelectedAnswer) ||
+    selectAnswerMutation.isLoading;
+
   return (
     <s.KvizContainer>
       <s.Info>
@@ -255,8 +259,13 @@ const Kviz = ({ code, userId }: KvizProps) => {
                 Finish Exam
               </Button>
             )}
-            <Button onClick={handleGoToNextQuestion}>
-              {selectedAnswer === noSelectedAnswer ? "Skip" : "Next"}
+            <Button
+              onClick={handleGoToNextQuestion}
+              disabled={isNextButtonDisabled}
+            >
+              {selectedAnswer === noSelectedAnswer && !isInSecondPhase
+                ? "Skip"
+                : "Next"}
             </Button>
           </s.NextButtonContainer>
         </>
