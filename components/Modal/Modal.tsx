@@ -16,6 +16,7 @@ const Modal = ({ children, width, height, title, onClose }: ModalProps) => {
       if (ev.keyCode === escKeyCode) onClose();
     };
     window.addEventListener("keydown", handleEsc);
+    throw new Error("hups");
     return () => {
       window.removeEventListener("keydown", handleEsc);
     };
