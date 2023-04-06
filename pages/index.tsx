@@ -6,7 +6,7 @@ import { getServerSession } from "next-auth";
 import Layout from "../components/Layout/Layout";
 import ExamSubscriber from "@/components/ExamSubscriber/ExamSubscriber";
 import { useQuery } from "react-query";
-import CircularProgress from "@mui/material/CircularProgress";
+import Loading from "@/components/Loading/Loading";
 import SearchIcon from "@mui/icons-material/Search";
 import Exam from "@/components/Exam/Exam";
 import { getSubscribedExams } from "@/utils/api/get";
@@ -30,7 +30,6 @@ const Home = ({ usersession }: HomePageProps) => {
     getSubscribedExams
   );
 
-  if (isLoading) return <CircularProgress />;
   return (
     <>
       <Head>
@@ -59,13 +58,17 @@ const Home = ({ usersession }: HomePageProps) => {
           />
         </s.Bar>
         <br />
-        <div ref={animationParent}>
-          {search(exams, searchQuery).map(
-            (exam: ExamListItem, index: number) => (
-              <Exam exam={exam} isSubscribed key={index} />
-            )
-          )}
-        </div>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <div ref={animationParent}>
+            {search(exams, searchQuery).map(
+              (exam: ExamListItem, index: number) => (
+                <Exam exam={exam} isSubscribed key={index} />
+              )
+            )}
+          </div>
+        )}
       </Layout>
     </>
   );

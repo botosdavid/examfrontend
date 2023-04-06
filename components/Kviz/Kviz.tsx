@@ -14,7 +14,6 @@ import {
   questionHalving,
   questionStatistics,
 } from "@/utils/querykeys/querykeys";
-import { CircularProgress } from "@mui/material";
 import { Answer } from "@prisma/client";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "react-query";
@@ -28,6 +27,7 @@ import Image from "next/image";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import moment from "moment";
 import { finishExam } from "@/utils/api/patch";
+import Loading from "../Loading/Loading";
 
 export const noSelectedAnswer = -1;
 
@@ -133,7 +133,7 @@ const Kviz = ({ code, userId }: KvizProps) => {
     [exam]
   );
 
-  if (isLoading || isFetching || ipQuery.isLoading) return <CircularProgress />;
+  if (isLoading || isFetching || ipQuery.isLoading) return <Loading />;
 
   if (!isFinished && exam?.ip && exam?.ip !== ipQuery?.data?.ip)
     return <div>Cannot access exam from this IP address</div>;

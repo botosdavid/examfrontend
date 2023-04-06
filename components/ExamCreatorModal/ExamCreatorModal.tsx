@@ -9,7 +9,6 @@ import {
 import Button from "../Button/Button";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { CircularProgress } from "@mui/material";
 import moment, { Moment } from "moment";
 import { queryClient } from "@/pages/_app";
 import { useMutation, useQuery } from "react-query";
@@ -28,6 +27,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import type { examCreateSchemaType } from "../../utils/validation/schema";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import AddIcon from "@mui/icons-material/Add";
+import Loading from "../Loading/Loading";
 
 const defaultAnswerCount = 4;
 
@@ -224,7 +224,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
       uploadImagesMutation.isLoading ||
       createExamMutation.isLoading ||
       updateExamMutation.isLoading ? (
-        <CircularProgress />
+        <Loading />
       ) : (
         <>
           <DesktopDatePicker

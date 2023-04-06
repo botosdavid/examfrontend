@@ -1,6 +1,5 @@
 import { getExamResults } from "@/utils/api/get";
 import { examResults } from "@/utils/querykeys/querykeys";
-import CircularProgress from "@mui/material/CircularProgress";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckIcon from "@mui/icons-material/Check";
 import PersonIcon from "@mui/icons-material/Person";
@@ -12,6 +11,7 @@ import { Bar, Doughnut, getElementAtEvent } from "react-chartjs-2";
 import "chart.js/auto";
 import { theme } from "@/styles/theme";
 import { useRef, useState } from "react";
+import Loading from "../Loading/Loading";
 
 interface ExamResultsProps {
   code: string;
@@ -26,7 +26,7 @@ const ExamResults = ({ code }: ExamResultsProps) => {
     getExamResults(code)
   );
 
-  if (isLoading) return <CircularProgress />;
+  if (isLoading) return <Loading />;
 
   const handleGoToExamResult = (code: string, userId: string) => {
     router.push(`/exam/${code}/results/${userId}`);

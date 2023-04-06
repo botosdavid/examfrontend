@@ -17,8 +17,8 @@ import {
   notifyNeptunAlreadyExists,
   notifyRegistered,
 } from "@/utils/toast/toastify";
-import CircularProgress from "@mui/material/CircularProgress";
 import Link from "next/link";
+import Loading from "@/components/Loading/Loading";
 
 interface RegistrationPageProps {
   session: Session;
@@ -56,48 +56,52 @@ const Registration = ({ session }: RegistrationPageProps) => {
     createUserMutation.mutate({ name, neptun, password, isTeacher });
   };
 
-  if (createUserMutation.isLoading) return <CircularProgress />;
-
   return (
     <AuthPage
       title={"Register"}
       confirmButtonLabel={"Sign Up"}
       confirmButtonOnClick={handleSubmit}
     >
-      <CustomInput
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        error={!!errors?.name?._errors?.[0]}
-        helperText={errors?.name?._errors?.[0]}
-      />
-      <CustomInput
-        type="text"
-        placeholder="Neptun"
-        value={neptun}
-        onChange={(e) => setNeptun(e.target.value)}
-        error={!!errors?.neptun?._errors?.[0]}
-        helperText={errors?.neptun?._errors?.[0]}
-      />
-      <CustomInput
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        error={!!errors?.password?._errors?.[0]}
-        helperText={errors?.password?._errors?.[0]}
-      />
-      <FormControlLabel
-        control={
-          <CustomSwitch
-            checked={isTeacher}
-            onChange={(e) => setIsTeacher(e.target.checked)}
+      {createUserMutation.isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <CustomInput
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            error={!!errors?.name?._errors?.[0]}
+            helperText={errors?.name?._errors?.[0]}
           />
-        }
-        label="I'm a teacher"
-      />
-      <Link href={"/login"}>Already have an account?</Link>
+          <CustomInput
+            type="text"
+            placeholder="Neptun"
+            value={neptun}
+            onChange={(e) => setNeptun(e.target.value)}
+            error={!!errors?.neptun?._errors?.[0]}
+            helperText={errors?.neptun?._errors?.[0]}
+          />
+          <CustomInput
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={!!errors?.password?._errors?.[0]}
+            helperText={errors?.password?._errors?.[0]}
+          />
+          <FormControlLabel
+            control={
+              <CustomSwitch
+                checked={isTeacher}
+                onChange={(e) => setIsTeacher(e.target.checked)}
+              />
+            }
+            label="I'm a teacher"
+          />
+          <Link href={"/login"}>Already have an account?</Link>
+        </>
+      )}
     </AuthPage>
   );
 };

@@ -7,13 +7,14 @@ import Layout from "@/components/Layout/Layout";
 import { getCreatedExams } from "@/utils/api/get";
 import { createdExams } from "@/utils/querykeys/querykeys";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { CircularProgress, InputAdornment } from "@mui/material";
+import { InputAdornment } from "@mui/material";
 import { getServerSession } from "next-auth";
 import { GetServerSideProps } from "next/types";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { search } from "@/utils/functions/functions";
+import Loading from "@/components/Loading/Loading";
 
 interface ManagePageProps {
   usersession: UserSession;
@@ -25,7 +26,6 @@ const ManagePage = ({ usersession }: ManagePageProps) => {
 
   const { data: exams, isLoading } = useQuery(createdExams, getCreatedExams);
 
-  if (isLoading) return <CircularProgress />;
   return (
     <Layout usersession={usersession}>
       <h1>Manage your exams</h1>
@@ -46,11 +46,17 @@ const ManagePage = ({ usersession }: ManagePageProps) => {
         />
       </s.Bar>
       <br />
-      <div ref={animationParent}>
-        {search(exams, searchQuery).map((exam: ExamListItem, index: number) => (
-          <Exam exam={exam} key={index} />
-        ))}
-      </div>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <div ref={animationParent}>
+          {search(exams, searchQuery).map(
+            (exam: ExamListItem, index: number) => (
+              <Exam exam={exam} key={index} />
+            )
+          )}
+        </div>
+      )}
     </Layout>
   );
 };

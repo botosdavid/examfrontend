@@ -1,12 +1,12 @@
 import { getExamCorrectAnswers } from "@/utils/api/get";
 import { resultExam } from "@/utils/querykeys/querykeys";
-import { CircularProgress } from "@mui/material";
 import { Answer, Question } from "@prisma/client";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
 import * as s from "./ExamResultAtom";
 import { noSelectedAnswer } from "../Kviz/Kviz";
 import moment from "moment";
+import Loading from "../Loading/Loading";
 
 interface ExamResultProps {
   code: string;
@@ -27,7 +27,7 @@ const ExamResult = ({ code, userId }: ExamResultProps) => {
     getExamCorrectAnswers(code, userId).then(console.log);
   }, []);
 
-  if (isLoading) return <CircularProgress />;
+  if (isLoading) return <Loading />;
 
   const questionCount = examResult?.exam?.questions?.length;
   const timeTillExamEnd = moment
