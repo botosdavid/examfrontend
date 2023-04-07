@@ -23,6 +23,7 @@ const ExamInfoModal = ({ exam, onClose }: ExamInfoModal) => {
         <ContentCopyIcon />
       </s.Code>
       <QRCode
+        data-testid="QrCode"
         size={256}
         style={{ height: "auto", maxWidth: "100%", width: "70%" }}
         value={exam.code}
