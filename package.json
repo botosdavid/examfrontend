@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "jest --watch",
+    "test": "jest --watchAll",
     "lint": "next lint",
     "vercel-build": "npx prisma generate && npx prisma migrate deploy && next build"
   },
