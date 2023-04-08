@@ -32,7 +32,7 @@ it("escape pressed calls the onClose function", () => {
 
   const { container } = render(wrapper(onCloseFunction));
 
-  fireEvent.keyDown(container, { key: "Escape", keyCode: "27" });
+  fireEvent.keyDown(container, { key: "Escape" });
 
   expect(onCloseFunction).toHaveBeenCalled();
 });
