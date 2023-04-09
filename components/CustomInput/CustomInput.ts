@@ -20,6 +20,10 @@ const CustomInput = styled(TextField)<CustomInputProps>(
     "& .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input": {
       color: `${theme.main}`,
     },
+
+    "& .css-u9osun.Mui-focused": {
+      color: `${theme.main}`,
+    },
   })
 );
 
