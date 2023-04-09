@@ -276,20 +276,19 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
                   </Button>
                 </s.QuestionEditContainer>
                 <s.ImageWrapper>
-                  {question.imageFile?.name ||
-                    (question.image && (
-                      <Image
-                        alt=""
-                        width="400"
-                        height="100"
-                        unoptimized
-                        src={
-                          question.imageFile?.name
-                            ? URL.createObjectURL(question.imageFile)
-                            : question.image
-                        }
-                      />
-                    ))}
+                  {(question.imageFile?.name || question.image) && (
+                    <Image
+                      alt=""
+                      width="400"
+                      height="100"
+                      unoptimized
+                      src={
+                        question.imageFile?.name
+                          ? URL.createObjectURL(question.imageFile)
+                          : question.image
+                      }
+                    />
+                  )}
                 </s.ImageWrapper>
                 <CustomInput
                   label={`${index + 1}. Question`}

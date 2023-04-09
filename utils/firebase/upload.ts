@@ -1,4 +1,10 @@
-import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytes,
+  deleteObject,
+} from "firebase/storage";
 import { app } from "@/utils/firebase/config";
 
 const storage = getStorage(app);
@@ -17,7 +23,10 @@ export const uploadImages = async (questions: CreateQuestion[]) => {
   for (const question of questions) {
     if (question.imageFile?.name) {
       try {
-        // TODO: delete image in cloud if overwriting
+        if (question.image) {
+          const prevImageRef = ref(storage, question.image);
+          await deleteObject(prevImageRef);
+        }
         const imageUrl = await uploadImage(question.imageFile);
         imageUrls.push(imageUrl);
       } catch (error) {
