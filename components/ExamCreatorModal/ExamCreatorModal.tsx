@@ -258,32 +258,39 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
           <div ref={animationParent}>
             {questions.map((question, index) => (
               <s.QuestionContainer key={index}>
-                {(question.imageFile?.name || question.image) && (
-                  <Image
-                    alt=""
-                    width="400"
-                    height="100"
-                    style={{ gridColumn: "span 2", objectFit: "cover" }}
-                    unoptimized
-                    src={
-                      question.imageFile?.name
-                        ? URL.createObjectURL(question.imageFile)
-                        : question.image
-                    }
-                  />
-                )}
                 <s.QuestionEditContainer>
-                  <b>A</b>
-                  <CustomSwitch
-                    checked={question.group === Group.B}
-                    onChange={() => handleQuestionGroupChange(index)}
-                  />
-                  <b>B</b>
-                  <Button onClick={() => handleDeleteQuestion(index)} secondary>
+                  <div>
+                    <b>A</b>
+                    <CustomSwitch
+                      checked={question.group === Group.B}
+                      onChange={() => handleQuestionGroupChange(index)}
+                    />
+                    <b>B</b>
+                  </div>
+                  <Button
+                    onClick={() => handleDeleteQuestion(index)}
+                    secondary
+                    small
+                  >
                     <DeleteRoundedIcon />
                   </Button>
                 </s.QuestionEditContainer>
-                <br />
+                <s.ImageWrapper>
+                  {question.imageFile?.name ||
+                    (question.image && (
+                      <Image
+                        alt=""
+                        width="400"
+                        height="100"
+                        unoptimized
+                        src={
+                          question.imageFile?.name
+                            ? URL.createObjectURL(question.imageFile)
+                            : question.image
+                        }
+                      />
+                    ))}
+                </s.ImageWrapper>
                 <CustomInput
                   label={`${index + 1}. Question`}
                   value={question.text}
