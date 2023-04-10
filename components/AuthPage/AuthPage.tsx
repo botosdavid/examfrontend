@@ -1,5 +1,8 @@
+import { useEffect } from "react";
 import Button from "../Button/Button";
 import * as s from "./AuthPageAtom";
+
+const enterKey = "Enter";
 
 interface AuthPageProps {
   title: string;
@@ -16,6 +19,16 @@ const AuthPage = ({
   confirmButtonLabel,
   confirmButtonOnClick,
 }: AuthPageProps) => {
+  useEffect(() => {
+    const handleSubmit = (event: KeyboardEvent) => {
+      if (event.key === enterKey) confirmButtonOnClick();
+    };
+    window.addEventListener("keydown", handleSubmit);
+    return () => {
+      window.removeEventListener("keydown", handleSubmit);
+    };
+  }, [confirmButtonOnClick]);
+
   return (
     <s.PageContainer>
       <s.CredentialsContainer>
