@@ -237,11 +237,12 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   );
 
   return (
-    <Modal title={title} width="60vw" height="90vh" onClose={onClose}>
+    <Modal title={title} width="60vw" height="95vh" onClose={onClose}>
       {isLoading ||
       uploadImagesMutation.isLoading ||
       createExamMutation.isLoading ||
-      updateExamMutation.isLoading ? (
+      updateExamMutation.isLoading ||
+      deleteExamMutation.isLoading ? (
         <Loading />
       ) : (
         <>
@@ -353,15 +354,17 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
             </FormHelperText>
           )}
           Where should the levels be?
-          {levels.map((level, index) => (
-            <div key={index}>
-              {index + 1}
-              <CustomSwitch
-                checked={Boolean(level)}
-                onChange={() => handleLevelChange(index)}
-              />
-            </div>
-          ))}
+          <s.LevelsContainer>
+            {levels.map((level, index) => (
+              <div key={index}>
+                {index + 1}
+                <CustomSwitch
+                  checked={Boolean(level)}
+                  onChange={() => handleLevelChange(index)}
+                />
+              </div>
+            ))}
+          </s.LevelsContainer>
           {errors?.levels?._errors?.[0] && (
             <FormHelperText error>
               {errors?.levels?._errors?.[0]}

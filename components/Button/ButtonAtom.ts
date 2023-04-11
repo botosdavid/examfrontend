@@ -28,4 +28,8 @@ export const ButtonContainer = styled.button<ButtonContainerProps>`
   align-items: center;
   justify-content: center;
   gap: 0.3rem;
+
+  @media ${(props) => props.theme.device.mobile} {
+    border-radius: 0.3rem;
+  }
 `;

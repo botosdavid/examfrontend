@@ -27,3 +27,9 @@ export const ImageWrapper = styled.div`
     border-radius: 0.4rem;
   }
 `;
+
+export const LevelsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+`;

@@ -64,7 +64,7 @@ const Exam = ({ exam, isSubscribed }: ExamProps) => {
         <Button small secondary onClick={() => setIsInfoModalOpen(true)}>
           <QrCodeScannerIcon />
         </Button>
-        {canEdit && (
+        {canEdit && !hasStarted && (
           <Button small secondary onClick={handleEditExam}>
             <EditRoundedIcon />
           </Button>

@@ -16,9 +16,6 @@ export const ExamContainer = styled.div`
 
   @media ${(props) => props.theme.device.mobile} {
     padding: 1rem;
-    button {
-      padding: 0.2rem;
-    }
   }
 `;
 
@@ -49,6 +46,9 @@ export const ExamInfoContainer = styled.div`
   gap: 1rem;
   @media ${(props) => props.theme.device.mobile} {
     gap: 0.4rem;
+    button {
+      padding: 0.3rem;
+    }
   }
 `;
 
