@@ -3,7 +3,7 @@ import * as s from "./ModalAtom";
 const escapeKey = "Escape";
 
 interface ModalProps {
-  title?: string;
+  title?: ReactNode;
   children: ReactNode;
   width?: string;
   height?: string;

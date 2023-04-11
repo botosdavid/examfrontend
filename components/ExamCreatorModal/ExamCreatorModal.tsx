@@ -4,6 +4,7 @@ import CustomInput from "../CustomInput/CustomInput";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import {
   notifyCreatedSuccessfully,
+  notifyDeletedSuccessfully,
   notifyUpdatedSuccessfully,
 } from "../../utils/toast/toastify";
 import Button from "../Button/Button";
@@ -28,6 +29,8 @@ import type { examCreateSchemaType } from "../../utils/validation/schema";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import AddIcon from "@mui/icons-material/Add";
 import Loading from "../Loading/Loading";
+import { deleteExam } from "@/utils/api/delete";
+import ExamDeletion from "../ExamDeletion/ExamDeletion";
 
 const defaultAnswerCount = 4;
 
@@ -115,6 +118,14 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
             date,
             ip,
           }),
+  });
+
+  const deleteExamMutation = useMutation(deleteExam, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(createdExams);
+      notifyDeletedSuccessfully();
+      onClose();
+    },
   });
 
   const handleAddQuestion = () =>
@@ -218,8 +229,15 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
     uploadImagesMutation.mutate(questions);
   };
 
+  const title = (
+    <>
+      Exam Details
+      <ExamDeletion onConfirm={() => deleteExamMutation.mutate(exam!.code)} />
+    </>
+  );
+
   return (
-    <Modal title="Exam Details" width="60vw" height="90vh" onClose={onClose}>
+    <Modal title={title} width="60vw" height="90vh" onClose={onClose}>
       {isLoading ||
       uploadImagesMutation.isLoading ||
       createExamMutation.isLoading ||
@@ -271,6 +289,7 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
                     onClick={() => handleDeleteQuestion(index)}
                     secondary
                     small
+                    danger
                   >
                     <DeleteRoundedIcon />
                   </Button>

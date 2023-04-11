@@ -30,7 +30,7 @@ export const ModalContainer = styled.div<ModalContainerProps>`
   flex-direction: column;
   align-items: center;
   gap: 2rem;
-  background-color: ${(props) => props.theme.grey};
+  background-color: white;
   color: ${(props) => props.theme.fontColor};
   overflow: scroll;
 
@@ -40,8 +40,11 @@ export const ModalContainer = styled.div<ModalContainerProps>`
 `;
 
 export const ModalTitle = styled.h3`
+  display: flex;
+  align-items: center;
   font-weight: bold;
   text-align: center;
+  gap: 1rem;
 `;
 
 export const Close = styled(CloseIcon)`

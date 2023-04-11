@@ -38,7 +38,7 @@ export default async function handler(
             },
             where: { id },
           });
-          if (!user) return res.status(404);
+          if (!user) return res.status(404).json([]);
           const exams = user[0][`${filter}`];
           const formatExams = [...exams].map(
             ({ exam }: ExamsOnUsers & { exam: Exam }) => exam

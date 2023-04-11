@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import * as s from "./ButtonAtom";
 
-interface ButtonProps {
+export interface ButtonProps {
   children: ReactNode;
   disabled?: boolean;
   secondary?: boolean;

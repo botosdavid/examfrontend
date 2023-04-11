@@ -130,5 +130,9 @@ export default async function handler(
         },
       });
       return res.status(200).json({ isSuccess: true });
+
+    case "DELETE":
+      await prisma.exam.delete({ where: { code } });
+      return res.status(201).json({ isSuccess: true });
   }
 }

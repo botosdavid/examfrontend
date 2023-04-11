@@ -33,7 +33,7 @@ model Question {
     id              String             @id @default(cuid())
     text            String
     answers         Answer[]
-    exam            Exam               @relation(fields: [examId], references: [id])
+    exam            Exam               @relation(fields: [examId], references: [id], onDelete: Cascade)
     examId          String
     correctAnswer   Int
     selectedAnswers QuestionsOnUsers[]
@@ -73,9 +73,9 @@ model QuestionsOnUsers {
 }
 
 model ExamsOnUsers {
-    user            User     @relation(fields: [userId], references: [id])
+    user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId          String
-    exam            Exam     @relation(fields: [examId], references: [id])
+    exam            Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
     examId          String
     hasHalving      Boolean  @default(true)
     hasStatistics   Boolean  @default(true)

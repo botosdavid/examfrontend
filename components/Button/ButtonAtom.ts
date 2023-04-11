@@ -1,21 +1,21 @@
 import styled from "styled-components";
+import { ButtonProps } from "./Button";
 
-interface ButtonProps {
-  disabled?: boolean;
-  secondary?: boolean;
-  small?: boolean;
-  selected?: boolean;
-  danger?: boolean;
-}
+type ButtonContainerProps = Omit<ButtonProps, "children" | "onClick">;
 
-export const ButtonContainer = styled.button<ButtonProps>`
+export const ButtonContainer = styled.button<ButtonContainerProps>`
   background-color: ${(props) =>
     props.secondary
       ? props.theme.grey
       : props.danger
       ? props.theme.red
       : props.theme.main};
-  color: ${(props) => (props.secondary ? props.theme.main : "white")};
+  color: ${(props) =>
+    props.secondary
+      ? props.danger
+        ? props.theme.red
+        : props.theme.main
+      : "white"};
   opacity: ${(props) => (props.disabled ? "0.5" : "1")};
   border-radius: 0.5rem;
   border: ${(props) =>

@@ -30,6 +30,12 @@ export const notifyInvalidCredentials = () =>
     type: "error",
   });
 
+export const notifyDeletedSuccessfully = () =>
+  toast("Exam deleted successfully!", {
+    position: "top-center",
+    type: "success",
+  });
+
 export const notifySelectAnswer = () =>
   toast("You must select an answer!", {
     position: "top-center",
