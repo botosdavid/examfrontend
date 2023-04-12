@@ -241,6 +241,7 @@ const Kviz = ({ code, userId }: KvizProps) => {
                   key={index}
                   secondary={index !== selectedAnswer}
                   disabled={
+                    showHalving &&
                     eliminatedAnswerIndexes &&
                     eliminatedAnswerIndexes.eliminatedAnswerIndexes.includes(
                       index
