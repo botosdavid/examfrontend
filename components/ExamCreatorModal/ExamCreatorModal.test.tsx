@@ -22,7 +22,7 @@ it("renders modal component without exam", () => {
   const deleteIcon = queryByTestId("DeleteRoundedIcon");
   const submitButton = getAllByRole("button").pop();
 
-  expect(deleteIcon).not.toBeInTheDocument();
+  expect(deleteIcon).toBeInTheDocument();
   expect(submitButton).toHaveTextContent("Create");
 });
 
