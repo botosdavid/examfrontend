@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { Exam, ExamsOnUsers, Group } from "@prisma/client";
+import { timeBetweenPhasesInMinutes } from "@/utils/constants/constants";
+import { Exam, ExamsOnUsers, Group, User } from "@prisma/client";
 import moment from "moment";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
@@ -9,11 +10,57 @@ import { authOptions } from "../auth/[...nextauth]";
 type Response =
   | (Exam & {
       questions: { text: string; answers: { text: string }[] }[];
-      subscribers: ExamsOnUsers[];
+      subscribers: Partial<ExamsOnUsers>[];
       currentQuestionIndex?: number;
       currentQuestionIndexInSecondPhase?: number;
     })
-  | { isSuccess: boolean };
+  | { isSuccess: boolean }
+  | { waitTimeBetweenPhases: number };
+
+const getWaitTimeBetweenPhases = async (
+  exam: {
+    date: Date;
+    id: string;
+  },
+  questionsOrder: { group: Group }
+) => {
+  const questionCountFirstPhase = await prisma.question.count({
+    where: { examId: exam.id, group: questionsOrder.group },
+  });
+
+  const timeOfSecondPhaseStart = moment
+    .utc(exam.date)
+    .startOf("minute")
+    .add(questionCountFirstPhase + timeBetweenPhasesInMinutes, "minutes");
+
+  return moment
+    .utc(timeOfSecondPhaseStart)
+    .diff(moment.utc(new Date()), "seconds");
+};
+
+const checkIsLateForQuestion = async (
+  exam: { id: string; date: Date },
+  currentQuestionIndex: number,
+  user: User,
+  isSecondPhase: boolean
+) => {
+  const currentQuestionIndexByTime =
+    moment
+      .utc(new Date())
+      .startOf("minute")
+      .diff(moment.utc(exam?.date).startOf("minute"), "minutes") -
+    Number(isSecondPhase) * timeBetweenPhasesInMinutes;
+
+  const isLateForQuestion = currentQuestionIndexByTime > currentQuestionIndex;
+
+  if (isLateForQuestion) {
+    await prisma.examsOnUsers.update({
+      where: { userId_examId: { userId: user.id, examId: exam.id } },
+      data: { hasFinished: true },
+    });
+  }
+  return isLateForQuestion;
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -45,18 +92,6 @@ export default async function handler(
         },
       });
 
-      const currentQuestionIndexByTime = moment
-        .utc(new Date())
-        .startOf("minute")
-        .diff(moment.utc(examInfo?.date).startOf("minute"), "minutes");
-
-      if (currentQuestionIndexByTime > currentQuestionIndex) {
-        await prisma.examsOnUsers.update({
-          where: { userId_examId: { userId: user.id, examId: examInfo.id } },
-          data: { hasFinished: true },
-        });
-      }
-
       const questionsOrder = await prisma.examsOnUsers.findUnique({
         where: {
           userId_examId: {
@@ -64,10 +99,16 @@ export default async function handler(
             examId: examInfo.id,
           },
         },
-        select: { questionsOrder: true, group: true },
+        select: { questionsOrder: true, group: true, hasFinished: true },
       });
       if (!questionsOrder?.questionsOrder)
         return res.status(404).json({ isSuccess: false });
+
+      if (questionsOrder.hasFinished)
+        return res.status(200).json({
+          subscribers: [questionsOrder],
+          isSuccess: true,
+        });
 
       let order = questionsOrder.questionsOrder.split(",");
       const shouldGenerateSecondPhase =
@@ -120,6 +161,30 @@ export default async function handler(
           select: { questionsOrder: true },
         });
         order = newQuestionsOrder?.questionsOrder?.split(",")!;
+      }
+
+      const isSecondPhase = order.length === examInfo._count.questions;
+
+      const isLateForQuestion = await checkIsLateForQuestion(
+        examInfo,
+        currentQuestionIndex,
+        user,
+        isSecondPhase
+      );
+
+      if (isLateForQuestion)
+        return res.status(200).json({
+          subscribers: [questionsOrder],
+          isSuccess: true,
+        });
+
+      const waitTimeBetweenPhases = await getWaitTimeBetweenPhases(
+        examInfo,
+        questionsOrder
+      );
+
+      if (isSecondPhase && waitTimeBetweenPhases > 0) {
+        return res.json({ waitTimeBetweenPhases });
       }
 
       const skip =

@@ -9,6 +9,7 @@ type Response = {
   isSuccess?: boolean;
   exam?:
     | (Exam & {
+        questionsCount?: number;
         questions: (Question & {
           selectedAnswers: { selectedAnswer: number }[];
         })[];
@@ -34,7 +35,7 @@ export default async function handler(
   switch (method) {
     case "GET":
       if (!code) return res.status(404).json({ isSuccess: false });
-      const examWIthQuestions = await prisma.exam.findFirst({
+      const examWithQuestions = await prisma.exam.findFirst({
         where: { code: code.toString() },
         include: {
           questions: {
@@ -57,14 +58,17 @@ export default async function handler(
           },
         },
       });
-      if (!examWIthQuestions?.subscribers[0]?.questionsOrder)
+      if (!examWithQuestions?.subscribers[0]?.questionsOrder)
         return res.status(404).json({ isSuccess: false });
 
-      examWIthQuestions.questions =
-        examWIthQuestions.subscribers[0].questionsOrder
+      const questionsCount = examWithQuestions.questions.length;
+      examWithQuestions.questions =
+        examWithQuestions.subscribers[0].questionsOrder
           .split(",")
-          .map((index: string) => examWIthQuestions.questions[Number(index)]);
-      return res.status(200).json({ exam: examWIthQuestions });
+          .map((index: string) => examWithQuestions.questions[Number(index)]);
+      return res
+        .status(200)
+        .json({ exam: { ...examWithQuestions, questionsCount } });
 
     case "POST":
       const question = await prisma.question.findUnique({

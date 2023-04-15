@@ -28,6 +28,7 @@ import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import moment from "moment";
 import { finishExam } from "@/utils/api/patch";
 import Loading from "../Loading/Loading";
+import PauseScreen from "../PauseScreen/PauseScreen";
 
 export const noSelectedAnswer = -1;
 
@@ -123,17 +124,30 @@ const Kviz = ({ code, userId }: KvizProps) => {
     setSelectedAnswer(index);
   };
 
+  const isInSecondPhase =
+    exam?.questions?.[0]?.group !== exam?.subscribers?.[0]?.group;
+
   const countdownDuration = useMemo(
     () =>
       moment
         .utc(exam?.date)
         .startOf("minute")
-        .add(exam?.currentQuestionIndex + 1, "minutes")
+        .add(exam?.currentQuestionIndex + 1 + isInSecondPhase, "minutes")
         .diff(moment.utc(new Date()), "seconds"),
     [exam]
   );
 
   if (isLoading || isFetching || ipQuery.isLoading) return <Loading />;
+
+  if (exam?.waitTimeBetweenPhases > 0)
+    return (
+      <PauseScreen
+        waitTime={exam.waitTimeBetweenPhases}
+        onComplete={() =>
+          queryClient.invalidateQueries([currentQuestion, { code }])
+        }
+      />
+    );
 
   if (!isFinished && exam?.ip && exam?.ip !== ipQuery?.data?.ip)
     return <div>Cannot access exam from this IP address</div>;
@@ -144,8 +158,6 @@ const Kviz = ({ code, userId }: KvizProps) => {
     return <div>You are not subscribed to this exam</div>;
 
   const { hasHalving, hasStatistics, hasBestAnswer } = exam.subscribers[0];
-  const isInSecondPhase =
-    exam.questions[0]?.group !== exam.subscribers[0]?.group;
 
   const isNextButtonDisabled =
     (isInSecondPhase && selectedAnswer === noSelectedAnswer) ||
@@ -167,14 +179,12 @@ const Kviz = ({ code, userId }: KvizProps) => {
               size={45}
               key={0}
               isPlaying
-              duration={60}
+              duration={Math.max(countdownDuration, 60)}
               colors={["#008e00", "#d5b500", "#A30000"]}
               colorsTime={[60, 30, 0]}
               strokeWidth={6}
               onComplete={handleGoToNextQuestion}
-              initialRemainingTime={
-                countdownDuration >= 0 ? countdownDuration : 0
-              }
+              initialRemainingTime={Math.max(countdownDuration, 0)}
             >
               {({ remainingTime }) => remainingTime}
             </CountdownCircleTimer>
