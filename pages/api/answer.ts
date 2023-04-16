@@ -4,17 +4,29 @@ import prisma from "../../prisma/lib/prismadb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";
 import { Exam, Question } from "@prisma/client";
+import moment from "moment";
+import { timeBetweenPhasesInMinutes } from "@/utils/constants/constants";
+
+type ExamFull = Exam & {
+  questions: (Question & {
+    selectedAnswers: { selectedAnswer: number }[];
+  })[];
+};
 
 type Response = {
   isSuccess?: boolean;
-  exam?:
-    | (Exam & {
-        questionsCount?: number;
-        questions: (Question & {
-          selectedAnswers: { selectedAnswer: number }[];
-        })[];
-      })
-    | null;
+  timeTillExamEnd?: number;
+  exam?: ExamFull;
+};
+
+const getTimeTillExamEnd = (exam: ExamFull) => {
+  const questionsCount = exam.questions.length;
+
+  return moment
+    .utc(exam?.date)
+    .startOf("minute")
+    .add(questionsCount + timeBetweenPhasesInMinutes, "minutes")
+    .diff(moment.utc(new Date()), "seconds");
 };
 
 export default async function handler(
@@ -61,14 +73,18 @@ export default async function handler(
       if (!examWithQuestions?.subscribers[0]?.questionsOrder)
         return res.status(404).json({ isSuccess: false });
 
-      const questionsCount = examWithQuestions.questions.length;
-      examWithQuestions.questions =
-        examWithQuestions.subscribers[0].questionsOrder
-          .split(",")
-          .map((index: string) => examWithQuestions.questions[Number(index)]);
+      const timeTillExamEnd = getTimeTillExamEnd(examWithQuestions);
+
+      if (timeTillExamEnd > 0) {
+        return res.status(200).json({ timeTillExamEnd });
+      }
+
+      const questions = examWithQuestions.subscribers[0].questionsOrder
+        .split(",")
+        .map((index: string) => examWithQuestions.questions[Number(index)]);
       return res
         .status(200)
-        .json({ exam: { ...examWithQuestions, questionsCount } });
+        .json({ exam: { ...examWithQuestions, questions } });
 
     case "POST":
       const question = await prisma.question.findUnique({

@@ -4,9 +4,7 @@ import { Answer, Question } from "@prisma/client";
 import { useQuery } from "react-query";
 import * as s from "./ExamResultAtom";
 import { noSelectedAnswer } from "../Kviz/Kviz";
-import moment from "moment";
 import Loading from "../Loading/Loading";
-import { timeBetweenPhasesInMinutes } from "@/utils/constants/constants";
 
 interface ExamResultProps {
   code: string;
@@ -25,14 +23,7 @@ const ExamResult = ({ code, userId }: ExamResultProps) => {
 
   if (isLoading) return <Loading />;
 
-  const questionCount = examResult?.exam?.questionsCount;
-  const timeTillExamEnd = moment
-    .utc(examResult?.exam?.date)
-    .startOf("minute")
-    .add(questionCount + timeBetweenPhasesInMinutes, "minutes")
-    .diff(moment.utc(new Date()), "seconds");
-
-  if (timeTillExamEnd > 0)
+  if (examResult?.timeTillExamEnd)
     return <div>Result can be seen only after the exam ended.</div>;
 
   const correctAnswersCount = examResult?.exam?.questions?.reduce(
