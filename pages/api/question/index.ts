@@ -11,7 +11,7 @@ type Response =
   | (Exam & {
       questions: { text: string; answers: { text: string }[] }[];
       subscribers: Partial<ExamsOnUsers>[];
-      currentQuestionIndex?: number;
+      countDownDuration: number;
       currentQuestionIndexInSecondPhase?: number;
     })
   | { isSuccess: boolean }
@@ -60,6 +60,19 @@ const checkIsLateForQuestion = async (
     });
   }
   return isLateForQuestion;
+};
+
+const getQuestionCountDownDuration = (
+  currentQuestionIndex: number,
+  isInSecondPhase: boolean,
+  exam: Exam
+) => {
+  const pauseTime = isInSecondPhase ? timeBetweenPhasesInMinutes : 0;
+  return moment
+    .utc(exam?.date)
+    .startOf("minute")
+    .add(currentQuestionIndex + 1 + pauseTime, "minutes")
+    .diff(moment.utc(new Date()), "seconds");
 };
 
 export default async function handler(
@@ -211,6 +224,12 @@ export default async function handler(
       });
       if (!exam) return res.status(404).json({ isSuccess: false });
 
+      const countDownDuration = getQuestionCountDownDuration(
+        currentQuestionIndex,
+        isSecondPhase,
+        exam
+      );
+
       const currentQuestionIndexInSecondPhase =
         await prisma.questionsOnUsers.count({
           where: {
@@ -224,7 +243,7 @@ export default async function handler(
 
       return res.status(200).json({
         ...exam,
-        currentQuestionIndex,
+        countDownDuration,
         currentQuestionIndexInSecondPhase,
         isSuccess: true,
       });

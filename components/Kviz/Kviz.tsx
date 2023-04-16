@@ -127,16 +127,6 @@ const Kviz = ({ code, userId }: KvizProps) => {
   const isInSecondPhase =
     exam?.questions?.[0]?.group !== exam?.subscribers?.[0]?.group;
 
-  const countdownDuration = useMemo(
-    () =>
-      moment
-        .utc(exam?.date)
-        .startOf("minute")
-        .add(exam?.currentQuestionIndex + 1 + isInSecondPhase, "minutes")
-        .diff(moment.utc(new Date()), "seconds"),
-    [exam]
-  );
-
   if (isLoading || isFetching || ipQuery.isLoading) return <Loading />;
 
   if (exam?.waitTimeBetweenPhases > 0)
@@ -179,12 +169,12 @@ const Kviz = ({ code, userId }: KvizProps) => {
               size={45}
               key={0}
               isPlaying
-              duration={Math.max(countdownDuration, 60)}
+              duration={Math.max(exam.countDownDuration, 60)}
               colors={["#008e00", "#d5b500", "#A30000"]}
               colorsTime={[60, 30, 0]}
               strokeWidth={6}
               onComplete={handleGoToNextQuestion}
-              initialRemainingTime={Math.max(countdownDuration, 0)}
+              initialRemainingTime={Math.max(exam.countDownDuration, 0)}
             >
               {({ remainingTime }) => remainingTime}
             </CountdownCircleTimer>
