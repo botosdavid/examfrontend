@@ -1,7 +1,7 @@
 export const useMutation = () => ({ isLoading: false, data: {} });
 export const useQuery = () => ({
   isLoading: false,
-  data: exam,
+  data: { exam },
 });
 
 export const exam = {
@@ -13,14 +13,17 @@ export const exam = {
   levels: "0,1",
   ip: "",
   createdAt: new Date(),
+  subscribers: [{ group: "A" }],
+
   questions: [
     {
       id: 1,
       text: "question",
       image: "",
-      correctAnswer: 0,
+      correctAnswer: 1,
       group: "A",
       answers: [{ text: "answer" }],
+      selectedAnswers: [{ selectedAnswer: 1 }],
     },
   ],
 };
