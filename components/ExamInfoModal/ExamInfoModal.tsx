@@ -3,7 +3,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { Exam } from "@prisma/client";
 import QRCode from "react-qr-code";
 import Modal from "../Modal/Modal";
-import * as s from "./ExamIndoModalAtom";
+import * as s from "./ExamInfoModalAtom";
 
 interface ExamInfoModal {
   exam: Exam;
