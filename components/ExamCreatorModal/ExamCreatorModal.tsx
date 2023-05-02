@@ -232,7 +232,9 @@ const ExamCreatorModal = ({ onClose, exam }: ExamCreatorModalProps) => {
   const title = (
     <>
       Exam Details
-      <ExamDeletion onConfirm={() => deleteExamMutation.mutate(exam!.code)} />
+      {exam && (
+        <ExamDeletion onConfirm={() => deleteExamMutation.mutate(exam.code)} />
+      )}
     </>
   );
 
