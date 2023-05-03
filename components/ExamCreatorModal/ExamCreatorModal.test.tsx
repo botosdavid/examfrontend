@@ -22,15 +22,17 @@ it("renders modal component without exam", () => {
   const deleteIcon = queryByTestId("DeleteRoundedIcon");
   const submitButton = getAllByRole("button").pop();
 
-  expect(deleteIcon).toBeInTheDocument();
+  expect(deleteIcon).not.toBeInTheDocument();
   expect(submitButton).toHaveTextContent("Create");
 });
 
 it("renders modal component with exam", () => {
-  const { getAllByRole } = render(wrapper(() => {}, exam));
+  const { queryByTestId, getAllByRole } = render(wrapper(() => {}, exam));
 
+  const deleteIcon = queryByTestId("DeleteRoundedIcon");
   const submitButton = getAllByRole("button").pop();
 
+  expect(deleteIcon).toBeInTheDocument();
   expect(submitButton).toHaveTextContent("Update");
 });
 
