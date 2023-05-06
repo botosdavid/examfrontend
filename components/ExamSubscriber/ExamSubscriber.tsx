@@ -3,7 +3,10 @@ import { useState } from "react";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import AuthCode from "react-auth-code-input";
 import Modal from "../Modal/Modal";
-import { notifySubscribedSuccessfully } from "@/utils/toast/toastify";
+import {
+  notifySubscribedNotFound,
+  notifySubscribedSuccessfully,
+} from "@/utils/toast/toastify";
 import { subscribeToExam } from "@/utils/api/patch";
 import Button from "../Button/Button";
 import { useMutation } from "react-query";
@@ -34,7 +37,11 @@ const ExamSubscriberModal = ({ onClose }: ExamSubscriberModalProps) => {
   const isValidCode = code.length === 6;
 
   const subscribeToExamMutation = useMutation(subscribeToExam, {
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (response.status === 404) {
+        notifySubscribedNotFound();
+        return;
+      }
       queryClient.invalidateQueries(subscribedExams);
       notifySubscribedSuccessfully();
       onClose();

@@ -72,7 +72,7 @@ export default async function handler(
           },
         },
       });
-      if (!examToSubscribe) return res.status(404);
+      if (!examToSubscribe) return res.status(404).json({ isSuccess: false });
 
       const group = examToSubscribe._count.subscribers % 2 ? Group.A : Group.B;
 

@@ -24,6 +24,12 @@ export const notifySubscribedSuccessfully = () =>
     type: "success",
   });
 
+export const notifySubscribedNotFound = () =>
+  toast("Exam code not found!", {
+    position: "top-center",
+    type: "error",
+  });
+
 export const notifyInvalidCredentials = () =>
   toast("Invalid Credentials!", {
     position: "top-center",
