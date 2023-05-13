@@ -27,7 +27,7 @@ export const examCreateSchema = z.object({
         .object({
           text: z
             .string()
-            .min(2, { message: "Answer must be minimum 2 characters" })
+            .min(1, { message: "Answer must be minimum 1 characters" })
             .max(30, { message: "Answer must be maximum of 30 characters" }),
         })
         .array()

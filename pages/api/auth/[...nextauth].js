@@ -7,9 +7,7 @@ export const authOptions =  {
   providers: [
     CredentialsProvider({
       name: "Credentials",
-      // `credentials` is used to generate a form on the sign in page.
-      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-      // You can pass any HTML attribute to the <input> tag through the object.
+      
       credentials: {
         neptun: { label: 'neptun', type: 'text', required: true },
         password: {label: 'password', type: 'password', required: true},
@@ -32,11 +30,7 @@ export const authOptions =  {
   
   secret: process.env.JWT_SECRET,
   callbacks: {
-    // async signIn({ user, account, profile, email, credentials }) {
-    //   console.log('SignIn');
-    //   // permission true/false
-    //   return false;
-    // },
+    
     async session({ session, token, user }) {
       console.log('Session');
       session.user = token.user;
