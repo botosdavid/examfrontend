@@ -45,8 +45,6 @@ const Kviz = ({ code, userId }: KvizProps) => {
   const [selectedAnswer, setSelectedAnswer] =
     useState<number>(noSelectedAnswer);
 
-  const ipQuery = useQuery(ipAddress, getIpAddress);
-
   const {
     data: exam,
     isLoading,
@@ -57,6 +55,10 @@ const Kviz = ({ code, userId }: KvizProps) => {
         exam.subscribers?.[0]?.hasFinished || !exam.questions?.length
       ),
     refetchOnWindowFocus: false,
+  });
+
+  const ipQuery = useQuery(ipAddress, getIpAddress, {
+    enabled: !!exam?.ip?.length,
   });
 
   const { data: eliminatedAnswerIndexes } = useQuery(
